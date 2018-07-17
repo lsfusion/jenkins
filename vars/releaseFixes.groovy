@@ -18,7 +18,7 @@ def call() {
                 stages {
                         stage('one') {
                                 steps {
-//                                        script {
+                                        script {
 //                                                parallel {
 //                                                        stage('releases') {
 //                                                                steps {
@@ -33,11 +33,11 @@ def call() {
 //                                                } 
                                                 parallel branches.collectEntries() {
                                                         ["${it}": stn(it)]
-                                                }
+                                                }                                                
                                         }
                                 }
                         }
-//                }
+                }
         }
 
 //        currentBuild.result = 'SUCCESS' //FAILURE to fail
