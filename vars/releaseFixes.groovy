@@ -15,8 +15,10 @@ def call() {
                 agent any
                 stages {
                         stage('one') {
-                                parallel ['release', 'master'].collectEntries()
-                                        ["dd ${it}": stn(it)]
+                                steps {
+                                        parallel['release', 'master'].collectEntries()
+                                               ["dd ${it}": stn(it)]
+                                }
                         }
                 }
         }
