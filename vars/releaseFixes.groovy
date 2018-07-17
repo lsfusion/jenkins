@@ -1,8 +1,22 @@
+def stn(String name) {
+        return {
+                stage(name) {
+                        sayHello "I am am : " + name
+                }
+        }
+}
+
 def call() {
         echo "Check status"
 
-        (1..3).each {
-                sayHello "I am am : " + it 
+        pipeline {
+                agent any
+                stages {
+                        stage('one') {
+                                parallel ['release', 'master'].collectEntries()
+                                        ["dd ${it}": stn(it)]
+                        }
+                }
         }
 
 //        currentBuild.result = 'SUCCESS' //FAILURE to fail
