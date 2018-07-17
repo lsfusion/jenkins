@@ -18,8 +18,9 @@ def call() {
                         stage('one') {
                                 steps {
                                         script {
-                                                parallel branches.collectEntries()
-                                                ["dd ${it}": stn(it)]
+                                                parallel branches.collectEntries() {
+                                                        ["dd ${it}": stn(it)]
+                                                }
                                         }
                                 }
                         }
