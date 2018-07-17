@@ -1,6 +1,6 @@
 def call(String jenkinsHome, String branch) {
-    def platform = "${jenkinsHome}/src/${branch}/platform"
-    def fsl = "${jenkinsHome}/src/${branch}/fsl"
+    def platform = "${jenkinsHome}/src/platform"
+    def fsl = "${jenkinsHome}/src/fsl"
     def repos = '-DaltReleaseDeploymentRepository=lsfusion::default::http://repo.lsfusion.org/repository/releases -DaltSnapshotDeploymentRepository=lsfusion::default::http://repo.lsfusion.org/repository/snapshots'
 
     pipeline {
