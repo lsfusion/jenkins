@@ -6,7 +6,13 @@ def call(String jenkinsHome, String branch) {
     pipeline {
         agent any
         stages {
-            update "${jenkinsHome}", "${branch}"
+            stage ('update') {
+                steps {
+                    script {
+                        update "${jenkinsHome}", "${branch}"
+                    }
+                }
+            }
 
             stage('deploy') {
                 steps {
