@@ -31,8 +31,8 @@ def call() {
 //                                                                }
 //                                                        }
 //                                                } 
-                                                parallel branches.collect() {
-                                                        stn(it)
+                                                parallel branches.collectEntries() {
+                                                        ["${it}": stn(it)]
                                                 }
                                         }
                                 }
