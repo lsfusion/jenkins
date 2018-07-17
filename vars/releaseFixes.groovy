@@ -16,8 +16,10 @@ def call() {
                 stages {
                         stage('one') {
                                 steps {
-                                        parallel['release', 'master'].collectEntries()
-                                               ["dd ${it}": stn(it)]
+                                        script {
+                                                parallel['release', 'master'].collectEntries()
+                                                ["dd ${it}": stn(it)]
+                                        }
                                 }
                         }
                 }
