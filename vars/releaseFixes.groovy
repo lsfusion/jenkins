@@ -16,7 +16,6 @@ def call() {
                 stages {
                         stage('one') {
                                 steps {
-                                        script {
                                                 parallel {
                                                         stage('releases') {
                                                                 sayHello 'I am am ' + 'release'
@@ -28,7 +27,6 @@ def call() {
 //                                                branches.collectEntries() {
 //                                                        ["${it}": stn(it)]
 //                                                }
-                                        }
                                 }
                         }
                 }
