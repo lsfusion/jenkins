@@ -1,8 +1,16 @@
 // vars/releaseFixes.groovy
-def call(String name = 'human') {
+def call() {
     // Any valid steps can be called from this code, just like in other
     // Scripted Pipeline
-        echo 'AAAA'
-        echo 'DSDSDSd'
+        pipeline {
+                agent any
+                stages {
+                        stage('Odd Stage') {
+                                steps {
+                                        echo "The build number is odd"
+                                }
+                        }
+                }
+        }
 //        sayHello 'Jddd'
 }
