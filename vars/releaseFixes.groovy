@@ -1,4 +1,4 @@
-def call() {
+def call(body) {
         echo "Check status"
 
         (1..3).each {
