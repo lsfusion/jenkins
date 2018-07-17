@@ -18,10 +18,10 @@ def call() {
                                 steps {
                                         script {
                                                 parallel {
-                                                        stage('release') {
+                                                        stage('releases') {
                                                                 sayHello 'I am am ' + 'release'
                                                         }
-                                                        stage('master') {
+                                                        stage('masters') {
                                                                 sayHello 'I am am ' + 'master'
                                                         }
                                                 } 
