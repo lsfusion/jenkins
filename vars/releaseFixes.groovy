@@ -5,6 +5,6 @@ def call() {
                 sayHello "I am : " + it 
         }
 
-        currentBuild.result = 'SUCCESS' //FAILURE to fail
-        return this
+//        currentBuild.result = 'SUCCESS' //FAILURE to fail
+//        return this
 }
