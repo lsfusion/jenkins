@@ -5,7 +5,7 @@ def call() {
         pipeline {
                 agent any
                 stages {
-                        stage('Odd Stage') {
+                        stage('Odd Stage2') {
                                 steps {
                                         echo "The build number is odd"
                                 }
