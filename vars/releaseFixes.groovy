@@ -19,14 +19,14 @@ def call() {
 //                                        script {
                                                 parallel {
                                                         stage('releases') {
-                                                                steps {
+//                                                                steps {
                                                                         sayHello 'I am am ' + 'release'
-                                                                }      
+//                                                                }      
                                                         }
                                                         stage('masters') {
-                                                                steps {
+//                                                                steps {
                                                                         sayHello 'I am am ' + 'master'
-                                                                }
+//                                                                }
                                                         }
                                                 } 
 //                                                branches.collectEntries() {
