@@ -1,0 +1,3 @@
+def call() {
+    sayHello 'Joe'
+}
