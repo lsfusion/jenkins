@@ -1,18 +1,10 @@
-// vars/releaseFixes.groovy
-def call() {
-    // Any valid steps can be called from this code, just like in other
-    // Scripted Pipeline
-        
-        dfdfdf
-        pipeline {
-                agent any
-                stages {
-                        stage('Odd Stage2') {
-                                steps {
-                                        echo "The build number is odd"
-                                }
-                        }
-                }
+def call(body) {
+        echo "Check status"
+
+        (1..3).each {
+                echo "Number: " + it
         }
-//        sayHello 'Jddd'
+
+        currentBuild.result = 'SUCCESS' //FAILURE to fail
+        return this
 }
