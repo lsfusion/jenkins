@@ -17,9 +17,17 @@ def call() {
                         stage('one') {
                                 steps {
                                         script {
-                                                parallel branches.collect() {
-                                                        [stn(it)]
-                                                }
+                                                parallel {
+                                                        stage('release') {
+                                                                sayHello 'I am am ' + 'release'
+                                                        }
+                                                        stage('master') {
+                                                                sayHello 'I am am ' + 'master'
+                                                        }
+                                                } 
+//                                                branches.collectEntries() {
+//                                                        ["${it}": stn(it)]
+//                                                }
                                         }
                                 }
                         }
