@@ -1,7 +1,9 @@
 def stn(String name) {
         return {
                 stage(name) {
-                        sayHello "I am am : " + name
+                        steps {
+                                sayHello "I am am : " + name
+                        }
                 }
         }
 }
