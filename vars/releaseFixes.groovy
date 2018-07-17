@@ -13,7 +13,7 @@ def call() {
 
         pipeline {
                 agent any
-                stages {
+//                stages {
 //                        stage('one') {
 //                                steps {
 //                                        script {
@@ -31,7 +31,7 @@ def call() {
 //                                        }
 //                                }
 //                        }
-                }
+//                }
         }
 
 //        currentBuild.result = 'SUCCESS' //FAILURE to fail
