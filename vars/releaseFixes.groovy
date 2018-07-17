@@ -8,8 +8,9 @@ def stn(String name) {
         }
 }
 
-String[] branches = ['release', 'master']
 def call() {
+        String[] branches = ['release', 'master']
+
         echo "Check status"
 
         pipeline {
