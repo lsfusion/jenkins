@@ -1,9 +1,9 @@
 def stn(String name) {
         return {
                 stage(name) {
-                        steps {
+//                        steps {
                                 sayHello "I am am : " + name
-                        }
+//                        }
                 }
         }
 }
@@ -17,7 +17,7 @@ def call() {
                 agent any
                 stages {
                         stage('one') {
-//                                steps {
+                                steps {
 //                                        script {
 //                                                parallel {
 //                                                        stage('releases') {
@@ -34,7 +34,7 @@ def call() {
                                                 parallel branches.collectEntries() {
                                                         ["${it}": stn(it)]
                                                 }
-//                                        }
+                                        }
                                 }
                         }
 //                }
