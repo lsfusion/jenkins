@@ -8,6 +8,7 @@ def stn(String name) {
         }
 }
 
+String[] branches = ['release', 'master']
 def call() {
         echo "Check status"
 
@@ -17,7 +18,7 @@ def call() {
                         stage('one') {
                                 steps {
                                         script {
-                                                parallel['release', 'master'].collectEntries()
+                                                parallel branches.collectEntries()
                                                 ["dd ${it}": stn(it)]
                                         }
                                 }
