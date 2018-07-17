@@ -14,7 +14,7 @@ def call() {
         pipeline {
                 agent any
                 stages {
-                        stage('one') {
+//                        stage('one') {
 //                                steps {
 //                                        script {
                                                 parallel {
@@ -30,7 +30,7 @@ def call() {
 //                                                }
 //                                        }
 //                                }
-                        }
+//                        }
                 }
         }
 
