@@ -13,24 +13,28 @@ def call() {
 
         pipeline {
                 agent any
-//                stages {
-//                        stage('one') {
+                stages {
+                        stage('one') {
 //                                steps {
 //                                        script {
                                                 parallel {
                                                         stage('releases') {
-                                                                sayHello 'I am am ' + 'release'
+                                                                steps {
+                                                                        sayHello 'I am am ' + 'release'
+                                                                }      
                                                         }
                                                         stage('masters') {
-                                                                sayHello 'I am am ' + 'master'
+                                                                steps {
+                                                                        sayHello 'I am am ' + 'master'
+                                                                }
                                                         }
                                                 } 
 //                                                branches.collectEntries() {
 //                                                        ["${it}": stn(it)]
 //                                                }
 //                                        }
-//                                }
-//                        }
+                                }
+                        }
 //                }
         }
 
