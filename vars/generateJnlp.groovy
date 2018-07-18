@@ -18,6 +18,10 @@ def call(String platformVersion) {
 -e 's|\${jnlp.exportName}|default|' \\
 -e 's|\${jnlp.singleInstance}|false|' \\
 -e "s|lsfusion-client.jar|lsfusion-client-${platformVersion}.jar|" ${Paths.tmp}/client-${platformVersion}.jnlp"""
+
+                    withCredentials([usernameColonPassword(credentialsId: 'lsfusion.ftp', variable: 'USERPASS')]) {
+                        sh "curl -T ${Paths.tmp}/client-${platformVersion}.jnlp ftp.keycdn.com --user $USERPASS"
+                    }
                 }
             }
         }
