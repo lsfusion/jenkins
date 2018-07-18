@@ -19,10 +19,8 @@ def call(String platformVersion) {
 -e 's|\${jnlp.singleInstance}|false|' \\
 -e "s|lsfusion-client.jar|lsfusion-client-${platformVersion}.jar|" ${Paths.tmp}/client-${platformVersion}.jnlp"""
 
-                    uploadToFtp "${Paths.tmp}/client-${platformVersion}.jnlp", "${platformVersion}"
-//                    withCredentials([usernameColonPassword(credentialsId: 'lsfusion.ftp', variable: 'USERPASS')]) {
-//                        sh "curl -T ${Paths.tmp}/client-${platformVersion}.jnlp --ftp-create-dirs ftp://ftp.keycdn.com/download/${platformVersion}/ --user $USERPASS"
-//                    }
+                    uploadToFtp "${Paths.tmp}/client-${platformVersion}.jnlp", ""
+//                    uploadToFtp "${Paths.tmp}/client-${platformVersion}.jnlp", "${platformVersion}"
 
                     sh "rm -f ${Paths.tmp}/client-${platformVersion}.jnlp"
                 }
