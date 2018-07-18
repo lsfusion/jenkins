@@ -4,7 +4,6 @@ def call(String platformVersion) {
         stages {
             stage('update') {
                 steps {
-//                        sh "cp -fa ${JENKINS_HOME}/src/platform/web-api/src/main/resources/client.jnlp ${Paths.tmp}/client-${platformVersion}.jnlp"
                         sh "cp -fa ${Paths.src}/platform/web-api/src/main/resources/client.jnlp ${Paths.tmp}/client-${platformVersion}.jnlp"
 
                         sh """sed -i -e 's|\${jnlp.codebase}|http://download.lsfusion.org|' \\
