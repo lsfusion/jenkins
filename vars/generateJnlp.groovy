@@ -22,6 +22,8 @@ def call(String platformVersion) {
                     withCredentials([usernameColonPassword(credentialsId: 'lsfusion.ftp', variable: 'USERPASS')]) {
                         sh "curl -T ${Paths.tmp}/client-${platformVersion}.jnlp ftp://ftp.keycdn.com/download/ --user $USERPASS"
                     }
+
+                    sh "rm -f ${Paths.tmp}/client-${platformVersion}.jnlp"
                 }
             }
         }
