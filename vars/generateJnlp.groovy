@@ -19,8 +19,7 @@ def call(String platformVersion) {
 -e 's|\${jnlp.singleInstance}|false|' \\
 -e "s|lsfusion-client.jar|lsfusion-client-${platformVersion}.jar|" ${Paths.tmp}/client-${platformVersion}.jnlp"""
 
-                    uploadToFtp "${Paths.tmp}/client-${platformVersion}.jnlp", ""
-//                    uploadToFtp "${Paths.tmp}/client-${platformVersion}.jnlp", "${platformVersion}"
+                    uploadToFtp "${Paths.tmp}/client-${platformVersion}.jnlp", "${platformVersion}"
 
                     sh "rm -f ${Paths.tmp}/client-${platformVersion}.jnlp"
                 }
