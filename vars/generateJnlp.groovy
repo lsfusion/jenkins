@@ -20,6 +20,7 @@ def call(String platformVersion) {
 -e "s|lsfusion-client.jar|lsfusion-client-${platformVersion}.jar|" ${Paths.tmp}/client-${platformVersion}.jnlp"""
 
                     withCredentials([usernameColonPassword(credentialsId: 'lsfusion.ftp', variable: 'USERPASS')]) {
+                        sh "curl -X MKCOL 'ftp://ftp.keycdn.com/download/${platformVersion}'"
                         sh "curl -T ${Paths.tmp}/client-${platformVersion}.jnlp ftp://ftp.keycdn.com/download/${platformVersion}/ --user $USERPASS"
                     }
 
