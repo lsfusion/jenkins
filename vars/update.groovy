@@ -1,6 +1,6 @@
 def call(String branch) {
     stage('update') {
-        dir(${Paths.src}) {
+        dir("${Paths.src}") {
             dir('fsl') {
                 git(
                         url: 'https://github.com/lsfusion/fsl',
