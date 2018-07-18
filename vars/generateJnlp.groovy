@@ -1,7 +1,12 @@
 def call(String platformVersion) {
-    sh "cp -fa ${Paths.src}/platform/web-api/src/main/resources/client.jnlp ${Paths.tmp}/client-${platformVersion}.jnlp"
+    pipeline {
+        agent any
+        stages {
+            stage('update') {
+                steps {
+                        sh "cp -fa ${Paths.src}/platform/web-api/src/main/resources/client.jnlp ${Paths.tmp}/client-${platformVersion}.jnlp"
 
-    sh """sed -i -e 's|${jnlp.codebase}|http://download.lsfusion.org|' \\
+                        sh """sed -i -e 's|${jnlp.codebase}|http://download.lsfusion.org|' \\
 -e "s/\${jnlp.url}/client-${platformVersion}.jnlp/" \\
 -e 's|${jnlp.appName}|lsFusion|' \\
 -e 's|${jnlp.initHeapSize}|256m|' \\
@@ -13,5 +18,9 @@ def call(String platformVersion) {
 -e 's|${jnlp.exportName}|default|' \\
 -e 's|${jnlp.singleInstance}|false|' \\
 -e "s|lsfusion-client.jar|lsfusion-client-${platformVersion}.jar|" ${Paths.tmp}/client-${platformVersion}.jnlp"""
+                }
+            }
+        }
+    }
 }
 
