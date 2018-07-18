@@ -1,6 +1,6 @@
-def call(String jenkinsHome, String branch) {
+def call(String branch) {
     stage('update') {
-        dir("${jenkinsHome}/src") {
+        dir(${Paths.src}) {
             dir('fsl') {
                 git(
                         url: 'https://github.com/lsfusion/fsl',

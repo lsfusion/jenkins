@@ -1,6 +1,6 @@
-def call(String jenkinsHome, String branch) {
-    def platform = "${jenkinsHome}/src/platform"
-    def fsl = "${jenkinsHome}/src/fsl"
+def call(String branch) {
+    def platform = "${Paths.src}/platform"
+    def fsl = "${Paths.src}/fsl"
     def repos = '-DaltReleaseDeploymentRepository=lsfusion::default::http://repo.lsfusion.org/repository/releases -DaltSnapshotDeploymentRepository=lsfusion::default::http://repo.lsfusion.org/repository/snapshots'
 
     pipeline {
@@ -9,7 +9,7 @@ def call(String jenkinsHome, String branch) {
             stage ('update') {
                 steps {
                     script {
-                        update "${jenkinsHome}", "${branch}"
+                        update "${branch}"
                     }
                 }
             }
