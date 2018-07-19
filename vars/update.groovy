@@ -4,14 +4,14 @@ def call(String branch) {
             dir('fsl') {
                 git(
                         url: 'https://github.com/lsfusion/fsl',
-                        branch: branch
+                        branch: "${branch}"
                 )
             }
 
             dir('platform') {
                 git(
                         url: 'https://github.com/lsfusion/platform',
-                        branch: branch
+                        branch: "${branch}"
                 )
             }
         }
