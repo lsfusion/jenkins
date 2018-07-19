@@ -23,7 +23,7 @@ def error(message, channel) {
 }
 
 def send(message, color) {
-    slackSend color: 'danger', message: message
+    slackSend color: color, message: message
 }
 
 def send(message, color, channel) {
