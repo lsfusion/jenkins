@@ -9,7 +9,7 @@ def call(String branch) {
             stage ('update') {
                 steps {
                     script {
-                        update "${branch}"
+                        update branch
                     }
                 }
             }
