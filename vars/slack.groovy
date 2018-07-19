@@ -1,4 +1,3 @@
-def message(String channel, String message) {
+def message(channel, message) {
     slackSend channel: channel, color: 'good', message: message
 }
-
