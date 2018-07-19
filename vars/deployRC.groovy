@@ -1,54 +1,56 @@
-properties([
-        pipelineTriggers([
-                [$class: "SCMTrigger", scmpoll_spec: "* * * * *"],
-        ])
-])
+def call() {
+    properties([
+            pipelineTriggers([
+                    [$class: "SCMTrigger", scmpoll_spec: "* * * * *"],
+            ])
+    ])
 
-node {
-    stage ('pull') {
-        dir("${Paths.jenkinsHome}/rc") {
-            dir('platform-RC') {
-                git(
-                        poll: true,
-                        url: 'https://github.com/lsfusion/platform',
-                        branch: 'release-candidate'
-                )
-            }
-            dir('fsl-RC') {
-                git(
-                        poll: true,
-                        url: 'https://github.com/lsfusion/fsl',
-                        branch: 'release-candidate'
-                )
-            }
-        }
-    }
-}
-
-pipeline {
-    agent none
-    stages {
-        stage('single') {
-            agent any
-            steps {
-                build 'saveLatestRCCommitToFile'
-                build 'cleanRC'
-                sh "mvn -f ${Paths.jenkinsHome}/rc/platform-RC/pom.xml deploy"
-                sh "mvn -f ${Paths.jenkinsHome}/rc/fsl-RC/pom.xml deploy"
+    node {
+        stage('pull') {
+            dir("${Paths.jenkinsHome}/rc") {
+                dir('platform-RC') {
+                    git(
+                            poll: true,
+                            url: 'https://github.com/lsfusion/platform',
+                            branch: 'release-candidate'
+                    )
+                }
+                dir('fsl-RC') {
+                    git(
+                            poll: true,
+                            url: 'https://github.com/lsfusion/fsl',
+                            branch: 'release-candidate'
+                    )
+                }
             }
         }
     }
 
-    post {
-        success {
-            slackSend channel: '#jenkins',
-                    color: 'good',
-                    message: "<${env.BUILD_URL}|${currentBuild.fullDisplayName}> успешно завершён.\n```" + getCommitMessage() + "```"
+    pipeline {
+        agent none
+        stages {
+            stage('single') {
+                agent any
+                steps {
+                    build 'saveLatestRCCommitToFile'
+                    build 'cleanRC'
+                    sh "mvn -f ${Paths.jenkinsHome}/rc/platform-RC/pom.xml deploy"
+                    sh "mvn -f ${Paths.jenkinsHome}/rc/fsl-RC/pom.xml deploy"
+                }
+            }
         }
-        failure {
-            slackSend channel: '#dev',
-                    color: 'danger',
-                    message: "Внимание! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> завершился с ошибкой.\n```" + getCommitMessage() + "```"
+
+        post {
+            success {
+                slackSend channel: '#jenkins',
+                        color: 'good',
+                        message: "<${env.BUILD_URL}|${currentBuild.fullDisplayName}> успешно завершён.\n```" + getCommitMessage() + "```"
+            }
+            failure {
+                slackSend channel: '#dev',
+                        color: 'danger',
+                        message: "Внимание! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> завершился с ошибкой.\n```" + getCommitMessage() + "```"
+            }
         }
     }
 }
