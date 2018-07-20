@@ -2,7 +2,9 @@ def call(String branch) {
     return {
         stage('update and deploy') {
             stages {
-                update branch
+                script {
+                    update branch
+                }
 
                 stage('deploy') {
                     steps {
