@@ -1,7 +1,5 @@
 def call(String branch) {
-
-    pipeline {
-        agent any
+    stage ('update and deploy') {
         stages {
             update branch
 
