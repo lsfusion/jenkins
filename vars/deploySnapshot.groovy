@@ -1,4 +1,6 @@
 def call(String branch) {
+    echo 'update'
     update branch
-    sh "mvn -f ${Paths.src}/pom.xml clean deploy"
+    echo 'deploy'
+    println "mvn -f ${Paths.src}/pom.xml clean deploy".execute().text
 }
