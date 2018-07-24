@@ -23,7 +23,7 @@ def call() {
             stage('single') {
                 agent any
                 steps {
-                    sh "git -C ${Paths.jenkinsHome}/rc/platform-RC log -n 1 --pretty=format:\"<logentry>%n<author>%an</author>%n<msg>%s</msg>%n</logentry>\" > ${Paths.jenkinsHome}/rc/platformLatestCommit"
+                    sh "/usr/local/git/bin/git -C ${Paths.jenkinsHome}/rc/platform-RC log -n 1 --pretty=format:\"<logentry>%n<author>%an</author>%n<msg>%s</msg>%n</logentry>\" > ${Paths.jenkinsHome}/rc/platformLatestCommit"
                     sh "mvn -f ${Paths.jenkinsHome}/rc/platform-RC/pom.xml clean deploy"
                 }
             }
