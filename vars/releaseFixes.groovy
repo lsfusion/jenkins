@@ -1,45 +1,11 @@
-def stn(String name) {
-        return {
-                stage(name) {
-//                        steps {
-                                sayHello "I am am : " + name
-//                        }
-                }
-        }
-}
+String lastVersionState
+Integer lastVersion, lastSupportedVersion
+(lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
 
+// when there are enough bugfixes / every 2-4 weeks (except beta / final releases) - for using in production (later versions are more stable)
 def call() {
-        String[] branches = ['release', 'master']
-
-        echo "Check status"
-
-        pipeline {
-                agent any
-                stages {
-                        stage('one') {
-                                steps {
-                                        script {
-//                                                parallel {
-//                                                        stage('releases') {
-//                                                                steps {
-//                                                                        sayHello 'I am am ' + 'release'
-//                                                                }      
-//                                                        }
-//                                                        stage('masters') {
-//                                                                steps {
-//                                                                        sayHello 'I am am ' + 'master'
-//                                                                }
-//                                                        }
-//                                                } 
-                                                parallel branches.collectEntries() {
-                                                        ["${it}": stn(it)]
-                                                }                                                
-                                        }
-                                }
-                        }
-                }
+        def branches = (lastSupportedVersion..(lastVersion - (lastVersionState.equals("ALPHA")?1:0))).collect{it}
+        for (branch in branches) {
+                releaseFix "$branch"
         }
-
-//        currentBuild.result = 'SUCCESS' //FAILURE to fail
-//        return this
 }
