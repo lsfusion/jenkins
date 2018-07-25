@@ -1,5 +1,5 @@
 def call() {
-    def branches = ['release-candidate']
+    def branches = ['v2']
     for (branch in branches) {
         deploySnapshot branch
     }

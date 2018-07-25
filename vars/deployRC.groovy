@@ -11,7 +11,7 @@ def call() {
                 git(
                         poll: true,
                         url: 'https://github.com/lsfusion/platform',
-                        branch: 'release-candidate'
+                        branch: 'v2'
                 )
             }
         }
