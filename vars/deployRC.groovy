@@ -23,22 +23,24 @@ def call() {
             stage('single') {
                 agent any
                 steps {
-                    sh "git -C ${Paths.jenkinsHome}/rc/platform-RC log -n 1 --pretty=format:\"<logentry>%n<author>%an</author>%n<msg>%s</msg>%n</logentry>\" > ${Paths.jenkinsHome}/rc/platformLatestCommit"
-                    sh "mvn -f ${Paths.jenkinsHome}/rc/platform-RC/pom.xml clean deploy"
+                    dir("${Paths.jenkinsHome}/rc/platform-RC") {
+                        sh "git log -n 1 --pretty=format:\"<logentry>%n<author>%an</author>%n<msg>%s</msg>%n</logentry>\" > ../platformLatestCommit"
+                        sh "mvn clean deploy"
+                    }
                 }
             }
         }
 
         post {
             success {
-                slackSend channel: '#jenkins',
-                        color: 'good',
-                        message: "<${env.BUILD_URL}|${currentBuild.fullDisplayName}> успешно завершён.\n```" + getCommitMessage() + "```"
+                script {
+                    slack.message "<${env.BUILD_URL}|${currentBuild.fullDisplayName}> успешно завершён.\n```" + getCommitMessage() + "```"
+                }
             }
             failure {
-                slackSend channel: '#dev',                   
-                        color: 'danger',
-                        message: "Внимание! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> завершился с ошибкой.\n```" + getCommitMessage() + "```"
+                script {
+                    slack.error "Внимание! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> завершился с ошибкой.\n```" + getCommitMessage() + "```", '#dev'
+                }
             }
         }
     }
