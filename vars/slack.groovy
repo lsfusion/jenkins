@@ -1,13 +1,19 @@
-def message(message) {
-    slackSend color: 'good', message: message
+def message(text) {
+    if(Paths.slackChannel != null)
+        message text, Paths.slackChannel
+    else
+        slackSend color: 'good', message: text
 }
 
-def message(message, channel) {
-    slackSend channel: channel, color: 'good', message: message
+def message(text, channel) {
+    slackSend channel: channel, color: 'good', message: text
 }
 
 def warning(message) {
-    slackSend color: 'warning', message: message
+    if(Paths.slackChannel != null)
+        warning message, Paths.slackChannel
+    else
+        slackSend color: 'warning', message: message
 }
 
 def warning(message, channel) {
@@ -15,17 +21,12 @@ def warning(message, channel) {
 }
 
 def error(message) {
-    slackSend color: 'danger', message: message
+    if(Paths.slackChannel != null)
+        error message, Paths.slackChannel
+    else
+        slackSend color: 'danger', message: message
 }
 
 def error(message, channel) {
     slackSend channel: channel, color: 'danger', message: message
-}
-
-def send(message, color) {
-    slackSend color: color, message: message
-}
-
-def send(message, color, channel) {
-    slackSend channel: channel, color: color, message: message
 }

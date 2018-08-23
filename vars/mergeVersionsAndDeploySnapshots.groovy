@@ -5,9 +5,8 @@ def call() {
 
     def branches = (lastSupportedVersion..lastVersion).collect{it}
     for (branch in branches) {
-        deploySnapshot "v$branch"
+        mergeVersionAndDeploySnapshot "v$branch", branch, false
     }
-    
-    deploySnapshot 'master'
-}
 
+    mergeVersionAndDeploySnapshot 'master', -1, true
+}

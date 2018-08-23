@@ -1,3 +1,4 @@
+
 def call() {
     String lastVersionState
     Integer lastVersion, lastSupportedVersion
@@ -5,9 +6,6 @@ def call() {
 
     def branches = (lastSupportedVersion..lastVersion).collect{it}
     for (branch in branches) {
-        deploySnapshot "v$branch"
+        mergeVersion branch
     }
-    
-    deploySnapshot 'master'
 }
-

@@ -1,10 +1,10 @@
 def call(String branch) {
-    node {
-        dir(Paths.src) {
-            git(
-                    url: 'https://github.com/lsfusion/platform',
-                    branch: branch
-            )
-        }
-    }
+    git(
+            url: "https://github.com/" + Paths.githubRepo,
+            branch: branch,
+    )
+}
+
+def tag(String tag) {
+    checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[url: 'https://github.com/' + Paths.githubRepo]], branches: [[name: tag]]]
 }

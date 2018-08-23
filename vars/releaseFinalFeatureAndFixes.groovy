@@ -1,41 +1,47 @@
 String lastVersionState
 Integer lastVersion, lastSupportedVersion
-(lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
 
-// when there are no new bug reports / in 2 months after alpha - public final release, for using in production
+// when there are no new bug reports / in 2 months after beta - public final release, for using in production
 def call() {
-    pipeline {
-        agent any
-        stages {
+//    pipeline {
+//        agent any
+//        stages {
+            stage('Read last version') {
+//                steps {
+///                    script {
+                (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
+//                    }
+//                }
+            }
+
             stage('Check last version state') {
-                steps {
+//                steps {
                     if(!lastVersionState.equals("BETA"))
                         error("Last version should be BETA")
-                }
+//                }
             }
             stage('Update') {
-                steps {
-                    update "$lastVersion"
-                }
+//                steps {
+                    update "v$lastVersion"
+//                }
             }
 
             // update version from a.beta.x TO a.0
             stage('Update version') {
-                steps {
-                    dir(Paths.src) {
+//                steps {
+//                    dir(Paths.src) {
                         sh "mvn release:clean release:update-versions -DdevelopmentVersion=$lastVersion.0-SNAPSHOT"
-                        sh "git commit -a -m \"Out of beta\""
-                        sh "git push"
-                    }
-                }
+                        sh "mvn scm:checkin -Dmessage=\"Out of beta\""
+//                    }
+//                }
             }
 
             stage('Release fixes') {
-                steps {
-                    build 'releaseFixes'
-                }
+//                steps {
+                    releaseFixes() //build 'releaseFixes'
+//                }
             }
-        }
-    }
+//        }
+//    }
 }
 

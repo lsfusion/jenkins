@@ -1,37 +1,29 @@
 def call() {
-    update master
+    update "master"
 
     String masterVersion = readVersion()
     String[] masterVersionParts = masterVersion.split("\\.")
     
     int majorVersion = Integer.valueOf(masterVersionParts[0])
-    if(masterVersionParts.size() != 3 || !masterVersionParts[1].equals("beta") || !masterVersionParts[1].equals("beta"))
+    if(masterVersionParts.size() != 3 || !masterVersionParts[1].equals("beta") || !masterVersionParts[2].equals("0-SNAPSHOT"))
         error("Version in master should be *.beta.0-SNAPSHOT")
-    
-    update "v$majorVersion"
-    
-    String lastVersionString = readVersion()
-    String[] lastVersionParts = masterVersion.split("\\.")
-    int lastVersion = masterVersion - 1
 
-    if((lastVersionParts.size() != 3 && lastVersionParts.size() != 2) || !lastVersionParts[lastVersionParts.size() - 1].endsWith("-SNAPSHOT"))
-        error("Version in branch should be either *.beta.*-SNAPSHOT or *.*-SNAPSHOT")
-
-    if(Integer.lastVersionParts[0]!=lastVersion)
-        error("Major version in branch should be (masterVersion-1).*.*-SNAPSHOT")
+    int lastVersion = majorVersion - 1
+    int minorLastVersion
+    boolean isLastBeta
+    (isLastBeta, minorLastVersion) = getBranchVersion(lastVersion)
     
-    String lastVersionState
-    if(lastVersionParts.size() == 3) {
-        if(!lastVersionParts[1].equals("beta"))
-            error("Beta version in branch should be *.beta.*-SNAPSHOT")
-
-        if(lastVersionParts[2].substring(0, lastVersionParts[2].size() - "-SNAPSHOT".length()).equals("0")) {
+    if(isLastBeta) {
+        if(minorLastVersion == 0)
             lastVersionState = "ALPHA"
-        } else 
+        else 
             lastVersionState = "BETA"
     } else
         lastVersionState = "FINAL"
     
-    int supportedVersions = 1
-    return [lastVersion, lastVersionState, lastVersion - (supportedVersions - 1)]
+    int supportedVersions = 3
+    int lastSupportedVersion = lastVersion - (supportedVersions - 1)
+    if(lastSupportedVersion < 2)
+        lastSupportedVersion = 2
+    return [lastVersion, lastVersionState, lastSupportedVersion]
 }
