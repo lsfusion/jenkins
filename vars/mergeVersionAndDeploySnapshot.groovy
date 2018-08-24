@@ -45,7 +45,7 @@ def call(String branch, int branchIndex, boolean message) {
             cvFile.text = prevBuilds.inspect()
         }
     } catch (e) {
-        slack.error "Warning! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> (v. " + branch + ") failed."
+        slack.error "Warning! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> (branch " + branch + ") failed."
         
         throw e
     }
