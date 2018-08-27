@@ -1,4 +1,4 @@
-call() {
+def call() {
     try {
         git(
                 url: 'https://github.com/lsfusion/plugin-idea',
