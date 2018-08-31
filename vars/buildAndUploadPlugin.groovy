@@ -9,7 +9,6 @@ def call() {
         def oldVer = readFile versionFile
         def newVer = getPluginVersion()
         if (newVer != oldVer) {
-            writeFile file: versionFile, text: newVer
             sh 'ant all'
 
             sh "cp -f lsfusion-idea-plugin.zip ${Paths.jenkinsHome}/installer-src/"
@@ -17,6 +16,8 @@ def call() {
             sh 'sh upload-plugin.sh'
 
             slack.message "Plugin v.${getPluginVersion()} was built successfully.\n```${getReleaseNotes()}```"
+
+            writeFile file: versionFile, text: newVer
         } else {
             echo "version's the same"
         }
