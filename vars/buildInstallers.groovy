@@ -10,11 +10,13 @@ def call(String platformVersion) {
     sh "cp -lr ${installerSrc}/* ${installerBin}"
 
     sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${platformVersion}:jar:assembly -DoutputDirectory=${installerBin}"
+    sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${platformVersion}:jar:sources -DoutputDirectory=${installerBin}"
     sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${platformVersion}:jar:assembly -DoutputDirectory=${installerBin}"
     sh "mvn dependency:copy -Dartifact=lsfusion.platform:web-client:${platformVersion}:war -DoutputDirectory=${installerBin}"
 
     dir(installerBin) {
         sh "mv -f server-${platformVersion}-assembly.jar lsfusion-server-${platformVersion}.jar"
+        sh "mv -f server-${platformVersion}-sources.jar lsfusion-server-${platformVersion}-sources.jar"
         sh "mv -f desktop-client-${platformVersion}-assembly.jar lsfusion-client-${platformVersion}.jar"
         sh "mv -f web-client-${platformVersion}.war lsfusion-client-${platformVersion}.war"
     }
