@@ -20,7 +20,7 @@ def call(int branch, boolean fake = false) {
 
     stage('Merge & Push') {
 //        steps {
-        sh "git merge" + (fake ? "  -s ours" : "") + " origin/v$branch"
+        sh "git merge" + (fake ? "  -s ours" : " -s recursive -Xignore-space-at-eol") + " origin/v$branch"
         push nextBranch
 //        }
     }   
