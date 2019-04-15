@@ -11,20 +11,18 @@ def call() {
         def oldVer = readFile versionFile
         def newVer = new JsonSlurper().parseText(new File("${Paths.jenkinsHome}/js-client/core/package.json").text).version
         if (newVer != oldVer) {
-            echo "new version ${newVer}"
+             dir("core") {
+                 sh 'npm install --access public'
+             }
 
-            // dir("core") {
-            //     sh 'npm install --access public'
-            // }
-
-            // slack.message "JS Client v.${newVer} was built successfully."
+             slack.message "JS Client v.${newVer} was built successfully."
 
             writeFile file: versionFile, text: newVer
         } else {
             echo "version's the same"
         }
     } catch (e) {
-        // slack.error "Warning! <$env.BUILD_URL|$currentBuild.fullDisplayName> failed."
+         slack.error "Warning! <$env.BUILD_URL|$currentBuild.fullDisplayName> failed."
         throw e
     }
 }
