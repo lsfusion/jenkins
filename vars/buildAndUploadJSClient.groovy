@@ -12,7 +12,7 @@ def call() {
         def newVer = new JsonSlurper().parseText(new File("${Paths.jenkinsHome}/js-client/core/package.json").text).version
         if (newVer != oldVer) {
              dir("core") {
-                 sh 'npm install --access public'
+                 sh 'npm publish --access public'
              }
 
              slack.message "JS Client v.${newVer} was built successfully."
