@@ -23,7 +23,7 @@ def call(String platformVersion) {
 
     dir(workspace) {
         def makensis = "${installerSrc}/nsis-unicode-win/makensis.exe"
-        def downloadDir = "${Paths.download}/${platformVersion}"
+        def downloadDir = "${Paths.download}/exe/${platformVersion}"
 
         sh "echo '\n!define LSFUSION_VERSION ${platformVersion}' >> Versions.nsh"
         String viVersion = platformVersion.replace('beta', '999') + '.0'

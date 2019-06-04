@@ -95,7 +95,12 @@ def call(int branch) {
     //        steps {
             dir(Paths.download) {
                 ftpPublisher failOnError: true, publishers: [
-                        [configName: 'Download FTP server', transfers: [[sourceFiles: "${tagVersion}/"]], verbose: true]
+                        [configName: 'Download FTP server', 
+                         transfers: [
+                                 [sourceFiles: "${tagVersion}/"], 
+                                 [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true]
+                         ], 
+                         verbose: true]
                 ]
             }          
     //        }
