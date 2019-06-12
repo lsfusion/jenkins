@@ -78,7 +78,7 @@ def call(int branch) {
             sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
             sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:pack.gz:assembly -DoutputDirectory=${downloadDir}"
             sh "mvn dependency:copy -Dartifact=lsfusion.platform:web-client:${tagVersion}:war -DoutputDirectory=${downloadDir}"
-            sh "cp -f CHANGELOG.md ${downloadDir}/CHANGELOG.txt"
+            sh "cp -f CHANGELOG.md ${Paths.download}/changelog/CHANGELOG-${tagVersion}.txt"
     
             dir(downloadDir) {
                 sh "mv -f server-${tagVersion}-assembly.jar lsfusion-server-${tagVersion}.jar"
@@ -97,7 +97,8 @@ def call(int branch) {
                 ftpPublisher failOnError: true, publishers: [
                         [configName: 'Download FTP server', 
                          transfers: [
-                                 [sourceFiles: "${tagVersion}/"], 
+                                 [sourceFiles: "${tagVersion}/", remoteDirectory: "java", flatten: true], 
+                                 [sourceFiles: "changelog/CHANGELOG-${tagVersion}.txt", remoteDirectory: "changelog", flatten: true], 
                                  [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true]
                          ], 
                          verbose: true]
