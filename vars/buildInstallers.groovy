@@ -1,4 +1,4 @@
-def call(String platformVersion) {
+def call(int majorVersion, String platformVersion) {
     def workspace = "${Paths.jenkinsHome}/installer"
     def installerSrc = "${Paths.jenkinsHome}/installer-src"
     def installerBin = "${workspace}/install-bin"
@@ -15,16 +15,17 @@ def call(String platformVersion) {
     sh "mvn dependency:copy -Dartifact=lsfusion.platform:web-client:${platformVersion}:war -DoutputDirectory=${installerBin}"
 
     dir(installerBin) {
-        sh "mv -f server-${platformVersion}-assembly.jar lsfusion-server-${platformVersion}.jar"
-        sh "mv -f server-${platformVersion}-sources.jar lsfusion-server-${platformVersion}-sources.jar"
-        sh "mv -f desktop-client-${platformVersion}-assembly.jar lsfusion-client-${platformVersion}.jar"
-        sh "mv -f web-client-${platformVersion}.war lsfusion-client-${platformVersion}.war"
+        sh "mv -f server-${platformVersion}-assembly.jar lsfusion-server.jar"
+        sh "mv -f server-${platformVersion}-sources.jar lsfusion-server-sources.jar"
+        sh "mv -f desktop-client-${platformVersion}-assembly.jar lsfusion-client.jar"
+        sh "mv -f web-client-${platformVersion}.war lsfusion-client.war"
     }
 
     dir(workspace) {
         def makensis = "${installerSrc}/nsis-unicode-win/makensis.exe"
         def downloadDir = "${Paths.download}/exe/${platformVersion}"
 
+        sh "echo '\n!define LSFUSION_MAJOR_VERSION ${majorVersion}' >> Versions.nsh"
         sh "echo '\n!define LSFUSION_VERSION ${platformVersion}' >> Versions.nsh"
         String viVersion = platformVersion.replace('beta', '999') + '.0'
         if (!platformVersion.contains('beta')) {

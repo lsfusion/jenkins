@@ -59,7 +59,7 @@ def call(int branch) {
     //    // Next 3 tasks to local folder
         stage('Build installers') {
     //        steps {
-            buildInstallers tagVersion
+            buildInstallers majorVersion, tagVersion
     //        }
         }
 
