@@ -70,11 +70,13 @@ Var tomcatShutdownPort
 Var tomcatHttpPort
 Var tomcatAjpPort
 Var tomcatServiceName 
+Var tomcatDisplayServiceName 
 
 Var platformServerHost
 Var platformServerPort
 Var platformServerPassword
 Var platformServiceName
+Var platformDisplayServiceName
 Var webClientContextFile
 Var webClientContext
 Var webClientDirectory
