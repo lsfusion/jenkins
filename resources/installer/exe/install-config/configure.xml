@@ -14,7 +14,7 @@
             </not>
             <then>
                 <copy file="${web.conf}" tofile="${web.dir}/../conf/catalina/localhost/${web.context.file}.xml" />
-                <copy file="${web.archive}" tofile="${web.dir}/${web.context.file}.war" />
+                <move file="${web.archive}" tofile="${web.dir}/${web.context.file}.war" />
             </then>
         </if>
     </target>
@@ -27,6 +27,7 @@
 
     <target name="configureIdea">
         <unzip src="../${idea.plugin}" dest="${idea.dir}/plugins/" />
+        <delete file="../${idea.plugin}"/>
         
         <replace file="jdk.table.xml" token="java.home" value="${jdk.home}" />
         <replace file="jdk.table.xml" token="java.majorversion" value="${jdk.majorversion}" />
