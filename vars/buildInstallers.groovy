@@ -2,9 +2,10 @@ def call(int majorVersion, String platformVersion) {
     def workspace = "${Paths.jenkinsHome}/installer"
     def installerSrc = "${Paths.jenkinsHome}/installer-src"
     def installerBin = "${workspace}/install-bin"
+    def resourcesDir = getResourcesDir()
 
     sh "rm -rf ${workspace}"
-    sh "cp -r server/src/installer/. ${workspace}"
+    sh "cp -r ${resourcesDir}/installer/exe/. ${workspace}"
     sh "chmod -R 777 ${workspace}"
 
     sh "cp -lr ${installerSrc}/* ${installerBin}"
