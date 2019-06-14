@@ -7,8 +7,8 @@ RequestExecutionLevel user
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
 !define VERSION ${LSFUSION_VERSION}
-!define COMPANY luxsoft
-!define URL lsfusion.ru
+!define COMPANY lsFusion
+!define URL lsfusion.org
 
 !define PLATFORM_SECTION_NAME "lsFusion Platform"
 !define SERVER_SECTION_NAME "lsFusion Server"
@@ -225,9 +225,11 @@ Function .onInit
     StrCpy $tomcatHttpPort "8080"
     StrCpy $tomcatAjpPort "8009"
     StrCpy $tomcatServiceName "lsfusion${LSFUSION_MAJOR_VERSION}_client"
+    StrCpy $tomcatDisplayServiceName "lsFusion ${LSFUSION_MAJOR_VERSION} Client"
 
     StrCpy $platformServerPort "7652"
     StrCpy $platformServiceName "lsfusion${LSFUSION_MAJOR_VERSION}-server"
+    StrCpy $platformDisplayServiceName "lsFusion ${LSFUSION_MAJOR_VERSION} Server"
     StrCpy $webClientContext ""
     
     !insertmacro MUI_LANGDLL_DISPLAY
@@ -430,7 +432,7 @@ Function createServices
     ${if} ${SectionIsSelected} ${SecTomcat}
         ClearErrors
         DetailPrint "Installing Tomcat service"
-        nsExec::ExecToStack '"$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" //IS//$tomcatServiceName --DisplayName "Apache Tomcat ${TOMCAT_FULL_VERSION} $tomcatServiceName" --Description "Apache Tomcat ${TOMCAT_MAJOR_VERSION} Server - http://tomcat.apache.org/" --LogPath "$tomcatDir\logs" --Install "$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" --Jvm "$jvmDll" --StartPath "$tomcatDir" --StopPath "$tomcatDir"'
+        nsExec::ExecToStack '"$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" //IS//$tomcatServiceName --DisplayName "$tomcatDisplayServiceName" --Description "Apache Tomcat ${TOMCAT_MAJOR_VERSION} Server - http://tomcat.apache.org/" --LogPath "$tomcatDir\logs" --Install "$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" --Jvm "$jvmDll" --StartPath "$tomcatDir" --StopPath "$tomcatDir"'
         Pop $0
         Pop $1
         ${ifNot} $0 == "0"
@@ -455,7 +457,7 @@ Function createServices
         ${if} ${SectionIsSelected} ${SecServer}
             ClearErrors
             DetailPrint "Installing lsFusion Server service"
-            nsExec::ExecToStack '"$INSTDIR\bin\lsfusion.exe" //IS//$platformServiceName --DisplayName "lsFusion Server" --Description "lsFusion server application http://lsfusion.ru" --LogPath "$INSTDIR\logs" --Install "$INSTDIR\bin\lsfusion.exe" --Jvm "$jvmDll" --StartPath "$INSTDIR" --StopPath "$INSTDIR"'
+            nsExec::ExecToStack '"$INSTDIR\bin\lsfusion.exe" //IS//$platformServiceName --DisplayName "$platformDisplayServiceName" --Description "lsFusion server application http://lsfusion.org" --LogPath "$INSTDIR\logs" --Install "$INSTDIR\bin\lsfusion.exe" --Jvm "$jvmDll" --StartPath "$INSTDIR" --StopPath "$INSTDIR"'
             Pop $0
             Pop $1
             ${ifNot} $0 == "0"
