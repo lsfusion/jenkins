@@ -52,20 +52,20 @@ SubSection "!${PLATFORM_SECTION_NAME}" SecPlatform
         WriteRegStr HKLM "${REGKEY}\Components" "${SERVER_SECTION_NAME}" 1
     SectionEnd
 
-    Section "${CLIENT_SECTION_NAME}" SecClient
-        SetOutPath $INSTDIR
-        SetOverwrite on
-        
-        ${SFile} install-bin\${CLIENT_JAR}
-        
-        WriteRegStr HKLM "${REGKEY}\Components" "${SERVER_SECTION_NAME}" 1
-    SectionEnd
-    
     Section "${WEBCLIENT_SECTION_NAME}" SecWebClient
         SetOutPath $INSTDIR
         SetOverwrite on
         
         ${SFile} install-bin\${WEBCLIENT_WAR}
+        
+        WriteRegStr HKLM "${REGKEY}\Components" "${SERVER_SECTION_NAME}" 1
+    SectionEnd
+
+    Section "${CLIENT_SECTION_NAME}" SecClient
+        SetOutPath $INSTDIR
+        SetOverwrite on
+        
+        ${SFile} install-bin\${CLIENT_JAR}
         
         WriteRegStr HKLM "${REGKEY}\Components" "${SERVER_SECTION_NAME}" 1
     SectionEnd

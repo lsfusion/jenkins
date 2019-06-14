@@ -12,8 +12,8 @@ RequestExecutionLevel user
 
 !define PLATFORM_SECTION_NAME "lsFusion Platform"
 !define SERVER_SECTION_NAME "lsFusion Server"
-!define CLIENT_SECTION_NAME "lsFusion Client"
-!define WEBCLIENT_SECTION_NAME "lsFusion Web Client"
+!define WEBCLIENT_SECTION_NAME "lsFusion Client (Web & Desktop)"
+!define CLIENT_SECTION_NAME "lsFusion Desktop Client"
 !define MENU_SECTION_NAME "Start Menu Items"
 !define SERVICES_SECTION_NAME "Create services"
 !define PG_SECTION_NAME "PostgreSQL ${PG_VERSION}"
@@ -228,8 +228,6 @@ Function .onInit
 
     StrCpy $platformServerPort "7652"
     StrCpy $platformServiceName "lsfusion${LSFUSION_MAJOR_VERSION}-server"
-    StrCpy $webClientContextFile "ROOT"
-    ; should be equal to webClientContextFile with slash in the end, or empty IF ROOT
     StrCpy $webClientContext ""
     
     !insertmacro MUI_LANGDLL_DISPLAY
@@ -372,7 +370,13 @@ Function execAntConfiguration
     ${endIf}
 
     ${if} ${SectionIsSelected} ${SecWebClient}
-        DetailPrint "Configuring WebClient"
+        DetailPrint "Configuring Client (Web & Desktop)"
+
+        ${if} $webClientContext == ""
+            StrCpy $webClientContextFile "ROOT"
+        ${else}
+            StrCpy $webClientContextFile $webClientContext
+        ${endIf}
 
         ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.host=" "$platformServerHost" $R0
         ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.port=" "$platformServerPort" $R0
@@ -495,11 +499,11 @@ Function createShortcuts
     ${endIf}
 
     ${if} ${SectionIsSelected} ${SecClient}
-        CreateShortCut "$SMPROGRAMS\lsFusion Platform ${VERSION}\lsFusion Client.lnk" \
+        CreateShortCut "$SMPROGRAMS\lsFusion Platform ${VERSION}\lsFusion Desktop Client.lnk" \
                         "$javaHome\bin\javaw.exe" \
                         "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$platformServerHost -Dlsfusion.client.hostport=$platformServerPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
                         "$INSTDIR\resources\lsfusion.ico"
-        CreateShortCut "$DESKTOP\lsFusion Client.lnk" \
+        CreateShortCut "$DESKTOP\lsFusion Desktop Client.lnk" \
                         "$javaHome\bin\javaw.exe" \
                         "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$platformServerHost -Dlsfusion.client.hostport=$platformServerPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
                         "$INSTDIR\resources\lsfusion.ico"

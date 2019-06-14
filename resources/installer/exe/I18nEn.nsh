@@ -3,8 +3,8 @@ LangString strUserShouldBeAdmin ${LANG_ENGLISH} "Installer requres administrator
 
 LangString strPlatformSectionDescription ${LANG_ENGLISH} "lsFusion Platform"
 LangString strServerSectionDescription ${LANG_ENGLISH} "lsFusion Server"
-LangString strClientSectionDescription ${LANG_ENGLISH} "lsFusion Client"
-LangString strWebClientSectionDescription ${LANG_ENGLISH} "lsFusion WebClient"
+LangString strWebClientSectionDescription ${LANG_ENGLISH} "lsFusion Client (Web & Desktop)"
+LangString strClientSectionDescription ${LANG_ENGLISH} "lsFusion Desktop Client"
 LangString strServicesSectionDescription ${LANG_ENGLISH} "Install server applications as window services"
 LangString strShortcutsSectionDescription ${LANG_ENGLISH} "Install shortcuts"
 LangString strPgSectionDescription ${LANG_ENGLISH} "PostgresSQL database"
@@ -61,11 +61,11 @@ LangString strPlatformServerHost ${LANG_ENGLISH} "lsFusion Server host"
 LangString strPlatformServerPort ${LANG_ENGLISH} "lsFusion Server port"
 LangString strPlatformServerPasswordMessage ${LANG_ENGLISH} "Enter lsFusion Server administrator password:"
 LangString strShortcutsForAllUsers ${LANG_ENGLISH} "Create shortcuts for all users"
-LangString strWebClientContextMessage ${LANG_ENGLISH} "Enter Web Client WebApp context (base URL path after deployment):"
-LangString strWebClientContext ${LANG_ENGLISH} "Web Client WebApp context"
+LangString strWebClientContextMessage ${LANG_ENGLISH} "Enter lsFusion Client WebApp context (base URL path after deployment):"
+LangString strWebClientContext ${LANG_ENGLISH} "WebApp context"
 LangString strInvalidWebClientDirectory ${LANG_ENGLISH} "Selected directory doesn't exist"
-LangString strWebClientDirectory ${LANG_ENGLISH} "Select directory to copy WebClient war-archive to (i.e. C:\Apache Tomcat\webapps) (leave blank if not needed)"
-LangString strInvalidWebClientContext ${LANG_ENGLISH} 'The WebClient WebApp context may not contain a space or any of the following characters: <>:"/\:|?*'
+LangString strWebClientDirectory ${LANG_ENGLISH} "Select directory to copy lsFusion Client war-archive to (i.e. C:\Apache Tomcat\webapps) (leave blank if not needed)"
+LangString strInvalidWebClientContext ${LANG_ENGLISH} 'The WebApp context may not contain a space or any of the following characters: <>:"/\:|?*'
 LangString strContinueOnEmptyPassword ${LANG_ENGLISH} "Do you really want to continue and use empty password?"
 
 LangString strOldPostgreMessage ${LANG_ENGLISH} "The installed version of PostgreSQL is too old (<${PG_VERSION}). Please uninstall this version or try a manual installation of PostgreSQL."

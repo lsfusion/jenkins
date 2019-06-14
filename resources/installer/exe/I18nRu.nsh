@@ -3,8 +3,8 @@ LangString strUserShouldBeAdmin ${LANG_RUSSIAN} "Инсталлятор долж
 
 LangString strPlatformSectionDescription ${LANG_RUSSIAN} "lsFusion Platform"
 LangString strServerSectionDescription ${LANG_RUSSIAN} "lsFusion Server"
-LangString strClientSectionDescription ${LANG_RUSSIAN} "lsFusion Client"
-LangString strWebClientSectionDescription ${LANG_RUSSIAN} "lsFusion WebClient"
+LangString strWebClientSectionDescription ${LANG_RUSSIAN} "lsFusion Client (Web & Desktop)"
+LangString strClientSectionDescription ${LANG_RUSSIAN} "lsFusion Desktop Client"
 LangString strServicesSectionDescription ${LANG_RUSSIAN} "Зарегистрировать серверные приложения как сервисы"
 LangString strShortcutsSectionDescription ${LANG_RUSSIAN} "Создать ярлыки"
 LangString strPgSectionDescription ${LANG_RUSSIAN} "База данных PostgresSQL ${PG_VERSION}"
@@ -61,11 +61,11 @@ LangString strPlatformServerHost ${LANG_RUSSIAN} "lsFusion Server хост"
 LangString strPlatformServerPort ${LANG_RUSSIAN} "lsFusion Server порт"
 LangString strPlatformServerPasswordMessage ${LANG_RUSSIAN} "Введите пароль администратора lsFusion Server:"
 LangString strShortcutsForAllUsers ${LANG_RUSSIAN} "Создавать ярлыки для всех пользователей"
-LangString strWebClientContextMessage ${LANG_RUSSIAN} "Введите контекст WebClient приложения (базовая часть URL при развёртывании):"
+LangString strWebClientContextMessage ${LANG_RUSSIAN} "Введите веб-контекст приложения lsFusion Client (базовая часть URL при развёртывании):"
 LangString strWebClientContext ${LANG_RUSSIAN} "Веб-контекст"
 LangString strInvalidWebClientDirectory ${LANG_RUSSIAN} "Выбранная папка не существует"
-LangString strWebClientDirectory ${LANG_RUSSIAN} "Выберите папку, в которую будет скопирован настроенный war-архив WebClient (например C:\Apache Tomcat\webapps) (оставьте пустым, чтобы пропустить копирование)"
-LangString strInvalidWebClientContext ${LANG_RUSSIAN} 'Веб-контекст Web Client приложения не должен содержать пробелы или любые из следующих символов: <>:"/\:|?*'
+LangString strWebClientDirectory ${LANG_RUSSIAN} "Выберите папку, в которую будет скопирован настроенный war-архив lsFusion Client (например C:\Apache Tomcat\webapps) (оставьте пустым, чтобы пропустить копирование)"
+LangString strInvalidWebClientContext ${LANG_RUSSIAN} 'Веб-контекст не должен содержать пробелы или любые из следующих символов: <>:"/\:|?*'
 LangString strContinueOnEmptyPassword ${LANG_RUSSIAN} "Вы действительно хотите продолжить и использовать пустой пароль?"
 
 LangString strOldPostgreMessage ${LANG_RUSSIAN} "Установленная версия PostgreSQL устарела (<${PG_VERSION}. Пожалуйста деинсталлируйте эту версию или попробуйте произвести установку PostgreSQL вручную."
