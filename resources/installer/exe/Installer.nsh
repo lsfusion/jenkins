@@ -486,14 +486,14 @@ Function createShortcuts
     
     SetOutPath "$INSTDIR"
     
-    CreateDirectory "$SMPROGRAMS\lsFusion Platform ${VERSION}"
+    CreateDirectory "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}"
 
     ${if} ${SectionIsSelected} ${SecServer}
         ${if} $createServices == "1"
-            CreateShortCut "$SMPROGRAMS\lsFusion Platform ${VERSION}\Start lsFusion Server.lnk" "$INSTDIR\bin\lsfusion.exe" "//ES//$platformServiceName" "$INSTDIR\resources\lsfusion.ico"
-            CreateShortCut "$SMPROGRAMS\lsFusion Platform ${VERSION}\Stop lsFusion Server.lnk" "$INSTDIR\bin\lsfusion.exe" "//SS//$platformServiceName" "$INSTDIR\resources\lsfusion.ico"
+            CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\Start lsFusion Server.lnk" "$INSTDIR\bin\lsfusion.exe" "//ES//$platformServiceName" "$INSTDIR\resources\lsfusion.ico"
+            CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\Stop lsFusion Server.lnk" "$INSTDIR\bin\lsfusion.exe" "//SS//$platformServiceName" "$INSTDIR\resources\lsfusion.ico"
         ${else}
-            CreateShortCut "$SMPROGRAMS\lsFusion Platform ${VERSION}\Start lsFusion Server as console application.lnk" \
+            CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\Start lsFusion Server as console application.lnk" \
                             "$javaExe" \
                             "-Xmx1200m -cp ${SERVER_JAR};deploy\*;deploy lsfusion.server.logics.BusinessLogicsBootstrap" \
                             "$INSTDIR\resources\lsfusion.ico"
@@ -501,7 +501,7 @@ Function createShortcuts
     ${endIf}
 
     ${if} ${SectionIsSelected} ${SecClient}
-        CreateShortCut "$SMPROGRAMS\lsFusion Platform ${VERSION}\lsFusion Desktop Client.lnk" \
+        CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\lsFusion Desktop Client.lnk" \
                         "$javaHome\bin\javaw.exe" \
                         "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$platformServerHost -Dlsfusion.client.hostport=$platformServerPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
                         "$INSTDIR\resources\lsfusion.ico"
@@ -512,11 +512,11 @@ Function createShortcuts
     ${endIf}
 
     ${if} ${SectionIsSelected} ${SecWebClient}
-        CreateShortCut "$SMPROGRAMS\lsFusion Platform ${VERSION}\lsFusion Web Client.lnk" "http://127.0.0.1:$tomcatHttpPort/$webClientContext" "" "$INSTDIR\resources\lsfusion.ico"
+        CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\lsFusion Web Client.lnk" "http://127.0.0.1:$tomcatHttpPort/$webClientContext" "" "$INSTDIR\resources\lsfusion.ico"
         CreateShortCut "$DESKTOP\lsFusion Web Client.lnk" "http://127.0.0.1:$tomcatHttpPort/$webClientContext" "" "$INSTDIR\resources\lsfusion.ico"
     ${endIf}
 
-    CreateShortCut "$SMPROGRAMS\lsFusion Platform ${VERSION}\Uninstall lsFusion Platform.lnk" "$INSTDIR\uninstall.exe"
+    CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\Uninstall lsFusion Platform.lnk" "$INSTDIR\uninstall.exe"
     
     ${if} ${SectionIsSelected} ${SecIdea}
         SetOutPath "$ideaDir"

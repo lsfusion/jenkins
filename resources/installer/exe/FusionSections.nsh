@@ -47,7 +47,7 @@ SubSection "!${PLATFORM_SECTION_NAME}" SecPlatform
 
         SetOutPath $INSTDIR\bin
         File /oname=lsfusion.exe bin\lsfusion${ARCH}.exe
-        File /oname=lsfusion.exe bin\lsfusion${ARCH}.exe
+        File bin\lsfusionw.exe
 
         WriteRegStr HKLM "${REGKEY}\Components" "${SERVER_SECTION_NAME}" 1
     SectionEnd

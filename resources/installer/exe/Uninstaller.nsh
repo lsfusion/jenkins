@@ -108,7 +108,7 @@ Section -un.Uninstall
     DetailPrint "Removing shortcuts"
     Delete "$DESKTOP\lsFusion Web Client.lnk"
     Delete "$DESKTOP\lsFusion Desktop Client.lnk"
-    RMDir /r "$SMPROGRAMS\lsFusion Platform ${VERSION}"
+    RMDir /r "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}"
 
 
     DetailPrint "Removing program directory"
