@@ -209,3 +209,11 @@ Function validateServiceName
     end:
     
 FunctionEnd
+
+!macro DownloadFile SRC DEST
+inetc::get ${SRC} OutFile ;download link
+FileOpen $4 OutFile r ;read url from downloaded link
+FileRead $4 $1 ; we read until the end of line (including carriage return and new line) and save it to $1
+FileClose $4 ; and close the file
+inetc::get $1 ${DEST} ;download client.jnlp from url
+!macroend
