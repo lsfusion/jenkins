@@ -3,6 +3,7 @@ class Paths {
     static String src = "$jenkinsHome/src"
     static String tmp = "/tmp"
     static String download = "/var/www/download"
+    static String rpm = "$jenkinsHome/rpm"
     
     static String githubRepo = "lsfusion/platform"
 

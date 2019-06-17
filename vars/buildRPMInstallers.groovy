@@ -1,13 +1,10 @@
-def rpmDir = "${Paths.jenkinsHome}/rpm"
-def yumDir = "$rpmDir/yum"
-
 def call(int majorVersion, String platformVersion) {
     def downloadDir = "${Paths.download}/yum/${platformVersion}"
     
     buildServerInstaller(majorVersion, platformVersion)
     buildClientInstaller(majorVersion, platformVersion)
 
-    dir(rpmDir) {
+    dir(Paths.rpm) {
         sh 'createrepo --update yum'
 
         sh "mkdir -p ${downloadDir}"
@@ -29,7 +26,7 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
     def serverName = "lsfusion$majorVersion-server"
     def templatesDir = getResourcesDir() + '/installer/yum/server'
 
-    dir(rpmDir) {
+    dir(Paths.rpm) {
         sh 'rm -rf rpmbuild'
         sh 'mkdir rpmbuild'
 
@@ -56,7 +53,7 @@ expect -exact "Enter pass phrase: "
 send -- "f7y45cnb\r"
 expect eof'''
             
-            sh "cp -fa RPMS/noarch/* $yumDir/"
+            sh "cp -fa RPMS/noarch/* ${Paths.rpm}/yum/"
         }
     }
 }
@@ -66,7 +63,7 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
     def clientName = "lsfusion$majorVersion-client"
     def templatesDir = getResourcesDir() + '/installer/yum/client'
 
-    dir(rpmDir) {
+    dir(Paths.rpm) {
         sh 'rm -rf rpmbuild'
         sh 'mkdir rpmbuild'
 
@@ -95,7 +92,7 @@ expect -exact "Enter pass phrase: "
 send -- "f7y45cnb\r"
 expect eof'''
             
-            sh "cp -fa RPMS/noarch/* $yumDir/"
+            sh "cp -fa RPMS/noarch/* ${Paths.rpm}/yum/"
         }
     }
 }
