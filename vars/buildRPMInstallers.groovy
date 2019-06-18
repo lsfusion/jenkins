@@ -28,7 +28,7 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
             sh 'mkdir SPECS'
             sh 'mkdir SRPMS'
             
-            sh "cp -fa $templatesDir/lsfusion.conf > SOURCES/lsfusion.conf"
+            sh "cp -fa $templatesDir/lsfusion.conf SOURCES/"
             sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g' $templatesDir/lsfusion-server.service > SOURCES/${serverName}.service"
             sh "sed 's/<lsfusion-major-version>/$majorVersion/g; s/<lsfusion-version>/$platformVersion/g; s/<lsfusion-title>/$title/g' $templatesDir/lsfusion.spec > SPECS/lsfusion.spec"
             
