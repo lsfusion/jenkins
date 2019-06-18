@@ -43,7 +43,7 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
             
             sh "cp -fa $templatesDir/settings.properties SOURCES/"
             
-            sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=SOURCES/"
+            sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
             sh "mv -f SOURCES/server-$platformVersion-assembly.jar SOURCES/server.jar"
 
             sh '''#!/usr/bin/expect
@@ -82,7 +82,7 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
             sh 'cp -fa ../apache-tomcat-9.0.20.tar.gz SOURCES/'
             sh "cp -fa $templatesDir/ROOT.xml SOURCES/"
 
-            sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=SOURCES/"
+            sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
             sh "mv -f SOURCES/web-client-${platformVersion}.war SOURCES/client.war"
 
             sh '''#!/usr/bin/expect
