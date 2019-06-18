@@ -13,6 +13,14 @@ RequestExecutionLevel user
 !define COMPANY lsFusion
 !define URL lsfusion.org
 
+!define JAVA_INSTALLER "java-${JDK_VERSION}-${ARCH}"
+!define PG_INSTALLER "postgresql-${PG_VERSION}-${ARCH}"
+!define IDEA_INSTALLER "ideaIC-${IDEA_VERSION}"
+!define IDEA_PLUGIN "lsfusion-idea-plugin"
+!define TOMCAT_ARCHIVE "apache-tomcat-${TOMCAT_VERSION}-${ARCH}"
+!define ANT_ARCHIVE "apache-ant-${ANT_VERSION}"
+!define JASPER_INSTALLER "jasper-${JASPER_VERSION}-${ARCH}"
+
 !define DOWNLOADURL "https://download.lsfusion.org/exe/links"
 !define DOWNLOADURL_JAVA "https://download.lsfusion.org/java"
 !define DOWNLOAD_SERVER_JAR "${DOWNLOADURL_JAVA}/lsfusion-server-${LSFUSION_VERSION}.jar"
