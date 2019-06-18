@@ -9,15 +9,6 @@ def call(int majorVersion, String platformVersion) {
 
         sh "mkdir -p ${downloadDir}"
         sh "cp -fa yum/* ${downloadDir}/"
-
-        ftpPublisher failOnError: true, publishers: [
-                [configName: 'Download FTP server',
-                 transfers : [
-                         [sourceFiles: "${downloadDir}/", remoteDirectory: "yum", removePrefix: "${downloadDir}"]
-//                         [sourceFiles: "yum/"]
-                 ],
-                 verbose   : true]
-        ]
     }
 }
 
