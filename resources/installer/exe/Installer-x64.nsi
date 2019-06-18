@@ -7,7 +7,7 @@
 !define IDEA_INSTALLER "ideaIC-${IDEA_VERSION}"
 !define IDEA_PLUGIN "lsfusion-idea-plugin"
 !define TOMCAT_ARCHIVE "apache-tomcat-${TOMCAT_FULL_VERSION}-windows-x64"
-!define ANT_ARCHIVE "apache-ant-${ANT_VERSION}"
+!define ANT_ARCHIVE "apache-ant-${ANT_VERSION}-bin"
 !define JASPER_INSTALLER "TIB_js-studiocomm_${JASPER_VERSION}.final_windows_x86_64"
 
 !define IDEA_EXE "idea64.exe"
