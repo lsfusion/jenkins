@@ -22,7 +22,6 @@ Source2:    lsfusion.conf
 Source3:    %{lsfusion_name}.service
 Source4:    ROOT.xml
 Source5:    lsfusion.logrotate
-Requires:   java-1.8.0-headless
 Conflicts:  tomcat, tomcat7, tomcat8
 BuildRoot:  %{_tmppath}/lsfusion%{lsfusion_major_version}-%{version}-%{release}-root-%(%{__id_u} -n)
 

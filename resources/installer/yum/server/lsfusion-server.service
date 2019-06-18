@@ -3,28 +3,16 @@ Description=<lsfusion-description>
 After=network.target
 
 [Service]
-Type=forking
+Type=simple
 User=lsfusion
 Group=lsfusion
 
 EnvironmentFile=/etc/<lsfusion-server>/lsfusion.conf
 
-ExecStart=/usr/bin/jsvc \
-        -home $JAVA_HOME \
-        -jvm server \
-        -cwd $FUSION_HOME \
-        -pidfile $PID_FILE \
-        -outfile ${FUSION_HOME}/logs/stdout.log \
-        -errfile ${FUSION_HOME}/logs/stderr.log \
-        -cp ${CLASSPATH}:${FUSION_HOME}/server.jar \
-        $FUSION_OPTS \
-        lsfusion.server.logics.BusinessLogicsBootstrap
+WorkingDirectory=/usr/share/<lsfusion-server>
 
-ExecStop=/usr/bin/jsvc \
-        -home $JAVA_HOME \
-        -stop \
-        -pidfile $PID_FILE \
-        lsfusion.server.logics.BusinessLogicsBootstrap
+ExecStart=/usr/bin/java $FUSION_OPTS -server -cp ${CLASSPATH}:server.jar lsfusion.server.logics.BusinessLogicsBootstrap
+TimeoutStartSec=0
 
 [Install]
 WantedBy=multi-user.target
