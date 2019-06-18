@@ -21,8 +21,8 @@ LangString strJasperUnSectionDescription ${LANG_ENGLISH} "Uninstall Jaspersoft S
 
 LangString strPlatformIsNotSelected ${LANG_ENGLISH} "You have to select at least one of lsFusion components to install."
 
-LangString strPostgreDirHeader ${LANG_ENGLISH} "Choose the folder in which to install PostgreSQL ${PG_VERSION}."
-LangString strPostgreDirTextTop ${LANG_ENGLISH} "Setup will install PostgreSQL ${PG_VERSION} to the following folder."
+LangString strPostgreDirHeader ${LANG_ENGLISH} "Choose the folder in which to install PostgreSQL ${PG_MAJORVERSION}."
+LangString strPostgreDirTextTop ${LANG_ENGLISH} "Setup will install PostgreSQL ${PG_MAJORVERSION} to the following folder."
 LangString strDestinationFolder ${LANG_ENGLISH} "Destination Folder"
 
 LangString strJavaDirHeader ${LANG_ENGLISH} "Choose the folder in which to install JDK ${JDK_VERSION}."
@@ -63,7 +63,7 @@ LangString strClientContext ${LANG_ENGLISH} "WebApp context"
 LangString strInvalidClientDirectory ${LANG_ENGLISH} 'The WebApp context may not contain a space or any of the following characters: <>:"/\:|?*'
 LangString strContinueOnEmptyPassword ${LANG_ENGLISH} "Do you really want to continue and use empty password?"
 
-LangString strOldPostgreMessage ${LANG_ENGLISH} "The installed version of PostgreSQL is too old (<${PG_VERSION}). Please uninstall this version or try a manual installation of PostgreSQL."
+LangString strOldPostgreMessage ${LANG_ENGLISH} "The installed version of PostgreSQL is too old (<${PG_MAJORVERSION}). Please uninstall this version or try a manual installation of PostgreSQL."
 
 LangString strPostgreOptions ${LANG_ENGLISH} "PostgreSQL Server options."
 LangString strPasswordMessage ${LANG_ENGLISH} "Please provide a password for the database superuser."

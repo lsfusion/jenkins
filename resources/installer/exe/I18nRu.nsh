@@ -8,7 +8,7 @@ LangString strDesktopClientSectionDescription ${LANG_RUSSIAN} "Desktop Client"
 LangString strServicesSectionDescription ${LANG_RUSSIAN} "Зарегистрировать серверные приложения как сервисы"
 LangString strShortcutsSectionDescription ${LANG_RUSSIAN} "Создать ярлыки"
 LangString strCreateService ${LANG_RUSSIAN} "Создать сервис"
-LangString strPgSectionDescription ${LANG_RUSSIAN} "База данных PostgresSQL ${PG_VERSION}"
+LangString strPgSectionDescription ${LANG_RUSSIAN} "База данных PostgresSQL ${PG_MAJORVERSION}"
 LangString strJavaSectionDescription ${LANG_RUSSIAN} "Java Development Kit ${JDK_VERSION}"
 LangString strIdeaSectionDescription ${LANG_RUSSIAN} "IntelliJ IDEA Community Edition ${IDEA_VERSION} со встроенным плагином lsFusion"
 LangString strJasperSectionDescription ${LANG_RUSSIAN} "Jaspersoft Studio ${JASPER_VERSION}"
@@ -21,8 +21,8 @@ LangString strJasperUnSectionDescription ${LANG_RUSSIAN} "Удалить Jaspers
 
 LangString strPlatformIsNotSelected ${LANG_RUSSIAN} "Пожалуйста, выберите хотя бы один компонент lsFusion для установки."
 
-LangString strPostgreDirHeader ${LANG_RUSSIAN} "Выберите папку для установки PotgreSQL ${PG_VERSION}."
-LangString strPostgreDirTextTop ${LANG_RUSSIAN} "Программа установит PostgreSQL ${PG_VERSION} в указанную папку."
+LangString strPostgreDirHeader ${LANG_RUSSIAN} "Выберите папку для установки PotgreSQL ${PG_MAJORVERSION}."
+LangString strPostgreDirTextTop ${LANG_RUSSIAN} "Программа установит PostgreSQL ${PG_MAJORVERSION} в указанную папку."
 LangString strDestinationFolder ${LANG_RUSSIAN} "Папка установки"
 
 LangString strJavaDirHeader ${LANG_RUSSIAN} "Выберите папку для установки JDK ${JDK_VERSION}."
@@ -63,7 +63,7 @@ LangString strClientContext ${LANG_RUSSIAN} "Веб-контекст"
 LangString strInvalidClientDirectory ${LANG_RUSSIAN} 'Веб-контекст не должен содержать пробелы или любые из следующих символов: <>:"/\:|?*'
 LangString strContinueOnEmptyPassword ${LANG_RUSSIAN} "Вы действительно хотите продолжить и использовать пустой пароль?"
 
-LangString strOldPostgreMessage ${LANG_RUSSIAN} "Установленная версия PostgreSQL устарела (<${PG_VERSION}. Пожалуйста деинсталлируйте эту версию или попробуйте произвести установку PostgreSQL вручную."
+LangString strOldPostgreMessage ${LANG_RUSSIAN} "Установленная версия PostgreSQL устарела (<${PG_MAJORVERSION}. Пожалуйста деинсталлируйте эту версию или попробуйте произвести установку PostgreSQL вручную."
 
 LangString strPostgreOptions ${LANG_RUSSIAN} "Настройки для установки PostgreSQL"
 LangString strPasswordMessage ${LANG_RUSSIAN} "Введите пароль, который будет использоваться для суперпользователя базы данных."

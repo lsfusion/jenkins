@@ -24,9 +24,9 @@ RequestExecutionLevel user
 !define SERVER_SECTION_NAME "Server"
 !define CLIENT_SECTION_NAME "Client (Web & Desktop)"
 !define DESKTOP_CLIENT_SECTION_NAME "Desktop Client"
-!define PG_SECTION_NAME "PostgreSQL ${PG_VERSION}"
+!define PG_SECTION_NAME "PostgreSQL ${PG_MAJORVERSION}"
 !define JAVA_SECTION_NAME "JDK ${JDK_VERSION}"
-!define TOMCAT_SECTION_NAME "Apache Tomcat ${TOMCAT_FULL_VERSION}"
+!define TOMCAT_SECTION_NAME "Apache Tomcat ${TOMCAT_VERSION}"
 !define IDEA_SECTION_NAME "IntelliJ IDEA Community Edition ${IDEA_VERSION} with lsFusion plugin"
 !define JASPER_SECTION_NAME "Jaspersoft Studio ${JASPER_VERSION}"
 
@@ -198,18 +198,18 @@ Function .onInit
     Pop $R1
     Pop $R1
     
-    StrCpy $javaDir "${JDK_FOLDER}"
+    StrCpy $javaDir "$ProgramFiles${ARCH}\Java\jdk${JDK_VERSION}"
 
     StrCpy $ideaDir "$ProgramFiles32\JetBrains\IDEA Community Edition ${IDEA_VERSION}"
     
     StrCpy $jasperDir "$ProgramFiles${ARCH}\TIBCO\Jaspersoft Studio-${JASPER_VERSION}"
 
-    StrCpy $pgDir "$ProgramFiles${ARCH}\PostgreSQL\${PG_VERSION}"
+    StrCpy $pgDir "$ProgramFiles${ARCH}\PostgreSQL\${PG_MAJORVERSION}"
     StrCpy $pgHost "localhost"
     StrCpy $pgPort "5432"
     StrCpy $pgUser "postgres"
     StrCpy $pgDbName "lsfusion"
-    StrCpy $pgServiceName "postgresql-${PG_VERSION}"
+    StrCpy $pgServiceName "postgresql-${PG_MAJORVERSION}"
     
     StrCpy $clientHttpPort "8080"
     StrCpy $clientContext ""
@@ -241,8 +241,8 @@ Function .onInit
     ${if} $1 != ""
         ReadRegStr $pgVersion HKLM "SOFTWARE\PostgreSQL\Installations\$1" "Version"
         ReadRegStr $pgDir HKLM "SOFTWARE\PostgreSQL\Installations\$1" "Base Directory"
-        ; if installed version is < PG_VERSION then abort
-        ${VersionCompare} $pgVersion "${PG_VERSION}" $0
+        ; if installed version is < PG_MAJORVERSION then abort
+        ${VersionCompare} $pgVersion "${PG_MAJORVERSION}" $0
         ${if} $0 == "2"
             MessageBox MB_ICONEXCLAMATION|MB_OK $(strOldPostgreMessage)
             Abort

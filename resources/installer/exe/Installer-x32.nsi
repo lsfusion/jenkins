@@ -2,13 +2,13 @@
 
 !include Versions.nsh
 
-!define JAVA_INSTALLER "java-${JDK_MAJORVERSION}-openjdk-${JDK_DISTRVERSION}.b04.ojdkbuild.windows.x86"
-!define PG_INSTALLER "postgresql-${PG_DISTRVERSION}-windows"
+!define JAVA_INSTALLER "java-${JDK_VERSION}-x86"
+!define PG_INSTALLER "postgresql-${PG_VERSION}-x86"
 !define IDEA_INSTALLER "ideaIC-${IDEA_VERSION}"
 !define IDEA_PLUGIN "lsfusion-idea-plugin"
-!define TOMCAT_ARCHIVE "apache-tomcat-${TOMCAT_FULL_VERSION}-windows-x86"
-!define ANT_ARCHIVE "apache-ant-${ANT_VERSION}-bin"
-!define JASPER_INSTALLER "TIB_js-studiocomm_${JASPER_VERSION}_windows_x86"
+!define TOMCAT_ARCHIVE "apache-tomcat-${TOMCAT_VERSION}-x86"
+!define ANT_ARCHIVE "apache-ant-${ANT_VERSION}"
+!define JASPER_INSTALLER "jasper-${JASPER_VERSION}-x86"
 
 !define IDEA_EXE "idea.exe"
 
