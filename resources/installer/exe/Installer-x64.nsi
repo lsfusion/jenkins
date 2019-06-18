@@ -2,7 +2,7 @@
 
 !include Versions.nsh
 
-!define JAVA_INSTALLER "jdk-${JDK_DISTRVERSION}-windows-x64"
+!define JAVA_INSTALLER "java-${JDK_MAJORVERSION}-openjdk-${JDK_DISTRVERSION}.b04.ojdkbuild.windows.x86_64"
 !define PG_INSTALLER "postgresql-${PG_DISTRVERSION}-windows-x64"
 !define IDEA_INSTALLER "ideaIC-${IDEA_VERSION}"
 !define IDEA_PLUGIN "lsfusion-idea-plugin"

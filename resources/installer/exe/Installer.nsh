@@ -198,7 +198,7 @@ Function .onInit
     Pop $R1
     Pop $R1
     
-    StrCpy $javaDir "$ProgramFiles${ARCH}\Java\jdk${JDK_VERSION}"
+    StrCpy $javaDir "${JDK_FOLDER}"
 
     StrCpy $ideaDir "$ProgramFiles32\JetBrains\IDEA Community Edition ${IDEA_VERSION}"
     
@@ -358,10 +358,6 @@ Function execAntConfiguration
     
         ${ConfigWriteS} "${INSTCONFDIR}\configure.bat" "set JAVA_HOME=" "$javaHome" $R0
     
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.home=" "$javaHome" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.majorversion=" "${JDK_MAJORVERSION}" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.version=" "${JDK_VERSION}" $R0
-    
         ${if} ${SectionIsSelected} ${SecClient}
             DetailPrint "Configuring Client (Web & Desktop)"
     
@@ -391,6 +387,11 @@ Function execAntConfiguration
     
         ${if} ${SectionIsSelected} ${SecIdea}
             DetailPrint "Configuring Intellij IDEA"
+            
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.home=" "$javaHome" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.majorversion=" "${JDK_MAJORVERSION}" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.version=" "${JDK_VERSION}" $R0
+
             ${if} ${SectionIsSelected} ${SecServer}
                 ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "lsfusion.library.name=" "${SERVER_LIBRARY_NAME}" $R0
                 ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.archive=" "$INSTDIR\${SERVER_JAR}" $R0

@@ -1,10 +1,12 @@
 !define IDEA_MAJORVERSION 2019.1
 !define IDEA_VERSION ${IDEA_MAJORVERSION}.3
 
-!define JDK_MAJORVERSION 1.8
-!define JDK_VERSION ${JDK_MAJORVERSION}.0_212
-!define JDK_DISTRVERSION 1.8.0.212-1
-!define JDK_DISTREXTENSION "nsi"
+!define JDK_MAJORVERSION 1.8.0 ; used in version compare and idea SDK
+!define JDK_VERSION ${JDK_MAJORVERSION}_212 ; log, idea SDK
+!define JDK_DISTRVERSION 1.8.0.212-1 ; java installer, folder
+!define JDK_DISTREXTENSION "msi" ; java installer extension
+!define JDK_FOLDER "$ProgramFiles${ARCH}\ojdkbuild\java-${JDK_MAJORVERSION}-openjdk-${JDK_DISTRVERSION}"
+;!define JDK_FOLDER "$ProgramFiles${ARCH}\Java\jdk${JDK_VERSION}"
 
 !define PG_VERSION 10
 !define PG_MINORVERSION .8
