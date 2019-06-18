@@ -81,6 +81,75 @@
 !macroend
 !define SFile "!insertmacro _LS_File" 
 
+!macro _LS_DownloadFile SRC LINK DEST
+    ${if} ${LINK} == 1
+        DetailPrint "Downloading link from ${SRC}"
+        inetc::get /WEAKSECURITY ${SRC} OutFile ;download link
+        FileOpen $4 OutFile r ;read url from downloaded link
+        FileRead $4 $1 ; we read until the end of line (including carriage return and new line) and save it to $1
+        FileClose $4 ; and close the file
+        DetailPrint "Downloading file from $1"
+        inetc::get /WEAKSECURITY $1 ${DEST} ;download client.jnlp from url
+    ${else}
+        DetailPrint "Downloading file from ${SRC}"
+        inetc::get /WEAKSECURITY ${SRC} ${DEST} ;download link
+    ${endIf}
+!macroend
+!define DownloadFile "!insertmacro _LS_DownloadFile" 
+
+!macro _Get_File URLFILE URLLINK DESTDIR FILE
+    !ifndef OFFLINE
+        ${DownloadFile} "${URLFILE}" ${URLLINK} "${DESTDIR}\${FILE}"  
+    !else
+        SetOutPath ${DESTDIR}
+        SetOverwrite on
+        ${SFile} "install-bin\${FILE}"
+    !endif
+!macroend
+!define GetFile "!insertmacro _Get_File" 
+
+!macro _Get_Direct_File URLFILE DESTDIR FILE
+    ${GetFile} ${URLFILE} 0 ${DESTDIR} ${FILE}
+!macroend
+!define GetDirectFile "!insertmacro _Get_Direct_File" 
+
+Var runFileName
+; for ZIP - PARAMS destination folder, for EXE - command lline params 
+!macro _Run_File URLFILE URLLINK FILE ISZIP INSTNAME PARAMS
+
+    ${GetFile} ${URLFILE} ${URLLINK} ${INSTBINDIR} "${FILE}" 
+
+    StrCpy $runFileName "${INSTBINDIR}\${FILE}"
+    ${if} ${ISZIP} == 1
+        DetailPrint 'Extracting ${INSTNAME} - $runFileName to ${PARAMS}'
+        nsisunz::Unzip "$runFileName" '${PARAMS}'
+    ${else}
+        DetailPrint "Installing ${INSTNAME}"
+        nsExec::ExecToLog '"$runFileName" ${PARAMS}'
+    ${endif}
+    
+    Pop $0
+    DetailPrint "${INSTNAME} installation returned $0"
+        
+    Delete "$runFileName"
+!macroend
+!define RunFile "!insertmacro _Run_File" 
+
+Var isZip
+!macro _Run_Link_File FILENAME EXT INSTNAME PARAMS
+    ${if} ${EXT} == "zip"
+        StrCpy $isZip 1
+    ${else}
+        StrCpy $isZip 0
+    ${endif}    
+    ${RunFile} "${DOWNLOADURL}/${FILENAME}.lnk" 1 "${FILENAME}.${EXT}" $isZip "${INSTNAME}" '${PARAMS}' 
+!macroend
+!define RunLinkFile "!insertmacro _Run_Link_File" 
+!macro _Run_Direct_File URLFILE FILE ISZIP INSTNAME PARAMS
+    ${RunFile} ${URLFILE} 0 ${FILE} ${ISZIP} ${INSTNAME} ${PARAMS} 
+!macroend
+!define RunDirectFile "!insertmacro _Run_Direct_File" 
+
 !macro DisableSection SEC
   !insertmacro UnselectSection ${SEC}
   !insertmacro SetSectionFlag ${SEC} ${SF_RO}
@@ -209,11 +278,3 @@ Function validateServiceName
     end:
     
 FunctionEnd
-
-!macro DownloadFile SRC DEST
-inetc::get ${SRC} OutFile ;download link
-FileOpen $4 OutFile r ;read url from downloaded link
-FileRead $4 $1 ; we read until the end of line (including carriage return and new line) and save it to $1
-FileClose $4 ; and close the file
-inetc::get $1 ${DEST} ;download client.jnlp from url
-!macroend

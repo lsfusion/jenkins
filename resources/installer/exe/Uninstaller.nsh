@@ -28,17 +28,13 @@ SectionEnd
 Section /o "un.${JASPER_SECTION_NAME}" UnSecJasper
 SectionEnd
 
-Section "un.${TOMCAT_SECTION_NAME}" UnSecTomcat
-    SectionIn RO
-SectionEnd
-
 Section -un.Uninstall
     ; has to be first string by spec
     Delete /REBOOTOK $INSTDIR\uninstall.exe
 
     ${if} ${FileExists} "$INSTDIR\bin\lsfusion.exe"
         DetailPrint "Removing lsFusion Server service"
-        ReadRegStr $0 HKLM "${REGKEY}" "platformServiceName"
+        ReadRegStr $0 HKLM "${REGKEY}" "serverServiceName"
         ${ifNot} ${Errors}
         ${andIfNot} $0 == ""
             nsExec::ExecToLog '"$INSTDIR\bin\lsfusion.exe" //DS//$0'
@@ -54,7 +50,7 @@ Section -un.Uninstall
         DetailPrint "Removing Apache Tomcat"
         
         DetailPrint "Removing tomcat service"
-        ReadRegStr $1 HKLM "${REGKEY}" "tomcatServiceName"
+        ReadRegStr $1 HKLM "${REGKEY}" "clientServiceName"
         ${ifNot} ${Errors}
         ${andIfNot} $1 == ""
             nsExec::ExecToLog '"$0\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" //DS//$1'
@@ -108,7 +104,7 @@ Section -un.Uninstall
     DetailPrint "Removing shortcuts"
     Delete "$DESKTOP\lsFusion Web Client.lnk"
     Delete "$DESKTOP\lsFusion Desktop Client.lnk"
-    RMDir /r "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}"
+    RMDir /r "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}"
 
 
     DetailPrint "Removing program directory"
@@ -127,7 +123,6 @@ Function un.onInit
     !insertmacro HideUnsection "${IDEA_SECTION_NAME}" ${UnSecIdea}
     !insertmacro HideUnsection "${JASPER_SECTION_NAME}" ${UnSecJasper}
     !insertmacro HideUnsection "${JAVA_SECTION_NAME}" ${UnSecJava}
-    !insertmacro HideUnsection "${TOMCAT_SECTION_NAME}" ${UnSecTomcat}
 FunctionEnd
 
 # Section Descriptions
@@ -137,5 +132,4 @@ FunctionEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${UnSecIdea} $(strIdeaUnSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${UnSecJasper} $(strJasperUnSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${UnSecJava} $(strJavaUnSectionDescription)
-!insertmacro MUI_DESCRIPTION_TEXT ${UnSecTomcat} $(strTomcatUnSectionDescription)
 !insertmacro MUI_UNFUNCTION_DESCRIPTION_END

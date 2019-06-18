@@ -1,26 +1,25 @@
 # English locale
 LangString strUserShouldBeAdmin ${LANG_ENGLISH} "Installer requres administrator permissions to run."
 
-LangString strPlatformSectionDescription ${LANG_ENGLISH} "lsFusion Platform"
-LangString strServerSectionDescription ${LANG_ENGLISH} "lsFusion Server"
-LangString strWebClientSectionDescription ${LANG_ENGLISH} "lsFusion Client (Web & Desktop)"
-LangString strClientSectionDescription ${LANG_ENGLISH} "lsFusion Desktop Client"
+LangString strPlatformSectionDescription ${LANG_ENGLISH} "lsFusion ${LSFUSION_MAJOR_VERSION}"
+LangString strServerSectionDescription ${LANG_ENGLISH} "Server"
+LangString strWebClientSectionDescription ${LANG_ENGLISH} "Client (Web & Desktop)"
+LangString strDesktopClientSectionDescription ${LANG_ENGLISH} "Desktop Client"
 LangString strServicesSectionDescription ${LANG_ENGLISH} "Install server applications as window services"
 LangString strShortcutsSectionDescription ${LANG_ENGLISH} "Install shortcuts"
+LangString strCreateService ${LANG_ENGLISH} "Create service"
 LangString strPgSectionDescription ${LANG_ENGLISH} "PostgresSQL database"
 LangString strJavaSectionDescription ${LANG_ENGLISH} "Java Development Kit ${JDK_VERSION}"
-LangString strTomcatSectionDescription ${LANG_ENGLISH} "Apache Tomcat ${TOMCAT_FULL_VERSION}"
 LangString strIdeaSectionDescription ${LANG_ENGLISH} "IntelliJ IDEA Community Edition ${IDEA_VERSION} with bundled lsFusion plugin"
 LangString strJasperSectionDescription ${LANG_ENGLISH} "Jaspersoft Studio ${JASPER_VERSION}"
 
-LangString strPlatformUnSectionDescription ${LANG_ENGLISH} "Uninstall lsFusion Platform"
+LangString strPlatformUnSectionDescription ${LANG_ENGLISH} "Uninstall lsFusion"
 LangString strPgUnSectionDescription ${LANG_ENGLISH} "Uninstall PostgresSQL database"
 LangString strJavaUnSectionDescription ${LANG_ENGLISH} "Java Development Kit ${JDK_VERSION} can't be uninstalled automatically, please uninstall it manually from 'Add or remove programs' console"
-LangString strTomcatUnSectionDescription ${LANG_ENGLISH} "Uninstall Apache Tomcat ${TOMCAT_FULL_VERSION}"
 LangString strIdeaUnSectionDescription ${LANG_ENGLISH} "Uninstall IntelliJ IDEA Community Edition ${IDEA_VERSION}"
 LangString strJasperUnSectionDescription ${LANG_ENGLISH} "Uninstall Jaspersoft Studio ${JASPER_VERSION}"
 
-LangString strPlatformIsNotSelected ${LANG_ENGLISH} "You have to select at least one of lsFusion Platform components to install."
+LangString strPlatformIsNotSelected ${LANG_ENGLISH} "You have to select at least one of lsFusion components to install."
 
 LangString strPostgreDirHeader ${LANG_ENGLISH} "Choose the folder in which to install PostgreSQL ${PG_VERSION}."
 LangString strPostgreDirTextTop ${LANG_ENGLISH} "Setup will install PostgreSQL ${PG_VERSION} to the following folder."
@@ -33,9 +32,7 @@ LangString strJavaSubtitle ${LANG_ENGLISH} "Java Virtual Machine path selection.
 LangString strSelectJavaMessage ${LANG_ENGLISH} "Please select the path of a Java SE 7.0 or later JDK installed on your system."
 LangString strNoJavaError ${LANG_ENGLISH} "No Java Virtual Machine found in folder:$\r$\n"
 
-LangString strTomcatDirHeader ${LANG_ENGLISH} "Choose the folder in which to install Apache Tomcat ${TOMCAT_FULL_VERSION}."
-LangString strTomcatDirTextTop ${LANG_ENGLISH} "Setup will install Apache Tomcat ${TOMCAT_FULL_VERSION} to the following folder."
-LangString strTomcatOptions ${LANG_ENGLISH} "Options for Apache Tomcat installation."
+LangString strClientOptions ${LANG_ENGLISH} "Options for lsFusion Client installation."
 
 LangString strIdeaDirHeader ${LANG_ENGLISH} "Choose the folder in which to install IntelliJ IDEA Community Edition ${IDEA_VERSION}."
 LangString strIdeaDirTextTop ${LANG_ENGLISH} "Setup will install IntelliJ IDEA Community Edition ${IDEA_VERSION} to the following folder."
@@ -43,9 +40,9 @@ LangString strIdeaDirTextTop ${LANG_ENGLISH} "Setup will install IntelliJ IDEA C
 LangString strJasperDirHeader ${LANG_ENGLISH} "Choose the folder in which to install Jaspersoft Studio ${JASPER_VERSION}."
 LangString strJasperDirTextTop ${LANG_ENGLISH} "Setup will install Jaspersoft Studio ${JASPER_VERSION} to the following folder."
 
-LangString strTomcatShutdownPort ${LANG_ENGLISH} "Server Shutdown Port"
-LangString strTomcatHttpPort ${LANG_ENGLISH} "HTTP/1.1 Connector Port"
-LangString strTomcatAjpPort ${LANG_ENGLISH} "AJP/1.3 Connector Port"
+LangString strClientShutdownPort ${LANG_ENGLISH} "Server Shutdown Port"
+LangString strClientHttpPort ${LANG_ENGLISH} "HTTP/1.1 Connector Port"
+LangString strClientAjpPort ${LANG_ENGLISH} "AJP/1.3 Connector Port"
 LangString strServiceName ${LANG_ENGLISH} "Windows Service Name"
 LangString strInvalidShutdownPort ${LANG_ENGLISH} "The shutdown port should be between 1 and 65535 inclusive."
 LangString strInvalidHttpPort ${LANG_ENGLISH} "The http port should be between 1 and 65535 inclusive."
@@ -56,16 +53,14 @@ LangString strInvalidHostName ${LANG_ENGLISH} 'The HostName may not contain a sp
 LangString strInvalidDbName ${LANG_ENGLISH} 'Database name may not contain a space or any of the following characters: <>:"/\:|?*'
 LangString strInvalidUsername ${LANG_ENGLISH} 'Username may not contain a space or any of the following characters: <>:"/\:|?*'
 
-LangString strPlatformOptions ${LANG_ENGLISH} "Options for lsFusion Platform installation."
-LangString strPlatformServerHost ${LANG_ENGLISH} "lsFusion Server host"
-LangString strPlatformServerPort ${LANG_ENGLISH} "lsFusion Server port"
-LangString strPlatformServerPasswordMessage ${LANG_ENGLISH} "Enter lsFusion Server administrator password:"
+LangString strServerOptions ${LANG_ENGLISH} "Options for lsFusion Server installation."
+LangString strServerHost ${LANG_ENGLISH} "Host"
+LangString strServerPort ${LANG_ENGLISH} "Port"
+LangString strServerPasswordMessage ${LANG_ENGLISH} "Enter administrator password:"
 LangString strShortcutsForAllUsers ${LANG_ENGLISH} "Create shortcuts for all users"
-LangString strWebClientContextMessage ${LANG_ENGLISH} "Enter lsFusion Client WebApp context (base URL path after deployment):"
-LangString strWebClientContext ${LANG_ENGLISH} "WebApp context"
-LangString strInvalidWebClientDirectory ${LANG_ENGLISH} "Selected directory doesn't exist"
-LangString strWebClientDirectory ${LANG_ENGLISH} "Select directory to copy lsFusion Client war-archive to (i.e. C:\Apache Tomcat\webapps) (leave blank if not needed)"
-LangString strInvalidWebClientContext ${LANG_ENGLISH} 'The WebApp context may not contain a space or any of the following characters: <>:"/\:|?*'
+LangString strClientContextMessage ${LANG_ENGLISH} "Enter lsFusion Client WebApp context (base URL path after deployment):"
+LangString strClientContext ${LANG_ENGLISH} "WebApp context"
+LangString strInvalidClientDirectory ${LANG_ENGLISH} 'The WebApp context may not contain a space or any of the following characters: <>:"/\:|?*'
 LangString strContinueOnEmptyPassword ${LANG_ENGLISH} "Do you really want to continue and use empty password?"
 
 LangString strOldPostgreMessage ${LANG_ENGLISH} "The installed version of PostgreSQL is too old (<${PG_VERSION}). Please uninstall this version or try a manual installation of PostgreSQL."
@@ -84,5 +79,5 @@ LangString strPasswordTooShort ${LANG_ENGLISH} "The password is too short (<5 ch
 LangString strPasswordEmpty ${LANG_ENGLISH} "Password should not be empty."
 LangString strInvalidPort ${LANG_ENGLISH} "The port should be between 1 and 65535 inclusive."
 
-LangString strErrorInstallingTomcatService ${LANG_ENGLISH} "Failed to install Tomcat service.$\r$\nCheck your settings and permissions and try to install manually.$\r$\n"
+LangString strErrorInstallingClientService ${LANG_ENGLISH} "Failed to install lsFusion Client service.$\r$\nCheck your settings and permissions and try to install manually.$\r$\n"
 LangString strErrorInstallingServerService ${LANG_ENGLISH} "Failed to install lsFusion Server service.$\r$\nCheck your settings and permissions and try to install manually.$\r$\n"

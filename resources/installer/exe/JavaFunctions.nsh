@@ -1,11 +1,16 @@
-;Var tfTomcatShutdownPort
-;Var tfTomcatHttpPort
-;Var tfTomcatAjpPort
-;Var tfTomcatServiceName
+;Var tfClientShutdownPort
+;Var tfClientHttpPort
+;Var tfClientAjpPort
 
 Var tfJavaHome
-Function javaExistingDirPagePre
+Function javaConfigPagePre
     ${if} ${SectionIsSelected} ${SecJava}
+        Abort
+    ${endIf}
+    
+    ${IfNot} ${SectionIsSelected} ${SecServer}
+    ${andIfNot} ${SectionIsSelected} ${SecClient}
+    ${andIfNot} ${SectionIsSelected} ${SecDesktopClient}
         Abort
     ${endIf}
 
@@ -14,14 +19,14 @@ Function javaExistingDirPagePre
     nsDialogs::Create 1018
 
     StrCpy $0 "0"
-    ${LS_CreateDirRequest} $(strSelectJavaMessage) $javaHome $tfJavaHome javaExistingDirPagePre_onDirBrowse
+    ${LS_CreateDirRequest} $(strSelectJavaMessage) $javaHome $tfJavaHome javaConfigPagePre_onDirBrowse
 
     nsDialogs::Show
 FunctionEnd
 
-!insertmacro DefineOnBrowseFunction $tfJavaHome javaExistingDirPagePre_onDirBrowse
+!insertmacro DefineOnBrowseFunction $tfJavaHome javaConfigPagePre_onDirBrowse
 
-Function javaExistingDirPageLeave
+Function javaConfigPageLeave
     ${NSD_GetText} $tfJavaHome $0
     
     ${if} $0 == ""

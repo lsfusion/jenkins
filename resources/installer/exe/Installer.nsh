@@ -1,4 +1,7 @@
-Name "lsFusion Platform"
+Name "lsFusion"
+
+; NSIS 2 - use another nsis version for unicode 
+Unicode true
 
 SetCompressor lzma
 
@@ -10,12 +13,17 @@ RequestExecutionLevel user
 !define COMPANY lsFusion
 !define URL lsfusion.org
 
-!define PLATFORM_SECTION_NAME "lsFusion Platform"
-!define SERVER_SECTION_NAME "lsFusion Server"
-!define WEBCLIENT_SECTION_NAME "lsFusion Client (Web & Desktop)"
-!define CLIENT_SECTION_NAME "lsFusion Desktop Client"
-!define MENU_SECTION_NAME "Start Menu Items"
-!define SERVICES_SECTION_NAME "Create services"
+!define DOWNLOADURL "https://download.lsfusion.org/exe/links"
+!define DOWNLOADURL_JAVA "https://download.lsfusion.org/java"
+!define DOWNLOAD_SERVER_JAR "${DOWNLOADURL_JAVA}/lsfusion-server-${LSFUSION_VERSION}.jar"
+!define DOWNLOAD_SERVER_SOURCES_JAR "${DOWNLOADURL_JAVA}/lsfusion-server-${LSFUSION_VERSION}-sources.jar"
+!define DOWNLOAD_CLIENT_JAR "${DOWNLOADURL_JAVA}/lsfusion-client-${LSFUSION_VERSION}.jar"
+!define DOWNLOAD_CLIENT_WAR "${DOWNLOADURL_JAVA}/lsfusion-client-${LSFUSION_VERSION}.war"
+
+!define PLATFORM_SECTION_NAME "lsFusion"
+!define SERVER_SECTION_NAME "Server"
+!define CLIENT_SECTION_NAME "Client (Web & Desktop)"
+!define DESKTOP_CLIENT_SECTION_NAME "Desktop Client"
 !define PG_SECTION_NAME "PostgreSQL ${PG_VERSION}"
 !define JAVA_SECTION_NAME "JDK ${JDK_VERSION}"
 !define TOMCAT_SECTION_NAME "Apache Tomcat ${TOMCAT_FULL_VERSION}"
@@ -26,7 +34,10 @@ RequestExecutionLevel user
 !define SERVER_JAR "server.jar"
 !define SERVER_LIBRARY_NAME "server"
 !define SERVER_SOURCES_JAR "server-sources.jar"
-!define WEBCLIENT_WAR "client.war"
+!define CLIENT_WAR "client.war"
+
+!define SERVER_DIR "Server"
+!define CLIENT_DIR "Client"
 
 !define INSTBINDIR "$INSTDIR\install-bin"
 !define INSTCONFDIR "$INSTDIR\install-config"
@@ -61,25 +72,19 @@ Var ideaDir
 
 Var jasperDir
 
-Var createShortcuts
-Var createServices
+Var serverHost
+Var serverPort
+Var serverPassword
+Var serverCreateService
+Var serverServiceName
+Var serverDisplayServiceName
 
-Var tomcatVersion
-Var tomcatDir
-Var tomcatShutdownPort
-Var tomcatHttpPort
-Var tomcatAjpPort
-Var tomcatServiceName 
-Var tomcatDisplayServiceName 
-
-Var platformServerHost
-Var platformServerPort
-Var platformServerPassword
-Var platformServiceName
-Var platformDisplayServiceName
-Var webClientContextFile
-Var webClientContext
-Var webClientDirectory
+Var clientShutdownPort
+Var clientHttpPort
+Var clientAjpPort
+Var clientServiceName 
+Var clientDisplayServiceName 
+Var clientContext
 
 # Included files
 !include Sections.nsh
@@ -102,26 +107,37 @@ ${StrRep}
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE pageComponentsLeave
 !insertmacro MUI_PAGE_COMPONENTS
 
+!include FusionSections.nsh
+
+# pgPagePre, javaPagePre, etc. are defined with DefinePreFeatureFunction in the end of Section.nsh, and all they do is enabling / disabling page if section is selected / unselected 
+
 # PG pages
+!include PgFunctions.nsh
 Page custom pgConfigPagePre pgConfigPageLeave
 !insertmacro CustomDirectoryPage $(strPostgreDirHeader) $(strPostgreDirTextTop) $(strDestinationFolder) $pgDir pgPagePre
 
-# Tomcat pages
-Page custom tomcatConfigPagePre tomcatConfigPageLeave
-!insertmacro CustomDirectoryPage $(strTomcatDirHeader) $(strTomcatDirTextTop) $(strDestinationFolder) $tomcatDir tomcatPagePre
-
 # Java pages
-; !insertmacro CustomDirectoryPage $(strJavaDirHeader) $(strJavaDirTextTop) $(strDestinationFolder) $javaDir javaPagePre
-Page custom javaExistingDirPagePre javaExistingDirPageLeave
+!include JavaFunctions.nsh
+Page custom javaConfigPagePre javaConfigPageLeave
+!insertmacro CustomDirectoryPage $(strJavaDirHeader) $(strJavaDirTextTop) $(strDestinationFolder) $javaDir javaPagePre
 
-# IntelliJ Idea pages
+# Server pages
+!include ServerFunctions.nsh
+Page custom serverConfigPagePre serverConfigPageLeave
+; directory - main
+
+# Client pages
+!include ClientFunctions.nsh
+Page custom clientConfigPagePre clientConfigPageLeave
+; directory - main
+
+# IDE (IntelliJ Idea + plugin) pages
+; leaf - we don't need any config
 !insertmacro CustomDirectoryPage $(strIdeaDirHeader) $(strIdeaDirTextTop) $(strDestinationFolder) $ideaDir ideaPagePre
 
 # Jaspersoft Studio pages
+; leaf - we don't need any config
 !insertmacro CustomDirectoryPage $(strJasperDirHeader) $(strJasperDirTextTop) $(strDestinationFolder) $jasperDir jasperPagePre
-
-# Platform pages
-Page custom platformConfigPagePre platformConfigPageLeave
 
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -134,7 +150,8 @@ Page custom platformConfigPagePre platformConfigPageLeave
 
 # Reserved Files
 !insertmacro MUI_RESERVEFILE_LANGDLL
-ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
+; NSIS 2 - ReserveFile "${NSISDIR}\Plugins\x86-ansi\AdvSplash.dll"
+ReserveFile "${NSISDIR}\Plugins\x86-unicode\AdvSplash.dll"
 
 # Installer languages
 !insertmacro MUI_LANGUAGE English
@@ -147,12 +164,12 @@ LicenseLangString lsLicense ${LANG_RUSSIAN} "resources\license-russian.txt"
 
 # Installer attributes
 OutFile ${OUT_FILE}
-InstallDir "$ProgramFiles${ARCH}\lsFusion Platform"
+InstallDir "$ProgramFiles${ARCH}\lsFusion ${LSFUSION_MAJOR_VERSION}"
 CRCCheck on
 XPStyle on
 ShowInstDetails show
 VIProductVersion ${VI_LSFUSION_VERSION}
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "lsFusion Platform"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "lsFusion"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "${COMPANY}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite "${URL}"
@@ -162,37 +179,9 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright ""
 InstallDirRegKey HKLM "${REGKEY}" Path
 ShowUninstDetails show
 
-!include FusionSections.nsh
-!include PgFunctions.nsh
-!include TomcatFunctions.nsh
-!include JavaFunctions.nsh
-!include PlatformFunctions.nsh
-
 !include Uninstaller.nsh
 
 Function pageComponentsLeave
-    ${ifNot} ${SectionIsSelected} ${SecServer}
-    ${andIfNot} ${SectionIsSelected} ${SecClient}
-    ${andIfNot} ${SectionIsSelected} ${SecWebClient}
-        MessageBox MB_ICONEXCLAMATION|MB_OK $(strPlatformIsNotSelected)
-        Abort
-    ${endIf}
-    
-    ${ifNot} ${SectionIsSelected} ${SecTomcat}
-        StrCpy $tomcatDir ""
-    ${endIf}
-
-    ${if} ${SectionIsSelected} ${SecShortcuts}
-        StrCpy $createShortcuts "1"
-    ${else}
-        StrCpy $createShortcuts "0"
-    ${endIf}
-    
-    ${if} ${SectionIsSelected} ${SecServices}
-        StrCpy $createServices "1"
-    ${else}
-        StrCpy $createServices "0"
-    ${endIf}
 FunctionEnd
 
 # Installer functions
@@ -201,7 +190,7 @@ Function .onInit
     
     InitPluginsDir
     
-    Call checkUserAdmin
+;    Call checkUserAdmin
 
     Push $R1
     File /oname=$PLUGINSDIR\spltmp.bmp resources\lsfusion.bmp
@@ -221,36 +210,32 @@ Function .onInit
     StrCpy $pgUser "postgres"
     StrCpy $pgDbName "lsfusion"
     StrCpy $pgServiceName "postgresql-${PG_VERSION}"
+    
+    StrCpy $clientHttpPort "8080"
+    StrCpy $clientContext ""
+    StrCpy $clientShutdownPort "8005"
+    StrCpy $clientAjpPort "8009"
+    StrCpy $clientServiceName "lsfusion${LSFUSION_MAJOR_VERSION}_client"
+    StrCpy $clientDisplayServiceName "lsFusion ${LSFUSION_MAJOR_VERSION} Client"
 
-    StrCpy $tomcatDir "$ProgramFiles${ARCH}\apache-tomcat-${TOMCAT_FULL_VERSION}"
-    StrCpy $tomcatShutdownPort "8005"
-    StrCpy $tomcatHttpPort "8080"
-    StrCpy $tomcatAjpPort "8009"
-    StrCpy $tomcatServiceName "lsfusion${LSFUSION_MAJOR_VERSION}_client"
-    StrCpy $tomcatDisplayServiceName "lsFusion ${LSFUSION_MAJOR_VERSION} Client"
-
-    StrCpy $platformServerPort "7652"
-    StrCpy $platformServiceName "lsfusion${LSFUSION_MAJOR_VERSION}-server"
-    StrCpy $platformDisplayServiceName "lsFusion ${LSFUSION_MAJOR_VERSION} Server"
-    StrCpy $webClientContext ""
+    StrCpy $serverHost "localhost"
+    StrCpy $serverPort "7652"
+    StrCpy $serverServiceName "lsfusion${LSFUSION_MAJOR_VERSION}-server"
+    StrCpy $serverDisplayServiceName "lsFusion ${LSFUSION_MAJOR_VERSION} Server"
+    !ifndef DEV
+        StrCpy $serverCreateService 1
+    !else
+        StrCpy $serverCreateService 0
+    !endif
     
     !insertmacro MUI_LANGDLL_DISPLAY
 
     Call initJavaFromRegistry
-
     ; if installed Java is outdated then install the new one.
     ${ifNot} $javaVersion == ""
         !insertmacro DisableSection ${SecJava}
     ${endIf}
 
-    ; Check if Tomcat is installed
-    EnumRegKey $1 HKLM "SOFTWARE\Apache Software Foundation\Tomcat\" "0"
-    ${if} $1 == "${TOMCAT_VERSION}"
-        !insertmacro DisableSection ${SecTomcat}
-    ${else}
-        StrCpy $tomcatVersion ""
-    ${endIf}
-    
     ; Check if PostgreSQL is installed
     EnumRegKey $1 HKLM "SOFTWARE\PostgreSQL\Installations\" "0"
     ${if} $1 != ""
@@ -271,8 +256,6 @@ Function .onInit
     !ifndef DEV
         !insertmacro HideSection ${SecIdea}
         !insertmacro HideSection ${SecJasper}
-    !else
-        !insertmacro UnselectSection ${SecServices}
     !endif
 FunctionEnd
 
@@ -296,28 +279,26 @@ Section -post SecPost
     
     CALL createServices
 
-    ${if} $createShortcuts == "1"
-        CALL createShortcuts
-    ${endIf}
+    CALL createShortcuts
 SectionEnd
 
-Function CheckUserAdmin
-    ClearErrors
-    UserInfo::GetName
-    ${if} ${Errors}
-        MessageBox MB_OK "Error! This DLL can't run under Windows 9x!"
-        Quit
-    ${endIf}
+;Function CheckUserAdmin
+;    ClearErrors
+;    UserInfo::GetName
+;    ${if} ${Errors}
+;        MessageBox MB_OK "Error! This DLL can't run under Windows 9x!"
+;        Quit
+;    ${endIf}
     
-    Pop $0
-    UserInfo::GetAccountType
-    Pop $1
+;    Pop $0
+;    UserInfo::GetAccountType
+;    Pop $1
   
-    ${ifNot} $1 == "Admin"
-        MessageBox MB_OK|MB_ICONSTOP "$(strUserShouldBeAdmin)"
-        Quit
-    ${endIf}
-FunctionEnd
+;    ${ifNot} $1 == "Admin"
+;        MessageBox MB_OK|MB_ICONSTOP "$(strUserShouldBeAdmin)"
+;        Quit
+;    ${endIf}
+;FunctionEnd
 
 Function initJavaFromRegistry
     ClearErrors
@@ -349,51 +330,12 @@ Function initJavaFromRegistry
 FunctionEnd
 
 
+# no locals in nsis
+Var clientContextFile
 Function execAntConfiguration
-    SetOutPath ${INSTCONFDIR}
 
     DetailPrint "Configuring lsFusion"
     
-    ${ConfigWriteS} "${INSTCONFDIR}\configure.bat" "set JAVA_HOME=" "$javaHome" $R0
-
-    ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.home=" "$javaHome" $R0
-    ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.majorversion=" "${JDK_MAJORVERSION}" $R0
-    ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.version=" "${JDK_VERSION}" $R0
-
-    ${if} ${SectionIsSelected} ${SecTomcat}
-        DetailPrint "Configuring Tomcat"
-
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "tomcat.dir=" "$tomcatDir" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "tomcat.httpPort=" "$tomcatHttpPort" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "tomcat.shutdownPort=" "$tomcatShutdownPort" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "tomcat.ajpPort=" "$tomcatAjpPort" $R0
-        nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" configureTomcat'
-        Pop $0
-
-        DetailPrint "Ant returned $0"
-    ${endIf}
-
-    ${if} ${SectionIsSelected} ${SecWebClient}
-        DetailPrint "Configuring Client (Web & Desktop)"
-
-        ${if} $webClientContext == ""
-            StrCpy $webClientContextFile "ROOT"
-        ${else}
-            StrCpy $webClientContextFile $webClientContext
-        ${endIf}
-
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.host=" "$platformServerHost" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.port=" "$platformServerPort" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "web.dir=" "$webClientDirectory" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "web.archive=" "$INSTDIR\${WEBCLIENT_WAR}" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "web.conf=" "${INSTCONFDIR}\tomcat.xml" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "web.context.file=" "$webClientContextFile" $R0
-        nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" configureWebClient'
-        Pop $0
-
-        DetailPrint "Ant returned $0"
-    ${endIf}
-
     ${if} ${SectionIsSelected} ${SecServer}
         DetailPrint "Configuring server"
         DetailPrint "$INSTDIR\conf\settings.properties"
@@ -401,83 +343,142 @@ Function execAntConfiguration
         ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "db.name=" "$pgDbName" $R0
         ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "db.user=" "$pgUser" $R0
         ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "db.password=" "$pgPassword" $R0
-        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "rmi.host=" "$platformServerHost" $R0
-        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "rmi.port=" "$platformServerPort" $R0
-        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "logics.initialAdminPassword=" "$platformServerPassword" $R0
+        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "rmi.host=" "$serverHost" $R0
+        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "rmi.port=" "$serverPort" $R0
+        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "logics.initialAdminPassword=" "$serverPassword" $R0
     ${endIf}
-
-    ${if} ${SectionIsSelected} ${SecIdea}
-        DetailPrint "Configuring Intellij IDEA"
-        ${if} ${SectionIsSelected} ${SecServer}
-            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "lsfusion.library.name=" "${SERVER_LIBRARY_NAME}" $R0
-            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.archive=" "$INSTDIR\${SERVER_JAR}" $R0
-            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.sources=" "$INSTDIR\${SERVER_SOURCES_JAR}" $R0
+    
+    ${if} ${SectionIsSelected} ${SecClient}
+    ${orIf} ${SectionIsSelected} ${SecIdea}
+    
+        ${RunLinkFile} ${ANT_ARCHIVE} "zip" "Ant" "${INSTBINDIR}" ; assuming that will unzip to ANT_ARCHIVE dir    
+    
+        SetOutPath ${INSTCONFDIR}
+        File "install-config\*.*"
+    
+        ${ConfigWriteS} "${INSTCONFDIR}\configure.bat" "set JAVA_HOME=" "$javaHome" $R0
+    
+        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.home=" "$javaHome" $R0
+        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.majorversion=" "${JDK_MAJORVERSION}" $R0
+        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.version=" "${JDK_VERSION}" $R0
+    
+        ${if} ${SectionIsSelected} ${SecClient}
+            DetailPrint "Configuring Client (Web & Desktop)"
+    
+            ${if} $clientContext == ""
+                StrCpy $clientContextFile "ROOT"
+            ${else}
+                StrCpy $clientContextFile $clientContext
+            ${endIf}
+    
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.dir=" "$INSTDIR\${CLIENT_DIR}" $R0
+            
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.httpPort=" "$clientHttpPort" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.shutdownPort=" "$clientShutdownPort" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.ajpPort=" "$clientAjpPort" $R0
+            
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.war=" "${CLIENT_WAR}" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.conf=" "${INSTCONFDIR}\tomcat.xml" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.context.file=" "$clientContextFile" $R0
+    
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.host=" "$serverHost" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.port=" "$serverPort" $R0
+            nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" ${ANT_ARCHIVE} configureClient'
+            Pop $0
+    
+            DetailPrint "Ant returned $0"
         ${endIf}
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.majorversion=" "${IDEA_MAJORVERSION}" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.host=" "$pgHost" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.port=" "$pgPort" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.user=" "$pgUser" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.pass=" "$pgPassword" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "admin.pass=" "$platformServerPassword" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.dir=" "$ideaDir" $R0
-        ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.plugin=" "${IDEA_PLUGIN}" $R0
-        nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" configureIdea'
-        Pop $0
-
-        DetailPrint "Ant returned $0"
+    
+        ${if} ${SectionIsSelected} ${SecIdea}
+            DetailPrint "Configuring Intellij IDEA"
+            ${if} ${SectionIsSelected} ${SecServer}
+                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "lsfusion.library.name=" "${SERVER_LIBRARY_NAME}" $R0
+                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.archive=" "$INSTDIR\${SERVER_JAR}" $R0
+                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.sources=" "$INSTDIR\${SERVER_SOURCES_JAR}" $R0
+            ${endIf}
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.majorversion=" "${IDEA_MAJORVERSION}" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.dir=" "$ideaDir" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.plugin=" "${IDEA_PLUGIN}" $R0
+            
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.host=" "$pgHost" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.port=" "$pgPort" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.user=" "$pgUser" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.pass=" "$pgPassword" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "admin.pass=" "$serverPassword" $R0
+            nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" ${ANT_ARCHIVE} configureIdea'
+            Pop $0
+    
+            DetailPrint "Ant returned $0"
+        ${endIf}
+        
+        Delete ${INSTBINDIR}
+        Delete ${INSTCONFDIR}
+        Delete "bin"
     ${endIf}
-
-    SetOutPath $INSTDIR
 FunctionEnd
 
+# no locals in nsis
+Var clientDir
+Var serverDir
+Var serviceFile
 Function createServices
-    ${if} ${SectionIsSelected} ${SecTomcat}
+    ${if} ${SectionIsSelected} ${SecClient}
+        StrCpy $clientDir "$INSTDIR\${CLIENT_DIR}"
+        StrCpy $serviceFile "$clientDir\bin\lsfusion${LSFUSION_MAJOR_VERSION}_client.exe"
+    
         ClearErrors
-        DetailPrint "Installing Tomcat service"
-        nsExec::ExecToStack '"$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" //IS//$tomcatServiceName --DisplayName "$tomcatDisplayServiceName" --Description "Apache Tomcat ${TOMCAT_MAJOR_VERSION} Server - http://tomcat.apache.org/" --LogPath "$tomcatDir\logs" --Install "$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" --Jvm "$jvmDll" --StartPath "$tomcatDir" --StopPath "$tomcatDir"'
+        DetailPrint "Installing Client service"
+        
+        Rename "$clientDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" $serviceFile
+        Rename "$clientDir\bin\tomcat${TOMCAT_MAJOR_VERSION}w.exe" "$clientDir\bin\lsfusion${LSFUSION_MAJOR_VERSION}_clientw.exe"
+        
+        nsExec::ExecToStack '"$serviceFile" //IS//$clientServiceName --DisplayName "$clientDisplayServiceName" --Description "lsFusion web server" --LogPath "$clientDir\logs" --Install "$serviceFile" --Jvm "$jvmDll" --StartPath "$clientDir" --StopPath "$clientDir"'
         Pop $0
         Pop $1
         ${ifNot} $0 == "0"
             DetailPrint $1
-            MessageBox MB_OK|MB_ICONSTOP $(strErrorInstallingTomcatService)
+            MessageBox MB_OK|MB_ICONSTOP $(strErrorInstallingClientService)
         ${else}
-            DetailPrint "Configuring $tomcatServiceName service"
+            DetailPrint "Configuring $clientServiceName service"
     
-            WriteRegStr HKLM "${REGKEY}" "tomcatServiceName" "$tomcatServiceName"
+            WriteRegStr HKLM "${REGKEY}" "clientServiceName" "$clientServiceName"
     
-            nsExec::ExecToLog '"$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" //US//$tomcatServiceName --Startup auto'
-            nsExec::ExecToLog '"$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" //US//$tomcatServiceName --Classpath "$tomcatDir\bin\bootstrap.jar;$tomcatDir\bin\tomcat-juli.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop --StartMode jvm --StopMode jvm'
-            nsExec::ExecToLog '"$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" //US//$tomcatServiceName --JvmOptions "-Dcatalina.home=$tomcatDir#-Dcatalina.base=$tomcatDir#-Djava.endorsed.dirs=$tomcatDir\endorsed#-Djava.io.tmpdir=$tomcatDir\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=$tomcatDir\conf\logging.properties"'
-            nsExec::ExecToLog '"$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" //US//$tomcatServiceName --StdOutput auto --StdError auto'
+            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Startup auto'
+            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Classpath "$clientDir\bin\bootstrap.jar;$clientDir\bin\tomcat-juli.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop --StartMode jvm --StopMode jvm'
+            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions "-Dcatalina.home=$clientDir#-Dcatalina.base=$clientDir#-Djava.endorsed.dirs=$clientDir\endorsed#-Djava.io.tmpdir=$clientDir\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=$clientDir\conf\logging.properties"'
+            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --StdOutput auto --StdError auto'
 
-            DetailPrint "Starting Tomcat service"
-            nsExec::ExecToLog '"$tomcatDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" //ES//$tomcatServiceName'
+            DetailPrint "Starting $clientServiceName service"
+            nsExec::ExecToLog '"$serviceFile" //ES//$clientServiceName'
         ${endIf}
     ${endIf}
 
-    ${if} $createServices == "1"
-        ${if} ${SectionIsSelected} ${SecServer}
-            ClearErrors
-            DetailPrint "Installing lsFusion Server service"
-            nsExec::ExecToStack '"$INSTDIR\bin\lsfusion.exe" //IS//$platformServiceName --DisplayName "$platformDisplayServiceName" --Description "lsFusion server application http://lsfusion.org" --LogPath "$INSTDIR\logs" --Install "$INSTDIR\bin\lsfusion.exe" --Jvm "$jvmDll" --StartPath "$INSTDIR" --StopPath "$INSTDIR"'
-            Pop $0
-            Pop $1
-            ${ifNot} $0 == "0"
-                DetailPrint $1
-                MessageBox MB_OK|MB_ICONSTOP $(strErrorInstallingServerService)
-            ${else}
-                DetailPrint "Configuring $platformServiceName service"
-    
-                WriteRegStr HKLM "${REGKEY}" "platformServiceName" "$platformServiceName"
-    
-                nsExec::ExecToLog '"$INSTDIR\bin\lsfusion.exe" //US//$platformServiceName --Startup auto'
-                nsExec::ExecToLog '"$INSTDIR\bin\lsfusion.exe" //US//$platformServiceName --Classpath "$INSTDIR\${SERVER_JAR};$INSTDIR\deploy\*;$INSTDIR\deploy" --StartClass lsfusion.server.logics.BusinessLogicsBootstrap --StopClass lsfusion.server.logics.BusinessLogicsBootstrap --StartMethod start --StopMethod stop --StartMode jvm --StopMode jvm'
-                nsExec::ExecToLog '"$INSTDIR\bin\lsfusion.exe" //US//$platformServiceName --JvmMs=512 --JvmMx=1024'
-                nsExec::ExecToLog '"$INSTDIR\bin\lsfusion.exe" //US//$platformServiceName --StdOutput auto --StdError auto'
-    
-                DetailPrint "Starting lsFusion Server service"
-                nsExec::ExecToLog '"$INSTDIR\bin\lsfusion.exe" //ES//$platformServiceName'
-            ${endIf}
+    ${if} ${SectionIsSelected} ${SecServer}
+    ${andIf} $serverCreateService == "1"
+        StrCpy $serverDir "$INSTDIR\${SERVER_DIR}"
+        StrCpy $serviceFile "$serverDir\bin\lsfusion${LSFUSION_MAJOR_VERSION}_server.exe"
+
+        ClearErrors
+        DetailPrint "Installing Server service"
+
+        nsExec::ExecToStack '"$serviceFile" //IS//$serverServiceName --DisplayName "$serverDisplayServiceName" --Description "lsFusion application server" --LogPath "$serverDir\logs" --Install "$serviceFile" --Jvm "$jvmDll" --StartPath "$serverDir" --StopPath "$serverDir"'
+        Pop $0
+        Pop $1
+        ${ifNot} $0 == "0"
+            DetailPrint $1
+            MessageBox MB_OK|MB_ICONSTOP $(strErrorInstallingServerService)
+        ${else}
+            DetailPrint "Configuring $serverServiceName service"
+
+            WriteRegStr HKLM "${REGKEY}" "serverServiceName" "$serverServiceName"
+
+            nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --Startup auto'
+            nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --Classpath "$serverDir\${SERVER_JAR};$serverDir\lib\*;$serverDir\lib" --StartClass lsfusion.server.logics.BusinessLogicsBootstrap --StopClass lsfusion.server.logics.BusinessLogicsBootstrap --StartMethod start --StopMethod stop --StartMode jvm --StopMode jvm'
+            nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --JvmMs=512 --JvmMx=1024'
+            nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --StdOutput auto --StdError auto'
+
+            DetailPrint "Starting $serverServiceName service"
+            nsExec::ExecToLog '"$serviceFile" //ES//$serverServiceName'
         ${endIf}
     ${endIf}
     
@@ -488,37 +489,38 @@ Function createShortcuts
     
     SetOutPath "$INSTDIR"
     
-    CreateDirectory "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}"
+    CreateDirectory "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}"
 
     ${if} ${SectionIsSelected} ${SecServer}
-        ${if} $createServices == "1"
-            CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\Start lsFusion Server.lnk" "$INSTDIR\bin\lsfusion.exe" "//ES//$platformServiceName" "$INSTDIR\resources\lsfusion.ico"
-            CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\Stop lsFusion Server.lnk" "$INSTDIR\bin\lsfusion.exe" "//SS//$platformServiceName" "$INSTDIR\resources\lsfusion.ico"
+        StrCpy $serverDir "$INSTDIR\${SERVER_DIR}"
+        ${if} $serverCreateService == "1"
+            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server.lnk" "$serverDir\bin\lsfusion.exe" "//ES//$serverServiceName" "$INSTDIR\resources\lsfusion.ico"
+            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Stop Server.lnk" "$serverDir\bin\lsfusion.exe" "//SS//$serverServiceName" "$INSTDIR\resources\lsfusion.ico"
         ${else}
-            CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\Start lsFusion Server as console application.lnk" \
+            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server as console application.lnk" \
                             "$javaExe" \
-                            "-Xmx1200m -cp ${SERVER_JAR};deploy\*;deploy lsfusion.server.logics.BusinessLogicsBootstrap" \
+                            "-Xmx1200m -cp $serverDir\${SERVER_JAR};$serverDir\lib\*;$serverDir\lib lsfusion.server.logics.BusinessLogicsBootstrap" \
                             "$INSTDIR\resources\lsfusion.ico"
         ${endIf}
     ${endIf}
 
-    ${if} ${SectionIsSelected} ${SecClient}
-        CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\lsFusion Desktop Client.lnk" \
+    ${if} ${SectionIsSelected} ${SecDesktopClient}
+        CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Run Desktop Client.lnk" \
                         "$javaHome\bin\javaw.exe" \
-                        "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$platformServerHost -Dlsfusion.client.hostport=$platformServerPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
+                        "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$serverHost -Dlsfusion.client.hostport=$serverPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
                         "$INSTDIR\resources\lsfusion.ico"
         CreateShortCut "$DESKTOP\lsFusion Desktop Client.lnk" \
                         "$javaHome\bin\javaw.exe" \
-                        "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$platformServerHost -Dlsfusion.client.hostport=$platformServerPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
+                        "-Xmx300m -cp {CLIENT_JAR} -Dlsfusion.client.hostname=$serverHost -Dlsfusion.client.hostport=$serverPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
                         "$INSTDIR\resources\lsfusion.ico"
     ${endIf}
 
-    ${if} ${SectionIsSelected} ${SecWebClient}
-        CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\lsFusion Web Client.lnk" "http://127.0.0.1:$tomcatHttpPort/$webClientContext" "" "$INSTDIR\resources\lsfusion.ico"
-        CreateShortCut "$DESKTOP\lsFusion Web Client.lnk" "http://127.0.0.1:$tomcatHttpPort/$webClientContext" "" "$INSTDIR\resources\lsfusion.ico"
+    ${if} ${SectionIsSelected} ${SecClient}
+        CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Run Web Client.lnk" "http://127.0.0.1:$clientHttpPort/$clientContext" "" "$INSTDIR\resources\lsfusion.ico"
+        CreateShortCut "$DESKTOP\lsFusion Web Client.lnk" "http://127.0.0.1:$clientHttpPort/$clientContext" "" "$INSTDIR\resources\lsfusion.ico"
     ${endIf}
 
-    CreateShortCut "$SMPROGRAMS\lsFusion Platform ${LSFUSION_MAJOR_VERSION}\Uninstall lsFusion Platform.lnk" "$INSTDIR\uninstall.exe"
+    CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Uninstall lsFusion.lnk" "$INSTDIR\uninstall.exe"
     
     ${if} ${SectionIsSelected} ${SecIdea}
         SetOutPath "$ideaDir"

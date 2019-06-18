@@ -8,6 +8,12 @@ Var tfPgDbName
 Var tfPgServiceName
 
 Function pgConfigPagePre
+;   if we're not installing server or idea we don't need pg config 
+    ${IfNot} ${SectionIsSelected} ${SecServer}
+    ${andIfNot} ${SectionIsSelected} ${SecIdea}
+        Abort
+    ${endIf}
+
     !insertmacro MUI_HEADER_TEXT $(strPostgreOptions) ""
 
     nsDialogs::Create /NOUNLOAD 1018

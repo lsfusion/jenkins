@@ -1,2 +1,2 @@
 set JAVA_HOME=JAVA
-call "..\install-bin\apache-ant-1.9.2\bin\ant" -verbose -f configure.xml %* >>configure.log 2>&1
+call "..\install-bin\%1\bin\ant" -verbose -f configure.xml %2 >>configure.log 2>&1

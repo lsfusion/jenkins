@@ -4,31 +4,19 @@
 
     <property file="configure.properties" />
 
-    <target name="configureWebClient">
-        <replace file="${web.conf}" token="localhost" value="${server.host}" encoding="UTF-8"/>
-        <replace file="${web.conf}" token="7652" value="${server.port}" encoding="UTF-8"/>
+    <target name="configureClient">
+        <replace file="${client.dir}/conf/server.xml" token="8005" value="${client.shutdownPort}" />
+        <replace file="${client.dir}/conf/server.xml" token="8009" value="${client.ajpPort}" />
+        <replace file="${client.dir}/conf/server.xml" token="8080" value="${client.httpPort}" />
 
-        <if>
-            <not>
-                <equals arg1="${web.dir}" arg2="" />
-            </not>
-            <then>
-                <copy file="${web.conf}" tofile="${web.dir}/../conf/catalina/localhost/${web.context.file}.xml" />
-                <move file="${web.archive}" tofile="${web.dir}/${web.context.file}.war" />
-            </then>
-        </if>
-    </target>
+        <replace file="${client.conf}" token="localhost" value="${server.host}" encoding="UTF-8"/>
+        <replace file="${client.conf}" token="7652" value="${server.port}" encoding="UTF-8"/>
+        <copy file="${client.conf}" tofile="${client.dir}/conf/catalina/localhost/${client.context.file}.xml" />
 
-    <target name="configureTomcat">
-        <replace file="${tomcat.dir}/conf/server.xml" token="8005" value="${tomcat.shutdownPort}" />
-        <replace file="${tomcat.dir}/conf/server.xml" token="8009" value="${tomcat.ajpPort}" />
-        <replace file="${tomcat.dir}/conf/server.xml" token="8080" value="${tomcat.httpPort}" />
+        <move file="${client.dir}/${client.war}" tofile="${client.dir}/webapps/${client.context.file}.war" />
     </target>
 
     <target name="configureIdea">
-        <unzip src="../${idea.plugin}" dest="${idea.dir}/plugins/" />
-        <delete file="../${idea.plugin}"/>
-        
         <replace file="jdk.table.xml" token="java.home" value="${jdk.home}" />
         <replace file="jdk.table.xml" token="java.majorversion" value="${jdk.majorversion}" />
         <replace file="jdk.table.xml" token="java.version" value="${jdk.version}" />
