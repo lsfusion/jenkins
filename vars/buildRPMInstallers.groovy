@@ -8,7 +8,7 @@ def call(int majorVersion, String platformVersion) {
         sh 'createrepo --update yum'
 
         sh "mkdir -p ${downloadDir}"
-        sh "cp -f yum/* ${downloadDir}/"
+        sh "cp -fa yum/* ${downloadDir}/"
 
         ftpPublisher failOnError: true, publishers: [
                 [configName: 'Download FTP server',
