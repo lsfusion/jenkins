@@ -84,10 +84,12 @@
 !macro _LS_DownloadFile SRC LINK DEST
     ${if} ${LINK} == 1
         DetailPrint "Downloading link from ${SRC}"
+        SetOutPath $INSTDIR
         inetc::get /WEAKSECURITY ${SRC} OutFile ;download link
         FileOpen $4 OutFile r ;read url from downloaded link
         FileRead $4 $1 ; we read until the end of line (including carriage return and new line) and save it to $1
         FileClose $4 ; and close the file
+        Delete OutFile ; delete temp link file
         DetailPrint "Downloading file from $1"
         inetc::get /WEAKSECURITY $1 ${DEST} ;download client.jnlp from url
     ${else}
