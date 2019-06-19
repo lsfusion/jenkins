@@ -19,8 +19,8 @@ Function clientConfigPagePre
     ${LS_CreateNumber} $(strClientHttpPort) $clientHttpPort $tfClientHttpPort
     ${LS_CreateNumber} $(strClientAjpPort) $clientAjpPort $tfClientAjpPort
 
-    ${LS_CreateLabel} "$(strClientContextMessage)"
     ${LS_CreateText} "$(strClientContext)" $clientContext $tfClientContext
+    ${LS_CreateLabel} "$(strClientContextMessage)"
     
     nsDialogs::Show
 FunctionEnd

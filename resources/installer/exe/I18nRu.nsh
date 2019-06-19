@@ -58,14 +58,14 @@ LangString strServerHost ${LANG_RUSSIAN} "Хост"
 LangString strServerPort ${LANG_RUSSIAN} "Порт"
 LangString strServerPasswordMessage ${LANG_RUSSIAN} "Введите пароль администратора:"
 LangString strShortcutsForAllUsers ${LANG_RUSSIAN} "Создавать ярлыки для всех пользователей"
-LangString strClientContextMessage ${LANG_RUSSIAN} "Введите веб-контекст приложения lsFusion Client (базовая часть URL при развёртывании):"
-LangString strClientContext ${LANG_RUSSIAN} "Веб-контекст"
+LangString strClientContextMessage ${LANG_RUSSIAN} "* Например, для значения x приложение будет доступно по адресу http://localhost/x"
+LangString strClientContext ${LANG_RUSSIAN} "Веб-контекст*"
 LangString strInvalidClientDirectory ${LANG_RUSSIAN} 'Веб-контекст не должен содержать пробелы или любые из следующих символов: <>:"/\:|?*'
 LangString strContinueOnEmptyPassword ${LANG_RUSSIAN} "Вы действительно хотите продолжить и использовать пустой пароль?"
 
 LangString strOldPostgreMessage ${LANG_RUSSIAN} "Установленная версия PostgreSQL устарела (<${PG_MAJORVERSION}. Пожалуйста деинсталлируйте эту версию или попробуйте произвести установку PostgreSQL вручную."
 
-LangString strPostgreOptions ${LANG_RUSSIAN} "Настройки для установки PostgreSQL"
+LangString strPostgreOptions ${LANG_RUSSIAN} "Настройки PostgreSQL"
 LangString strPasswordMessage ${LANG_RUSSIAN} "Введите пароль, который будет использоваться для суперпользователя базы данных."
 LangString strPassword ${LANG_RUSSIAN} "Пароль"
 LangString strPasswordRetype ${LANG_RUSSIAN} "Повторите пароль"

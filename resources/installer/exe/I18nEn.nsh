@@ -58,14 +58,14 @@ LangString strServerHost ${LANG_ENGLISH} "Host"
 LangString strServerPort ${LANG_ENGLISH} "Port"
 LangString strServerPasswordMessage ${LANG_ENGLISH} "Enter administrator password:"
 LangString strShortcutsForAllUsers ${LANG_ENGLISH} "Create shortcuts for all users"
-LangString strClientContextMessage ${LANG_ENGLISH} "Enter lsFusion Client WebApp context (base URL path after deployment):"
-LangString strClientContext ${LANG_ENGLISH} "WebApp context"
+LangString strClientContextMessage ${LANG_ENGLISH} "* For example, for value x application will be available at http://localhost/x"
+LangString strClientContext ${LANG_ENGLISH} "WebApp context*"
 LangString strInvalidClientDirectory ${LANG_ENGLISH} 'The WebApp context may not contain a space or any of the following characters: <>:"/\:|?*'
 LangString strContinueOnEmptyPassword ${LANG_ENGLISH} "Do you really want to continue and use empty password?"
 
 LangString strOldPostgreMessage ${LANG_ENGLISH} "The installed version of PostgreSQL is too old (<${PG_MAJORVERSION}). Please uninstall this version or try a manual installation of PostgreSQL."
 
-LangString strPostgreOptions ${LANG_ENGLISH} "PostgreSQL Server options."
+LangString strPostgreOptions ${LANG_ENGLISH} "PostgreSQL Server options"
 LangString strPasswordMessage ${LANG_ENGLISH} "Please provide a password for the database superuser."
 LangString strPassword ${LANG_ENGLISH} "Password"
 LangString strPasswordRetype ${LANG_ENGLISH} "Retype password"
