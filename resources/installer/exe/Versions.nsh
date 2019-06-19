@@ -3,7 +3,6 @@
 
 !define JDK_MAJORVERSION 1.8 ; used in version compare and idea SDK
 !define JDK_VERSION ${JDK_MAJORVERSION}.0_212 ; log, idea SDK
-!define JDK_DISTREXTENSION "msi" ; java installer extension
 ;!define JDK_FOLDER "$ProgramFiles${ARCH}\ojdkbuild\java-${JDK_MAJORVERSION}-openjdk-${JDK_DISTRVERSION}"
 
 !define PG_MAJORVERSION 10

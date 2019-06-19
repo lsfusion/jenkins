@@ -9,7 +9,7 @@ Section "${PG_SECTION_NAME}" SecPG
 SectionEnd
 
 Section "${JAVA_SECTION_NAME}" SecJava
-    ${RunLinkFile} ${JAVA_INSTALLER} ${JDK_DISTREXTENSION} "Java" '/s ADDLOCAL="ToolsFeature,SourceFeature,PublicjreFeature"' 
+    ${RunLinkFile} ${JAVA_INSTALLER} ${JAVA_INSTALLER_EXT} "Java" '/s ADDLOCAL="ToolsFeature,SourceFeature,PublicjreFeature"' 
 
     Call initJavaFromRegistry
     ${if} $javaHome == ""

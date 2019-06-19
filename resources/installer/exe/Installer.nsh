@@ -14,6 +14,7 @@ RequestExecutionLevel user
 !define URL lsfusion.org
 
 !define JAVA_INSTALLER "java-${JDK_VERSION}-${ARCH}"
+!define JAVA_INSTALLER_EXT "msi"
 !define PG_INSTALLER "postgresql-${PG_VERSION}-${ARCH}"
 !define IDEA_INSTALLER "ideaIC-${IDEA_VERSION}"
 !define IDEA_PLUGIN "lsfusion-idea-plugin"

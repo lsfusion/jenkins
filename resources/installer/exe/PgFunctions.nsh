@@ -11,6 +11,7 @@ Function pgConfigPagePre
 ;   if we're not installing server or idea we don't need pg config 
     ${IfNot} ${SectionIsSelected} ${SecServer}
     ${andIfNot} ${SectionIsSelected} ${SecIdea}
+    ${andIfNot} ${SectionIsSelected} ${SecPG}
         Abort
     ${endIf}
 

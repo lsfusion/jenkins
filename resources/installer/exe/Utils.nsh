@@ -81,20 +81,33 @@
 !macroend
 !define SFile "!insertmacro _LS_File" 
 
+!macro _LS_DownloadFileAnyWay SRC DEST
+    inetc::get ${SRC} ${DEST} /END
+    Pop $0
+    ${ifNot} $0 == "OK"
+        DetailPrint "Trying without current proxy..."
+        inetc::get /POPUP /PROXY /TOSTACK ${SRC} ${DEST} /END ; it's hard to tell why but sometimes only with this options in that order of /POPUP /PROXY it works 
+        Pop $0
+        ${ifNot} $0 == "OK"
+            DetailPrint "Downloading failed : $0"
+        ${endIf}
+    ${endIf}
+!macroend
+!define DownloadFileAnyWay "!insertmacro _LS_DownloadFileAnyWay" 
+
 !macro _LS_DownloadFile SRC LINK DEST
     ${if} ${LINK} == 1
         DetailPrint "Downloading link from ${SRC}"
-        SetOutPath $INSTDIR
-        inetc::get /WEAKSECURITY ${SRC} OutFile ;download link
+        ${DownloadFileAnyWay} ${SRC} OutFile
         FileOpen $4 OutFile r ;read url from downloaded link
         FileRead $4 $1 ; we read until the end of line (including carriage return and new line) and save it to $1
         FileClose $4 ; and close the file
         Delete OutFile ; delete temp link file
         DetailPrint "Downloading file from $1"
-        inetc::get /WEAKSECURITY $1 ${DEST} ;download client.jnlp from url
+        ${DownloadFileAnyWay} $1 ${DEST}
     ${else}
         DetailPrint "Downloading file from ${SRC}"
-        inetc::get /WEAKSECURITY ${SRC} ${DEST} ;download link
+        ${DownloadFileAnyWay} ${SRC} ${DEST} ;download link
     ${endIf}
 !macroend
 !define DownloadFile "!insertmacro _LS_DownloadFile" 
