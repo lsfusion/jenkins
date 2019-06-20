@@ -9,7 +9,7 @@ Section "${PG_SECTION_NAME}" SecPG
 SectionEnd
 
 Section "${JAVA_SECTION_NAME}" SecJava
-    ${RunLinkFile} ${JAVA_INSTALLER} ${JAVA_INSTALLER_EXT} "Java" '/s ADDLOCAL="ToolsFeature,SourceFeature,PublicjreFeature"' 
+    ${RunLinkFile} ${JAVA_INSTALLER} ${JAVA_INSTALLER_EXT} "Java" '${JAVA_INSTALLER_PARAMS}' 
 
     Call initJavaFromRegistry
     ${if} $javaHome == ""
@@ -21,52 +21,44 @@ Section "${JAVA_SECTION_NAME}" SecJava
 SectionEnd
 
 # Installer sections
-SubSection "!${PLATFORM_SECTION_NAME}" SecPlatform
-    Section -CoreFiles
-        DetailPrint "Installing lsFusion"
-        
-        SetOutPath $INSTDIR\resources
-        File "resources\lsfusion.ico"
-        
-        ; TODO
-;        File "resources\license-english.txt"
-;        File "resources\license-russian.txt"
-    SectionEnd
+Section "${SERVER_SECTION_NAME}" SecServer
+    SetOutPath $INSTDIR\${SERVER_DIR}
+    File /r "lib"
+    File /r "conf"
 
-    Section "${SERVER_SECTION_NAME}" SecServer
-        ${GetDirectFile} "${DOWNLOAD_SERVER_JAR}" "$INSTDIR\${SERVER_DIR}" ${SERVER_JAR}  
-        ${GetDirectFile} "${DOWNLOAD_SERVER_SOURCES_JAR}" "$INSTDIR\${SERVER_DIR}" ${SERVER_SOURCES_JAR}  
-        
-        SetOutPath $INSTDIR\${SERVER_DIR}
-        File /r "lib"
-        File /r "conf"
+    ${GetDirectFile} "${DOWNLOAD_SERVER_JAR}" "$INSTDIR\${SERVER_DIR}" ${SERVER_JAR}  
+    ${GetDirectFile} "${DOWNLOAD_SERVER_SOURCES_JAR}" "$INSTDIR\${SERVER_DIR}" ${SERVER_SOURCES_JAR}  
+    
+    SetOutPath $INSTDIR\${SERVER_DIR}\bin
+    File /oname=$serverServiceName.exe bin\lsfusion${ARCH}.exe
+    File /oname=$serverServiceNamew.exe bin\lsfusionw.exe
 
-        SetOutPath $INSTDIR\${SERVER_DIR}\bin
-        File /oname=lsfusion${LSFUSION_MAJOR_VERSION}_server.exe bin\lsfusion${ARCH}.exe
-        File /oname=lsfusion${LSFUSION_MAJOR_VERSION}_serverw.exe bin\lsfusionw.exe
+    WriteRegStr HKLM "${REGKEY}\Components" "${SERVER_SECTION_NAME}" 1
+SectionEnd
 
-        WriteRegStr HKLM "${REGKEY}\Components" "${SERVER_SECTION_NAME}" 1
-    SectionEnd
+Section "${CLIENT_SECTION_NAME}" SecClient
 
-    Section "${CLIENT_SECTION_NAME}" SecClient
+    ${RunLinkFile} ${TOMCAT_ARCHIVE} "zip" "Tomcat" "$INSTDIR" ; because in current installation tomcat is inside folder with name apache-tomcat-{VERSION}
+    Rename "$INSTDIR\apache-tomcat-${TOMCAT_VERSION}" "$INSTDIR\${CLIENT_DIR}" 
+    
+    ; will be moved later by ant to the webapps
+    ${GetDirectFile} "${DOWNLOAD_CLIENT_WAR}" "$INSTDIR\${CLIENT_DIR}" ${CLIENT_WAR}   
 
-        ${RunLinkFile} ${TOMCAT_ARCHIVE} "zip" "Tomcat" "$INSTDIR\${CLIENT_DIR}"
-        
-        ; will be moved later by ant to the webapps
-        ${GetDirectFile} "${DOWNLOAD_CLIENT_WAR}" "$INSTDIR\${CLIENT_DIR}" ${CLIENT_WAR}   
+    WriteRegStr HKLM "${REGKEY}\Components" "${CLIENT_SECTION_NAME}" 1
+SectionEnd
 
-        WriteRegStr HKLM "${REGKEY}\Components" "${CLIENT_SECTION_NAME}" 1
-    SectionEnd
-
-    Section "${DESKTOP_CLIENT_SECTION_NAME}" SecDesktopClient
-        ${GetDirectFile} "${DOWNLOAD_CLIENT_JAR}" "$INSTDIR" ${CLIENT_JAR}  
-        
-        WriteRegStr HKLM "${REGKEY}\Components" "${DESKTOP_CLIENT_SECTION_NAME}" 1
-    SectionEnd
-SubSectionEnd
+Section "${DESKTOP_CLIENT_SECTION_NAME}" SecDesktopClient
+    ${GetDirectFile} "${DOWNLOAD_CLIENT_JAR}" "$INSTDIR" ${CLIENT_JAR}  
+    
+    WriteRegStr HKLM "${REGKEY}\Components" "${DESKTOP_CLIENT_SECTION_NAME}" 1
+SectionEnd
 
 Section "${IDEA_SECTION_NAME}" SecIdea
-    ${RunLinkFile} ${IDEA_INSTALLER} "exe" "IntelliJ Idea" '/S /D=$ideaDir' 
+
+    SetOutPath ${INSTCONFDIR}
+    File "install-config\silent.config"
+
+    ${RunLinkFile} ${IDEA_INSTALLER} "exe" "IntelliJ Idea" '/S /CONFIG="${INSTCONFDIR}\silent.config" /D=$ideaDir' ; no quotes in ideaDir, otherwise doesn't work 
     
     WriteRegStr HKLM "${REGKEY}\Components" "${IDEA_SECTION_NAME}" 1
     WriteRegStr HKLM "${REGKEY}" "ideaInstallDir" "$ideaDir"
@@ -75,7 +67,7 @@ Section "${IDEA_SECTION_NAME}" SecIdea
 SectionEnd
 
 Section "${JASPER_SECTION_NAME}" SecJasper
-    ${RunLinkFile} ${JASPER_INSTALLER} "exe" "Jaspersoft Studio" '/S /D=$jasperDir' 
+    ${RunLinkFile} ${JASPER_INSTALLER} "exe" "Jaspersoft Studio" '/S /D="$jasperDir"' 
 
     WriteRegStr HKLM "${REGKEY}\Components" "${JASPER_SECTION_NAME}" 1
     WriteRegStr HKLM "${REGKEY}" "jaspersoftStudioInstallDir" "$jasperDir"
@@ -85,7 +77,6 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SecPG} $(strPgSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecJava} $(strJavaSectionDescription)
-!insertmacro MUI_DESCRIPTION_TEXT ${SecPlatform} $(strPlatformSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(strServerSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(strWebClientSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecDesktopClient} $(strDesktopClientSectionDescription)

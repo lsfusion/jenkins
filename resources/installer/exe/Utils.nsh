@@ -85,16 +85,17 @@
     inetc::get ${SRC} ${DEST} /END
     Pop $0
     ${ifNot} $0 == "OK"
-        DetailPrint "Trying without current proxy..."
-        inetc::get /POPUP /PROXY /TOSTACK ${SRC} ${DEST} /END ; it's hard to tell why but sometimes only with this options in that order of /POPUP /PROXY it works 
-        Pop $0
-        ${ifNot} $0 == "OK"
+;        DetailPrint "Trying without current proxy..."
+;        inetc::get /POPUP /PROXY /TOSTACK ${SRC} ${DEST} /END ; it's hard to tell why but sometimes only with this options in that order of /POPUP /PROXY it works 
+;        Pop $0
+;        ${ifNot} $0 == "OK"
             DetailPrint "Downloading failed : $0"
-        ${endIf}
+;        ${endIf}
     ${endIf}
 !macroend
 !define DownloadFileAnyWay "!insertmacro _LS_DownloadFileAnyWay" 
 
+; Dest dir should exist
 !macro _LS_DownloadFile SRC LINK DEST
     ${if} ${LINK} == 1
         DetailPrint "Downloading link from ${SRC}"
@@ -113,10 +114,10 @@
 !define DownloadFile "!insertmacro _LS_DownloadFile" 
 
 !macro _Get_File URLFILE URLLINK DESTDIR FILE
+    SetOutPath ${DESTDIR} ; need this because DownloadFile doesn't create dir
     !ifndef OFFLINE
         ${DownloadFile} "${URLFILE}" ${URLLINK} "${DESTDIR}\${FILE}"  
     !else
-        SetOutPath ${DESTDIR}
         SetOverwrite on
         ${SFile} "install-bin\${FILE}"
     !endif
@@ -130,17 +131,22 @@
 
 Var runFileName
 ; for ZIP - PARAMS destination folder, for EXE - command lline params 
-!macro _Run_File URLFILE URLLINK FILE ISZIP INSTNAME PARAMS
+!macro _Run_File URLFILE URLLINK FILE EXT INSTNAME PARAMS
 
     ${GetFile} ${URLFILE} ${URLLINK} ${INSTBINDIR} "${FILE}" 
 
     StrCpy $runFileName "${INSTBINDIR}\${FILE}"
-    ${if} ${ISZIP} == 1
+    ${if} ${EXT} == "zip"
         DetailPrint 'Extracting ${INSTNAME} - $runFileName to ${PARAMS}'
         nsisunz::Unzip "$runFileName" '${PARAMS}'
     ${else}
         DetailPrint "Installing ${INSTNAME}"
-        nsExec::ExecToLog '"$runFileName" ${PARAMS}'
+        ${if} ${EXT} == "msi"
+            nsExec::ExecToLog 'msiexec /i "$runFileName" ${PARAMS}'
+        ${else}
+            DetailPrint '"$runFileName" ${PARAMS}'
+            nsExec::ExecToLog '"$runFileName" ${PARAMS}'
+        ${endif}
     ${endif}
     
     Pop $0
@@ -157,11 +163,11 @@ Var isZip
     ${else}
         StrCpy $isZip 0
     ${endif}    
-    ${RunFile} "${DOWNLOADURL}/${FILENAME}.lnk" 1 "${FILENAME}.${EXT}" $isZip "${INSTNAME}" '${PARAMS}' 
+    ${RunFile} "${DOWNLOADURL}/${FILENAME}.lnk" 1 "${FILENAME}.${EXT}" ${EXT} "${INSTNAME}" '${PARAMS}' 
 !macroend
 !define RunLinkFile "!insertmacro _Run_Link_File" 
-!macro _Run_Direct_File URLFILE FILE ISZIP INSTNAME PARAMS
-    ${RunFile} ${URLFILE} 0 ${FILE} ${ISZIP} ${INSTNAME} ${PARAMS} 
+!macro _Run_Direct_File URLFILE FILE EXT INSTNAME PARAMS
+    ${RunFile} ${URLFILE} 0 ${FILE} ${EXT} ${INSTNAME} ${PARAMS} 
 !macroend
 !define RunDirectFile "!insertmacro _Run_Direct_File" 
 

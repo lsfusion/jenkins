@@ -11,9 +11,9 @@ RequestExecutionLevel user
 !macroend
 
 # Uninstaller sections
-Section "!un.${PLATFORM_SECTION_NAME}" UnSecPlatform
-    SectionIn RO
-SectionEnd
+;Section "!un.${PLATFORM_SECTION_NAME}" UnSecPlatform
+;    SectionIn RO
+;SectionEnd
 
 Section /o "un.${JAVA_SECTION_NAME}" UnSecJava
     SectionIn RO
@@ -127,7 +127,7 @@ FunctionEnd
 
 # Section Descriptions
 !insertmacro MUI_UNFUNCTION_DESCRIPTION_BEGIN
-!insertmacro MUI_DESCRIPTION_TEXT ${UnSecPlatform} $(strPlatformUnSectionDescription)
+;!insertmacro MUI_DESCRIPTION_TEXT ${UnSecPlatform} $(strPlatformUnSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${UnSecPG} $(strPgUnSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${UnSecIdea} $(strIdeaUnSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${UnSecJasper} $(strJasperUnSectionDescription)

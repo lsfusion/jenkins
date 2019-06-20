@@ -15,6 +15,9 @@ RequestExecutionLevel user
 
 !define JAVA_INSTALLER "java-${JDK_VERSION}-${ARCH}"
 !define JAVA_INSTALLER_EXT "msi"
+;!define JAVA_INSTALLER_EXT "exe"
+!define JAVA_INSTALLER_PARAMS '/quiet INSTALLDIR="$javaDir" ADDLOCAL=jdk,jdk_registry_standard,jdk_env_path,jdk_env_java_home,jdk_registry_jar,webstart,webstart_registry,webstart_env'
+;!define JAVA_INSTALLER_PARAMS '/s ADDLOCAL="ToolsFeature,SourceFeature,PublicjreFeature"'
 !define PG_INSTALLER "postgresql-${PG_VERSION}-${ARCH}"
 !define IDEA_INSTALLER "ideaIC-${IDEA_VERSION}"
 !define IDEA_PLUGIN "lsfusion-idea-plugin"
@@ -29,15 +32,14 @@ RequestExecutionLevel user
 !define DOWNLOAD_CLIENT_JAR "${DOWNLOADURL_JAVA}/lsfusion-client-${LSFUSION_VERSION}.jar"
 !define DOWNLOAD_CLIENT_WAR "${DOWNLOADURL_JAVA}/lsfusion-client-${LSFUSION_VERSION}.war"
 
+!define PG_SECTION_NAME "DB" ; "PostgreSQL ${PG_MAJORVERSION}"
+!define JAVA_SECTION_NAME "Java" ; "JDK ${JDK_VERSION}"
 !define PLATFORM_SECTION_NAME "lsFusion"
 !define SERVER_SECTION_NAME "Server"
 !define CLIENT_SECTION_NAME "Client (Web & Desktop)"
 !define DESKTOP_CLIENT_SECTION_NAME "Desktop Client"
-!define PG_SECTION_NAME "PostgreSQL ${PG_MAJORVERSION}"
-!define JAVA_SECTION_NAME "JDK ${JDK_VERSION}"
-!define TOMCAT_SECTION_NAME "Apache Tomcat ${TOMCAT_VERSION}"
-!define IDEA_SECTION_NAME "IntelliJ IDEA Community Edition ${IDEA_VERSION} with lsFusion plugin"
-!define JASPER_SECTION_NAME "Jaspersoft Studio ${JASPER_VERSION}"
+!define IDEA_SECTION_NAME "IDE" ; "IntelliJ IDEA Community Edition ${IDEA_VERSION} with lsFusion plugin"
+!define JASPER_SECTION_NAME "Reports IDE" ; "Jaspersoft Studio ${JASPER_VERSION}"
 
 !define CLIENT_JAR "client.jar"
 !define SERVER_JAR "server.jar"
@@ -209,7 +211,7 @@ Function .onInit
     
     StrCpy $javaDir "$ProgramFiles${ARCH}\Java\jdk${JDK_VERSION}"
 
-    StrCpy $ideaDir "$ProgramFiles32\JetBrains\IDEA Community Edition ${IDEA_VERSION}"
+    StrCpy $ideaDir "$ProgramFiles${ARCH}\JetBrains\IDEA Community Edition ${IDEA_VERSION}"
     
     StrCpy $jasperDir "$ProgramFiles${ARCH}\TIBCO\Jaspersoft Studio-${JASPER_VERSION}"
 
@@ -229,7 +231,7 @@ Function .onInit
 
     StrCpy $serverHost "localhost"
     StrCpy $serverPort "7652"
-    StrCpy $serverServiceName "lsfusion${LSFUSION_MAJOR_VERSION}-server"
+    StrCpy $serverServiceName "lsfusion${LSFUSION_MAJOR_VERSION}_server"
     StrCpy $serverDisplayServiceName "lsFusion ${LSFUSION_MAJOR_VERSION} Server"
     !ifndef DEV
         StrCpy $serverCreateService 1
@@ -260,7 +262,7 @@ Function .onInit
         ${endIf}
     ${endIf}
     
-    !insertmacro ExpandSection ${SecPlatform}
+;    !insertmacro ExpandSection ${SecPlatform}
 
     !ifndef DEV
         !insertmacro HideSection ${SecIdea}
@@ -289,6 +291,9 @@ Section -post SecPost
     CALL createServices
 
     CALL createShortcuts
+    
+    RMDir ${INSTBINDIR}
+    RMDir ${INSTCONFDIR}
 SectionEnd
 
 ;Function CheckUserAdmin
@@ -341,20 +346,21 @@ FunctionEnd
 
 # no locals in nsis
 Var clientContextFile
+Var serverSettingsFile
 Function execAntConfiguration
 
     DetailPrint "Configuring lsFusion"
     
     ${if} ${SectionIsSelected} ${SecServer}
         DetailPrint "Configuring server"
-        DetailPrint "$INSTDIR\conf\settings.properties"
-        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "db.server=" "$pgHost:$pgPort" $R0
-        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "db.name=" "$pgDbName" $R0
-        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "db.user=" "$pgUser" $R0
-        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "db.password=" "$pgPassword" $R0
-        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "rmi.host=" "$serverHost" $R0
-        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "rmi.port=" "$serverPort" $R0
-        ${ConfigWriteSE} "$INSTDIR\conf\settings.properties" "logics.initialAdminPassword=" "$serverPassword" $R0
+        StrCpy $serverSettingsFile "$INSTDIR\${SERVER_DIR}\conf\settings.properties"
+        ${ConfigWriteSE} "$serverSettingsFile" "db.server=" "$pgHost:$pgPort" $R0
+        ${ConfigWriteSE} "$serverSettingsFile" "db.name=" "$pgDbName" $R0
+        ${ConfigWriteSE} "$serverSettingsFile" "db.user=" "$pgUser" $R0
+        ${ConfigWriteSE} "$serverSettingsFile" "db.password=" "$pgPassword" $R0
+        ${ConfigWriteSE} "$serverSettingsFile" "rmi.host=" "$serverHost" $R0
+        ${ConfigWriteSE} "$serverSettingsFile" "rmi.port=" "$serverPort" $R0
+        ${ConfigWriteSE} "$serverSettingsFile" "logics.initialAdminPassword=" "$serverPassword" $R0
     ${endIf}
     
     ${if} ${SectionIsSelected} ${SecClient}
@@ -401,11 +407,6 @@ Function execAntConfiguration
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.majorversion=" "${JDK_MAJORVERSION}" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.version=" "${JDK_VERSION}" $R0
 
-            ${if} ${SectionIsSelected} ${SecServer}
-                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "lsfusion.library.name=" "${SERVER_LIBRARY_NAME}" $R0
-                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.archive=" "$INSTDIR\${SERVER_JAR}" $R0
-                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.sources=" "$INSTDIR\${SERVER_SOURCES_JAR}" $R0
-            ${endIf}
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.majorversion=" "${IDEA_MAJORVERSION}" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.dir=" "$ideaDir" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.plugin=" "${IDEA_PLUGIN}" $R0
@@ -417,13 +418,22 @@ Function execAntConfiguration
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "admin.pass=" "$serverPassword" $R0
             nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" ${ANT_ARCHIVE} configureIdea'
             Pop $0
-    
             DetailPrint "Ant returned $0"
+
+            ${if} ${SectionIsSelected} ${SecServer}
+                DetailPrint "Configuring Intellij IDEA lsFusion Server Library"
+
+                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "lsfusion.library.name=" "${SERVER_LIBRARY_NAME}" $R0
+                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.archive=" "$INSTDIR\${SERVER_JAR}" $R0
+                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.sources=" "$INSTDIR\${SERVER_SOURCES_JAR}" $R0
+
+                nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" ${ANT_ARCHIVE} configureIdeaServer'
+                Pop $0
+                DetailPrint "Ant returned $0"
+            ${endIf}
         ${endIf}
         
-        Delete ${INSTBINDIR}
-        Delete ${INSTCONFDIR}
-        Delete "bin"
+        RMDir ${ANT_ARCHIVE} ; we don't need ant anymore
     ${endIf}
 FunctionEnd
 
@@ -496,21 +506,22 @@ FunctionEnd
 
 Function createShortcuts
     DetailPrint "Creating shortcuts"
-    
-    SetOutPath "$INSTDIR"
+
+    SetOutPath $INSTDIR
+    File "resources\lsfusion.ico"
     
     CreateDirectory "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}"
 
     ${if} ${SectionIsSelected} ${SecServer}
         StrCpy $serverDir "$INSTDIR\${SERVER_DIR}"
         ${if} $serverCreateService == "1"
-            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server.lnk" "$serverDir\bin\lsfusion.exe" "//ES//$serverServiceName" "$INSTDIR\resources\lsfusion.ico"
-            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Stop Server.lnk" "$serverDir\bin\lsfusion.exe" "//SS//$serverServiceName" "$INSTDIR\resources\lsfusion.ico"
+            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server.lnk" "$serverDir\bin\lsfusion.exe" "//ES//$serverServiceName" "$INSTDIR\lsfusion.ico"
+            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Stop Server.lnk" "$serverDir\bin\lsfusion.exe" "//SS//$serverServiceName" "$INSTDIR\lsfusion.ico"
         ${else}
             CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server as console application.lnk" \
                             "$javaExe" \
                             "-Xmx1200m -cp $serverDir\${SERVER_JAR};$serverDir\lib\*;$serverDir\lib lsfusion.server.logics.BusinessLogicsBootstrap" \
-                            "$INSTDIR\resources\lsfusion.ico"
+                            "$INSTDIR\lsfusion.ico"
         ${endIf}
     ${endIf}
 
@@ -518,16 +529,16 @@ Function createShortcuts
         CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Run Desktop Client.lnk" \
                         "$javaHome\bin\javaw.exe" \
                         "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$serverHost -Dlsfusion.client.hostport=$serverPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
-                        "$INSTDIR\resources\lsfusion.ico"
+                        "$INSTDIR\lsfusion.ico"
         CreateShortCut "$DESKTOP\lsFusion Desktop Client.lnk" \
                         "$javaHome\bin\javaw.exe" \
-                        "-Xmx300m -cp {CLIENT_JAR} -Dlsfusion.client.hostname=$serverHost -Dlsfusion.client.hostport=$serverPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
-                        "$INSTDIR\resources\lsfusion.ico"
+                        "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$serverHost -Dlsfusion.client.hostport=$serverPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
+                        "$INSTDIR\lsfusion.ico"
     ${endIf}
 
     ${if} ${SectionIsSelected} ${SecClient}
-        CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Run Web Client.lnk" "http://127.0.0.1:$clientHttpPort/$clientContext" "" "$INSTDIR\resources\lsfusion.ico"
-        CreateShortCut "$DESKTOP\lsFusion Web Client.lnk" "http://127.0.0.1:$clientHttpPort/$clientContext" "" "$INSTDIR\resources\lsfusion.ico"
+        CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Run Web Client.lnk" "http://127.0.0.1:$clientHttpPort/$clientContext" "" "$INSTDIR\lsfusion.ico"
+        CreateShortCut "$DESKTOP\lsFusion Web Client.lnk" "http://127.0.0.1:$clientHttpPort/$clientContext" "" "$INSTDIR\lsfusion.ico"
     ${endIf}
 
     CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Uninstall lsFusion.lnk" "$INSTDIR\uninstall.exe"
