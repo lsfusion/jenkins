@@ -45,13 +45,12 @@ RequestExecutionLevel user
 !define SERVER_LIBRARY_NAME "lsfusion-server-${LSFUSION_MAJOR_VERSION}"
 !define SERVER_JAR "server.jar"
 !define SERVER_SOURCES_JAR "server-sources.jar"
-!define CLIENT_WAR "client.war"
-
-!define SERVER_DIR "Server"
-!define CLIENT_DIR "Client"
 
 !define INSTBINDIR "$INSTDIR\install-bin"
 !define INSTCONFDIR "$INSTDIR\install-config"
+
+!define INSTCLIENTDIR "$INSTDIR\Client"
+!define INSTSERVERDIR "$INSTDIR\Server"
 
 # MUI Symbol Definitions
 !define MUI_ICON resources\lsfusion.ico
@@ -292,8 +291,8 @@ Section -post SecPost
 
     CALL createShortcuts
     
-    RMDir ${INSTBINDIR}
-    RMDir ${INSTCONFDIR}
+    RMDir /r ${INSTBINDIR}
+    RMDir /r ${INSTCONFDIR}
 SectionEnd
 
 ;Function CheckUserAdmin
@@ -345,7 +344,6 @@ FunctionEnd
 
 
 # no locals in nsis
-Var clientContextFile
 Var serverSettingsFile
 Function execAntConfiguration
 
@@ -353,7 +351,7 @@ Function execAntConfiguration
     
     ${if} ${SectionIsSelected} ${SecServer}
         DetailPrint "Configuring server"
-        StrCpy $serverSettingsFile "$INSTDIR\${SERVER_DIR}\conf\settings.properties"
+        StrCpy $serverSettingsFile "${INSTSERVERDIR}\conf\settings.properties"
         ${ConfigWriteSE} "$serverSettingsFile" "db.server=" "$pgHost:$pgPort" $R0
         ${ConfigWriteSE} "$serverSettingsFile" "db.name=" "$pgDbName" $R0
         ${ConfigWriteSE} "$serverSettingsFile" "db.user=" "$pgUser" $R0
@@ -376,19 +374,12 @@ Function execAntConfiguration
         ${if} ${SectionIsSelected} ${SecClient}
             DetailPrint "Configuring Client (Web & Desktop)"
     
-            ${if} $clientContext == ""
-                StrCpy $clientContextFile "ROOT"
-            ${else}
-                StrCpy $clientContextFile $clientContext
-            ${endIf}
-    
-            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.dir=" "$INSTDIR\${CLIENT_DIR}" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.dir=" "${INSTCLIENTDIR}" $R0
             
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.httpPort=" "$clientHttpPort" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.shutdownPort=" "$clientShutdownPort" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.ajpPort=" "$clientAjpPort" $R0
             
-            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.war=" "${CLIENT_WAR}" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.conf=" "${INSTCONFDIR}\tomcat.xml" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.context.file=" "$clientContextFile" $R0
     
@@ -433,26 +424,24 @@ Function execAntConfiguration
             ${endIf}
         ${endIf}
         
-        RMDir ${ANT_ARCHIVE} ; we don't need ant anymore
+        RMDir /r ${ANT_ARCHIVE} ; we don't need ant anymore
     ${endIf}
 FunctionEnd
 
 # no locals in nsis
-Var clientDir
 Var serverDir
 Var serviceFile
 Function createServices
     ${if} ${SectionIsSelected} ${SecClient}
-        StrCpy $clientDir "$INSTDIR\${CLIENT_DIR}"
-        StrCpy $serviceFile "$clientDir\bin\lsfusion${LSFUSION_MAJOR_VERSION}_client.exe"
+        StrCpy $serviceFile "${INSTCLIENTDIR}\bin\lsfusion${LSFUSION_MAJOR_VERSION}_client.exe"
     
         ClearErrors
         DetailPrint "Installing Client service"
         
-        Rename "$clientDir\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" $serviceFile
-        Rename "$clientDir\bin\tomcat${TOMCAT_MAJOR_VERSION}w.exe" "$clientDir\bin\lsfusion${LSFUSION_MAJOR_VERSION}_clientw.exe"
+        Rename "${INSTCLIENTDIR}\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" $serviceFile
+        Rename "${INSTCLIENTDIR}\bin\tomcat${TOMCAT_MAJOR_VERSION}w.exe" "${INSTCLIENTDIR}\bin\lsfusion${LSFUSION_MAJOR_VERSION}_clientw.exe"
         
-        nsExec::ExecToStack '"$serviceFile" //IS//$clientServiceName --DisplayName "$clientDisplayServiceName" --Description "lsFusion web server" --LogPath "$clientDir\logs" --Install "$serviceFile" --Jvm "$jvmDll" --StartPath "$clientDir" --StopPath "$clientDir"'
+        nsExec::ExecToStack '"$serviceFile" //IS//$clientServiceName --DisplayName "$clientDisplayServiceName" --Description "lsFusion web server" --LogPath "${INSTCLIENTDIR}\logs" --Install "$serviceFile" --Jvm "$jvmDll" --StartPath "${INSTCLIENTDIR}" --StopPath "${INSTCLIENTDIR}"'
         Pop $0
         Pop $1
         ${ifNot} $0 == "0"
@@ -464,8 +453,8 @@ Function createServices
             WriteRegStr HKLM "${REGKEY}" "clientServiceName" "$clientServiceName"
     
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Startup auto'
-            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Classpath "$clientDir\bin\bootstrap.jar;$clientDir\bin\tomcat-juli.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop --StartMode jvm --StopMode jvm'
-            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions "-Dcatalina.home=$clientDir#-Dcatalina.base=$clientDir#-Djava.endorsed.dirs=$clientDir\endorsed#-Djava.io.tmpdir=$clientDir\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=$clientDir\conf\logging.properties"'
+            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Classpath "${INSTCLIENTDIR}\bin\bootstrap.jar;${INSTCLIENTDIR}\bin\tomcat-juli.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop --StartMode jvm --StopMode jvm'
+            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions "-Dcatalina.home=${INSTCLIENTDIR}#-Dcatalina.base=${INSTCLIENTDIR}#-Djava.endorsed.dirs=${INSTCLIENTDIR}\endorsed#-Djava.io.tmpdir=${INSTCLIENTDIR}\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=${INSTCLIENTDIR}\conf\logging.properties"'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --StdOutput auto --StdError auto'
 
             DetailPrint "Starting $clientServiceName service"
@@ -475,13 +464,12 @@ Function createServices
 
     ${if} ${SectionIsSelected} ${SecServer}
     ${andIf} $serverCreateService == "1"
-        StrCpy $serverDir "$INSTDIR\${SERVER_DIR}"
-        StrCpy $serviceFile "$serverDir\bin\lsfusion${LSFUSION_MAJOR_VERSION}_server.exe"
+        StrCpy $serviceFile "${INSTSERVERDIR}\bin\lsfusion${LSFUSION_MAJOR_VERSION}_server.exe"
 
         ClearErrors
         DetailPrint "Installing Server service"
 
-        nsExec::ExecToStack '"$serviceFile" //IS//$serverServiceName --DisplayName "$serverDisplayServiceName" --Description "lsFusion application server" --LogPath "$serverDir\logs" --Install "$serviceFile" --Jvm "$jvmDll" --StartPath "$serverDir" --StopPath "$serverDir"'
+        nsExec::ExecToStack '"$serviceFile" //IS//$serverServiceName --DisplayName "$serverDisplayServiceName" --Description "lsFusion application server" --LogPath "${INSTSERVERDIR}\logs" --Install "$serviceFile" --Jvm "$jvmDll" --StartPath "${INSTSERVERDIR}" --StopPath "${INSTSERVERDIR}"'
         Pop $0
         Pop $1
         ${ifNot} $0 == "0"
@@ -493,7 +481,7 @@ Function createServices
             WriteRegStr HKLM "${REGKEY}" "serverServiceName" "$serverServiceName"
 
             nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --Startup auto'
-            nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --Classpath "$serverDir\${SERVER_JAR};$serverDir\lib\*;$serverDir\lib" --StartClass lsfusion.server.logics.BusinessLogicsBootstrap --StopClass lsfusion.server.logics.BusinessLogicsBootstrap --StartMethod start --StopMethod stop --StartMode jvm --StopMode jvm'
+            nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --Classpath "${INSTSERVERDIR}\${SERVER_JAR};${INSTSERVERDIR}\lib\*;${INSTSERVERDIR}\lib" --StartClass lsfusion.server.logics.BusinessLogicsBootstrap --StopClass lsfusion.server.logics.BusinessLogicsBootstrap --StartMethod start --StopMethod stop --StartMode jvm --StopMode jvm'
             nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --JvmMs=512 --JvmMx=1024'
             nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --StdOutput auto --StdError auto'
 
@@ -513,14 +501,13 @@ Function createShortcuts
     CreateDirectory "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}"
 
     ${if} ${SectionIsSelected} ${SecServer}
-        StrCpy $serverDir "$INSTDIR\${SERVER_DIR}"
         ${if} $serverCreateService == "1"
-            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server.lnk" "$serverDir\bin\lsfusion.exe" "//ES//$serverServiceName" "$INSTDIR\lsfusion.ico"
-            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Stop Server.lnk" "$serverDir\bin\lsfusion.exe" "//SS//$serverServiceName" "$INSTDIR\lsfusion.ico"
+            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server.lnk" "${INSTSERVERDIR}\bin\lsfusion.exe" "//ES//$serverServiceName" "$INSTDIR\lsfusion.ico"
+            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Stop Server.lnk" "${INSTSERVERDIR}\bin\lsfusion.exe" "//SS//$serverServiceName" "$INSTDIR\lsfusion.ico"
         ${else}
             CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server as console application.lnk" \
                             "$javaExe" \
-                            "-Xmx1200m -cp $serverDir\${SERVER_JAR};$serverDir\lib\*;$serverDir\lib lsfusion.server.logics.BusinessLogicsBootstrap" \
+                            "-Xmx1200m -cp ${INSTSERVERDIR}\${SERVER_JAR};${INSTSERVERDIR}\lib\*;${INSTSERVERDIR}\lib lsfusion.server.logics.BusinessLogicsBootstrap" \
                             "$INSTDIR\lsfusion.ico"
         ${endIf}
     ${endIf}

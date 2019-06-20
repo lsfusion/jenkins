@@ -12,8 +12,6 @@
         <replace file="${client.conf}" token="localhost" value="${server.host}" encoding="UTF-8"/>
         <replace file="${client.conf}" token="7652" value="${server.port}" encoding="UTF-8"/>
         <copy file="${client.conf}" tofile="${client.dir}/conf/catalina/localhost/${client.context.file}.xml" />
-
-        <move file="${client.dir}/${client.war}" tofile="${client.dir}/webapps/${client.context.file}.war" />
     </target>
 
     <target name="configureIdea">

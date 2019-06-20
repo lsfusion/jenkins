@@ -22,27 +22,34 @@ SectionEnd
 
 # Installer sections
 Section "${SERVER_SECTION_NAME}" SecServer
-    SetOutPath $INSTDIR\${SERVER_DIR}
+    SetOutPath ${INSTSERVERDIR}
     File /r "lib"
     File /r "conf"
 
-    ${GetDirectFile} "${DOWNLOAD_SERVER_JAR}" "$INSTDIR\${SERVER_DIR}" ${SERVER_JAR}  
-    ${GetDirectFile} "${DOWNLOAD_SERVER_SOURCES_JAR}" "$INSTDIR\${SERVER_DIR}" ${SERVER_SOURCES_JAR}  
+    ${GetDirectFile} "${DOWNLOAD_SERVER_JAR}" "${INSTSERVERDIR}" ${SERVER_JAR}  
+    ${GetDirectFile} "${DOWNLOAD_SERVER_SOURCES_JAR}" "${INSTSERVERDIR}" ${SERVER_SOURCES_JAR}  
     
-    SetOutPath $INSTDIR\${SERVER_DIR}\bin
+    SetOutPath ${INSTSERVERDIR}\bin
     File /oname=$serverServiceName.exe bin\lsfusion${ARCH}.exe
     File /oname=$serverServiceNamew.exe bin\lsfusionw.exe
 
     WriteRegStr HKLM "${REGKEY}\Components" "${SERVER_SECTION_NAME}" 1
 SectionEnd
 
+Var clientContextFile
 Section "${CLIENT_SECTION_NAME}" SecClient
 
     ${RunLinkFile} ${TOMCAT_ARCHIVE} "zip" "Tomcat" "$INSTDIR" ; because in current installation tomcat is inside folder with name apache-tomcat-{VERSION}
-    Rename "$INSTDIR\apache-tomcat-${TOMCAT_VERSION}" "$INSTDIR\${CLIENT_DIR}" 
+    Rename "$INSTDIR\apache-tomcat-${TOMCAT_VERSION}" ${INSTCLIENTDIR}
     
-    ; will be moved later by ant to the webapps
-    ${GetDirectFile} "${DOWNLOAD_CLIENT_WAR}" "$INSTDIR\${CLIENT_DIR}" ${CLIENT_WAR}   
+    ${if} $clientContext == ""
+        StrCpy $clientContextFile "ROOT"
+    ${else}
+        StrCpy $clientContextFile $clientContext
+    ${endIf}
+
+    RMDir /r "${INSTCLIENTDIR}\webapps" ; will be recreated in next command 
+    ${GetDirectFile} "${DOWNLOAD_CLIENT_WAR}" "${INSTCLIENTDIR}\webapps" "$clientContextFile.war"   
 
     WriteRegStr HKLM "${REGKEY}\Components" "${CLIENT_SECTION_NAME}" 1
 SectionEnd
