@@ -70,7 +70,8 @@ Section "${IDEA_SECTION_NAME}" SecIdea
     WriteRegStr HKLM "${REGKEY}\Components" "${IDEA_SECTION_NAME}" 1
     WriteRegStr HKLM "${REGKEY}" "ideaInstallDir" "$ideaDir"
 
-    ${RunLinkFile} ${IDEA_PLUGIN} "zip" "lsFusion Idea Plugin" "$ideaDir/plugins" 
+    SetOutPath "${IDEA_CONFIG_DIR}\plugins" ; to create dir
+    ${RunLinkFile} ${IDEA_PLUGIN} "zip" "lsFusion Idea Plugin" "${IDEA_CONFIG_DIR}\plugins" ; putting in $ideaDir/plugins will make plugin bundled and not updatable 
 SectionEnd
 
 Section "${JASPER_SECTION_NAME}" SecJasper

@@ -11,6 +11,7 @@ Function javaConfigPagePre
     ${IfNot} ${SectionIsSelected} ${SecServer}
     ${andIfNot} ${SectionIsSelected} ${SecClient}
     ${andIfNot} ${SectionIsSelected} ${SecDesktopClient}
+    ${andIfNot} ${SectionIsSelected} ${SecIdea} ; we need it for ant + configuring SDK's
         Abort
     ${endIf}
 

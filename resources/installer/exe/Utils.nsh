@@ -81,12 +81,8 @@
 !macroend
 !define SFile "!insertmacro _LS_File" 
 
-!macro _LS_DownloadFileAnyWay SRC DEST RESUME
-    ${if} ${RESUME} == 1
-        inetc::get /RESUME ${SRC} ${DEST} /END
-    ${elseIf}
-        inetc::get ${SRC} ${DEST} /END
-    ${endIf}
+!macro _LS_DownloadFileAnyWay SRC DEST
+    inetc::get ${SRC} ${DEST} /END
     Pop $0
     ${ifNot} $0 == "OK"
 ;        DetailPrint "Trying without current proxy..."
@@ -103,16 +99,16 @@
 !macro _LS_DownloadFile SRC LINK DEST
     ${if} ${LINK} == 1
         DetailPrint "Downloading link from ${SRC}"
-        ${DownloadFileAnyWay} ${SRC} OutFile 0
+        ${DownloadFileAnyWay} ${SRC} OutFile
         FileOpen $4 OutFile r ;read url from downloaded link
         FileRead $4 $1 ; we read until the end of line (including carriage return and new line) and save it to $1
         FileClose $4 ; and close the file
         Delete OutFile ; delete temp link file
         DetailPrint "Downloading file from $1"
-        ${DownloadFileAnyWay} $1 ${DEST} 1
+        ${DownloadFileAnyWay} $1 ${DEST}
     ${else}
         DetailPrint "Downloading file from ${SRC}"
-        ${DownloadFileAnyWay} ${SRC} ${DEST} 1 ;download link
+        ${DownloadFileAnyWay} ${SRC} ${DEST} ;download link
     ${endIf}
 !macroend
 !define DownloadFile "!insertmacro _LS_DownloadFile" 

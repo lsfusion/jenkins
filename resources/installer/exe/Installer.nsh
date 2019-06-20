@@ -79,6 +79,7 @@ Var pgDir
 Var pgServiceName
 
 Var ideaDir
+!define IDEA_CONFIG_DIR "$PROFILE\.IdeaIC${IDEA_MAJORVERSION}\config"
 
 Var jasperDir
 
@@ -400,7 +401,7 @@ Function execAntConfiguration
 
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.majorversion=" "${IDEA_MAJORVERSION}" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.dir=" "$ideaDir" $R0
-            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.plugin=" "${IDEA_PLUGIN}" $R0
+            ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "idea.conf.dir=" "${IDEA_CONFIG_DIR}" $R0
             
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.host=" "$pgHost" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.port=" "$pgPort" $R0
