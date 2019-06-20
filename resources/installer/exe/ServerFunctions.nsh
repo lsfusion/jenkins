@@ -30,7 +30,7 @@ Function serverConfigPagePre
     ${if} ${SectionIsSelected} ${SecServer}
         ${LS_CreatePassword} "$(strPasswordRetype)" $serverPassword $tfServerPassword2
 
-        ${LS_CreateCheckBox} "$(strCreateService)" $cbServerCreateService
+        ${LS_CreateCheckBox} "$(strServerCreateService)" $cbServerCreateService
         ${NSD_SetState} $cbServerCreateService $serverCreateService
     ${endIf}
 

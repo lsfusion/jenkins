@@ -86,7 +86,7 @@ SectionEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${SecPG} $(strPgSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecJava} $(strJavaSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(strServerSectionDescription)
-!insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(strWebClientSectionDescription)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(strClientSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecDesktopClient} $(strDesktopClientSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecIdea} $(strIdeaSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecJasper} $(strJasperSectionDescription)

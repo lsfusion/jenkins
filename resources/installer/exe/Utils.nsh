@@ -99,11 +99,11 @@
 !macro _LS_DownloadFile SRC LINK DEST
     ${if} ${LINK} == 1
         DetailPrint "Downloading link from ${SRC}"
-        ${DownloadFileAnyWay} ${SRC} OutFile
-        FileOpen $4 OutFile r ;read url from downloaded link
+        ${DownloadFileAnyWay} ${SRC} filelink
+        FileOpen $4 filelink r ;read url from downloaded link
         FileRead $4 $1 ; we read until the end of line (including carriage return and new line) and save it to $1
         FileClose $4 ; and close the file
-        Delete OutFile ; delete temp link file
+        Delete filelink ; delete temp link file
         DetailPrint "Downloading file from $1"
         ${DownloadFileAnyWay} $1 ${DEST}
     ${else}

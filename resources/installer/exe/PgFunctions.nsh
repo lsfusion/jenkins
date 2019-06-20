@@ -5,7 +5,6 @@ Var tfPgUser
 Var tfPgPassword1
 Var tfPgPassword2
 Var tfPgDbName
-Var tfPgServiceName
 
 Function pgConfigPagePre
 ;   if we're not installing server or idea we don't need pg config 
@@ -46,10 +45,6 @@ Function pgConfigPagePre
 
     ${LS_CreateText} $(strDbName) $pgDbName $tfPgDbName
 
-    ${if} ${SectionIsSelected} ${SecPG}
-        ${LS_CreateText} $(strServiceName) $pgServiceName $tfPgServiceName
-    ${endIf}
-
     nsDialogs::Show
 
 FunctionEnd
@@ -62,7 +57,6 @@ Function pgConfigPageLeave
     
     ${if} ${SectionIsSelected} ${SecPG}
         ${NSD_GetText} $tfPgPassword2 $4
-        ${NSD_GetText} $tfPgServiceName $5
     ${else}
         ${NSD_GetText} $tfPgHost $6
         ${NSD_GetText} $tfPgUser $7
@@ -91,14 +85,6 @@ Function pgConfigPageLeave
             MessageBox MB_OK|MB_ICONEXCLAMATION $(strPasswordTooShort)
             Abort
         ${endif}
-
-        Push $5
-        Call validateServiceName
-        ${if} $0 == "0"
-            MessageBox MB_ICONEXCLAMATION|MB_OK $(strInvalidServiceName)
-            Abort
-        ${endIf}
-        StrCpy $pgServiceName $5
     ${else}
         Push $6
         Call validateNameString
