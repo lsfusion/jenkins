@@ -42,8 +42,8 @@ RequestExecutionLevel user
 !define JASPER_SECTION_NAME "Reports IDE" ; "Jaspersoft Studio ${JASPER_VERSION}"
 
 !define CLIENT_JAR "client.jar"
+!define SERVER_LIBRARY_NAME "lsfusion-server-${LSFUSION_MAJOR_VERSION}"
 !define SERVER_JAR "server.jar"
-!define SERVER_LIBRARY_NAME "server"
 !define SERVER_SOURCES_JAR "server-sources.jar"
 !define CLIENT_WAR "client.war"
 
