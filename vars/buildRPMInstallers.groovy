@@ -3,6 +3,7 @@ def call(int majorVersion, String platformVersion) {
     
     buildServerInstaller(majorVersion, platformVersion)
     buildClientInstaller(majorVersion, platformVersion)
+    generateScripts(majorVersion)
 
     dir(Paths.rpm) {
         sh 'createrepo --update yum'
@@ -85,5 +86,18 @@ expect eof'''
             
             sh "cp -fa RPMS/noarch/* ${Paths.rpm}/yum/"
         }
+    }
+}
+
+def generateScripts(int majorVersion) {
+    def templatesDir = getResourcesDir() + '/installer/yum/scripts'
+    def serverName = "lsfusion$majorVersion-server"
+    def clientName = "lsfusion$majorVersion-client"
+    
+    dir(Paths.rpm) {
+        sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion > yum/install-lsfusion$majorVersion"
+        sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion-client > yum/install-$clientName"
+        sh "cp -fa $templatesDir/install-lsfusion-db yum/install-lsfusion$majorVersion-db"
+        sh "sed 's/<lsfusion-server>/$serverName/g' $templatesDir/install-lsfusion-server > yum/install-$serverName"
     }
 }

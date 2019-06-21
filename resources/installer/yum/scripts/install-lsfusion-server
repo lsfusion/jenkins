@@ -1,0 +1,16 @@
+yum install -y yum-utils
+
+# Install lsFusion repo
+yum-config-manager --add-repo https://download.lsfusion.org/yum
+
+# Import lsFusion GPG Key
+rpm --import https://download.lsfusion.org/yum/GPG-KEY-lsfusion
+
+# Install lsFusion server
+yum install -y <lsfusion-server>
+
+# Autostart lsFusion server
+systemctl enable <lsfusion-server>
+
+# Run lsFusion server
+systemctl start <lsfusion-server>
