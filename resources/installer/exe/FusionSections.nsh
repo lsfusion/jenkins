@@ -48,7 +48,7 @@ Section "${CLIENT_SECTION_NAME}" SecClient
         StrCpy $clientContextFile $clientContext
     ${endIf}
 
-    RMDir /r "${INSTCLIENTDIR}\webapps" ; will be recreated in next command 
+    ${RMDir_Silent} "${INSTCLIENTDIR}\webapps" ; will be recreated in next command 
     ${GetDirectFile} "${DOWNLOAD_CLIENT_WAR}" "${INSTCLIENTDIR}\webapps" "$clientContextFile.war"   
 
     WriteRegStr HKLM "${REGKEY}\Components" "${CLIENT_SECTION_NAME}" 1
@@ -60,12 +60,19 @@ Section "${DESKTOP_CLIENT_SECTION_NAME}" SecDesktopClient
     WriteRegStr HKLM "${REGKEY}\Components" "${DESKTOP_CLIENT_SECTION_NAME}" 1
 SectionEnd
 
+Var ideaConfigFile
 Section "${IDEA_SECTION_NAME}" SecIdea
 
     SetOutPath ${INSTCONFDIR}
-    File "install-config\silent.config"
+    File install-config\silent.config
 
-    ${RunLinkFile} ${IDEA_INSTALLER} "exe" "IntelliJ Idea" '/S /CONFIG="${INSTCONFDIR}\silent.config" /D=$ideaDir' ; no quotes in ideaDir, otherwise doesn't work 
+    StrCpy $ideaConfigFile "${INSTCONFDIR}\silent.config"
+    ${ConfigWriteSE} "$ideaConfigFile" "launcher${ARCH}=" "1" $R0
+    ${ConfigWriteSE} "$ideaConfigFile" "jre${ARCH}=" "1" $R0
+
+    ${RunLinkFile} ${IDEA_INSTALLER} "exe" "IntelliJ Idea" '/S /CONFIG="$ideaConfigFile" /D=$ideaDir' ; no quotes in ideaDir, otherwise doesn't work
+
+    Delete "$ideaConfigFile"
     
     WriteRegStr HKLM "${REGKEY}\Components" "${IDEA_SECTION_NAME}" 1
     WriteRegStr HKLM "${REGKEY}" "ideaInstallDir" "$ideaDir"

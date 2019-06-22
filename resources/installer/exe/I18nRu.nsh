@@ -51,7 +51,7 @@ LangString strServerOptions ${LANG_RUSSIAN} "Настройки установк
 LangString strServerHost ${LANG_RUSSIAN} "Хост"
 LangString strServerPort ${LANG_RUSSIAN} "Порт"
 LangString strServerPasswordMessage ${LANG_RUSSIAN} "Введите пароль администратора:"
-LangString strServerCreateService ${LANG_RUSSIAN} "Создать сервис"
+LangString strServerCreateService ${LANG_RUSSIAN} "Создать службу"
 LangString strShortcutsForAllUsers ${LANG_RUSSIAN} "Создавать ярлыки для всех пользователей"
 LangString strClientContextMessage ${LANG_RUSSIAN} "* Например, для значения x приложение будет доступно по адресу http://localhost/x"
 LangString strClientContext ${LANG_RUSSIAN} "Веб-контекст*"

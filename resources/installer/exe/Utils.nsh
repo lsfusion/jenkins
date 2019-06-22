@@ -171,6 +171,14 @@ Var isZip
 !macroend
 !define RunDirectFile "!insertmacro _Run_Direct_File" 
 
+!macro _RMDir_Silent DIR
+    DetailPrint "Deleting ${DIR}"
+    SetDetailsPrint none
+    RMDir /r "${DIR}" ; will be recreated in next command 
+    SetDetailsPrint both
+!macroend
+!define RMDir_Silent "!insertmacro _RMDir_Silent" 
+
 !macro DisableSection SEC
   !insertmacro UnselectSection ${SEC}
   !insertmacro SetSectionFlag ${SEC} ${SF_RO}

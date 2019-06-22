@@ -42,7 +42,7 @@ RequestExecutionLevel user
 !define JASPER_SECTION_NAME "Reports IDE" ; "Jaspersoft Studio ${JASPER_VERSION}"
 
 !define CLIENT_JAR "client.jar"
-!define SERVER_LIBRARY_NAME "lsfusion-server-${LSFUSION_MAJOR_VERSION}"
+!define SERVER_LIBRARY_NAME "lsfusion-${LSFUSION_MAJOR_VERSION}"
 !define SERVER_JAR "server.jar"
 !define SERVER_SOURCES_JAR "server-sources.jar"
 
@@ -292,8 +292,8 @@ Section -post SecPost
 
     CALL createShortcuts
     
-    RMDir /r ${INSTBINDIR}
-    RMDir /r ${INSTCONFDIR}
+    RMDir ${INSTBINDIR}
+    RMDir ${INSTCONFDIR}
 SectionEnd
 
 ;Function CheckUserAdmin
@@ -346,6 +346,7 @@ FunctionEnd
 
 # no locals in nsis
 Var serverSettingsFile
+Var antArchive
 Function execAntConfiguration
 
     DetailPrint "Configuring lsFusion"
@@ -368,12 +369,17 @@ Function execAntConfiguration
         ${RunLinkFile} ${ANT_ARCHIVE} "zip" "Ant" "${INSTBINDIR}" ; assuming that will unzip to ANT_ARCHIVE dir    
     
         SetOutPath ${INSTCONFDIR}
-        File "install-config\*.*"
+        File install-config\configure.bat
+        File install-config\configure.xml
+        File install-config\configure.properties
     
         ${ConfigWriteS} "${INSTCONFDIR}\configure.bat" "set JAVA_HOME=" "$javaHome" $R0
+        StrCpy $antArchive ${INSTBINDIR}\${ANT_ARCHIVE}
     
         ${if} ${SectionIsSelected} ${SecClient}
             DetailPrint "Configuring Client (Web & Desktop)"
+            
+            File install-config\tomcat.xml
     
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "client.dir=" "${INSTCLIENTDIR}" $R0
             
@@ -386,14 +392,18 @@ Function execAntConfiguration
     
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.host=" "$serverHost" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.port=" "$serverPort" $R0
-            nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" ${ANT_ARCHIVE} configureClient'
-            Pop $0
-    
+            nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" "$antArchive" configureClient'
+            Pop $0    
             DetailPrint "Ant returned $0"
+            
+            Delete tomcat.xml
         ${endIf}
     
         ${if} ${SectionIsSelected} ${SecIdea}
             DetailPrint "Configuring Intellij IDEA"
+
+            File install-config\jdk.table.xml
+            File install-config\options.xml
             
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.home=" "$javaHome" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "jdk.majorversion=" "${JDK_MAJORVERSION}" $R0
@@ -408,29 +418,40 @@ Function execAntConfiguration
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.user=" "$pgUser" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "db.pass=" "$pgPassword" $R0
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "admin.pass=" "$serverPassword" $R0
-            nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" ${ANT_ARCHIVE} configureIdea'
+            nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" "$antArchive" configureIdea'
             Pop $0
             DetailPrint "Ant returned $0"
+
+            Delete jdk.table.xml
+            Delete options.xml
 
             ${if} ${SectionIsSelected} ${SecServer}
                 DetailPrint "Configuring Intellij IDEA lsFusion Server Library"
 
-                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "lsfusion.library.name=" "${SERVER_LIBRARY_NAME}" $R0
-                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.archive=" "$INSTDIR\${SERVER_JAR}" $R0
-                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.sources=" "$INSTDIR\${SERVER_SOURCES_JAR}" $R0
+                File install-config\applicationLibraries.xml
 
-                nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" ${ANT_ARCHIVE} configureIdeaServer'
+                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "lsfusion.library.name=" "${SERVER_LIBRARY_NAME}" $R0
+                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.archive=" "${INSTSERVERDIR}\${SERVER_JAR}" $R0
+                ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.sources=" "${INSTSERVERDIR}\${SERVER_SOURCES_JAR}" $R0
+
+                nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" "$antArchive" configureIdeaServer'
                 Pop $0
                 DetailPrint "Ant returned $0"
+
+                Delete applicationLibraries.xml
             ${endIf}
         ${endIf}
+
+        Delete configure.bat
+        Delete configure.xml
+        Delete configure.properties
+        Delete configure.log
         
-        RMDir /r ${ANT_ARCHIVE} ; we don't need ant anymore
+        ${RMDir_Silent} $antArchive ; we don't need ant anymore
     ${endIf}
 FunctionEnd
 
 # no locals in nsis
-Var serverDir
 Var serviceFile
 Function createServices
     ${if} ${SectionIsSelected} ${SecClient}
@@ -501,20 +522,8 @@ Function createShortcuts
     
     CreateDirectory "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}"
 
-    ${if} ${SectionIsSelected} ${SecServer}
-        ${if} $serverCreateService == "1"
-            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server.lnk" "${INSTSERVERDIR}\bin\lsfusion.exe" "//ES//$serverServiceName" "$INSTDIR\lsfusion.ico"
-            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Stop Server.lnk" "${INSTSERVERDIR}\bin\lsfusion.exe" "//SS//$serverServiceName" "$INSTDIR\lsfusion.ico"
-        ${else}
-            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server as console application.lnk" \
-                            "$javaExe" \
-                            "-Xmx1200m -cp ${INSTSERVERDIR}\${SERVER_JAR};${INSTSERVERDIR}\lib\*;${INSTSERVERDIR}\lib lsfusion.server.logics.BusinessLogicsBootstrap" \
-                            "$INSTDIR\lsfusion.ico"
-        ${endIf}
-    ${endIf}
-
     ${if} ${SectionIsSelected} ${SecDesktopClient}
-        CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Run Desktop Client.lnk" \
+        CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Open Desktop Client.lnk" \
                         "$javaHome\bin\javaw.exe" \
                         "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$serverHost -Dlsfusion.client.hostport=$serverPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
                         "$INSTDIR\lsfusion.ico"
@@ -525,16 +534,26 @@ Function createShortcuts
     ${endIf}
 
     ${if} ${SectionIsSelected} ${SecClient}
-        CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Run Web Client.lnk" "http://127.0.0.1:$clientHttpPort/$clientContext" "" "$INSTDIR\lsfusion.ico"
+        CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Open Web Client.lnk" "http://127.0.0.1:$clientHttpPort/$clientContext" "" "$INSTDIR\lsfusion.ico"
         CreateShortCut "$DESKTOP\lsFusion Web Client.lnk" "http://127.0.0.1:$clientHttpPort/$clientContext" "" "$INSTDIR\lsfusion.ico"
     ${endIf}
 
-    CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Uninstall lsFusion.lnk" "$INSTDIR\uninstall.exe"
-    
-    ${if} ${SectionIsSelected} ${SecIdea}
-        SetOutPath "$ideaDir"
-        CreateShortCut "$SMPROGRAMS\JetBrains\IntelliJ IDEA Community Edition ${IDEA_VERSION}.lnk" "$ideaDir\bin\${IDEA_EXE}" "" "$ideaDir\bin\${IDEA_EXE}"
-        CreateShortCut "$DESKTOP\IntelliJ IDEA Community Edition ${IDEA_VERSION}.lnk" "$ideaDir\bin\${IDEA_EXE}" "" "$ideaDir\bin\${IDEA_EXE}"
+    ${if} ${SectionIsSelected} ${SecServer}
+        ${if} $serverCreateService == "1"
+            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server.lnk" "${INSTSERVERDIR}\bin\lsfusion${LSFUSION_MAJOR_VERSION}_server.exe" "//ES//$serverServiceName" "$INSTDIR\lsfusion.ico"
+            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Stop Server.lnk" "${INSTSERVERDIR}\bin\lsfusion${LSFUSION_MAJOR_VERSION}_server.exe" "//SS//$serverServiceName" "$INSTDIR\lsfusion.ico"
+        ${else}
+            CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server as console application.lnk" \
+                            "$javaExe" \
+                            "-Xmx1200m -cp ${INSTSERVERDIR}\${SERVER_JAR};${INSTSERVERDIR}\lib\*;${INSTSERVERDIR}\lib lsfusion.server.logics.BusinessLogicsBootstrap" \
+                            "$INSTDIR\lsfusion.ico"
+        ${endIf}
     ${endIf}
 
+    ${if} ${SectionIsSelected} ${SecClient}
+        CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Client.lnk" "${INSTCLIENTDIR}\bin\lsfusion${LSFUSION_MAJOR_VERSION}_client.exe" "//ES//$clientServiceName" "$INSTDIR\lsfusion.ico"
+        CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Stop Client.lnk" "${INSTCLIENTDIR}\bin\lsfusion${LSFUSION_MAJOR_VERSION}_client.exe" "//SS//$clientServiceName" "$INSTDIR\lsfusion.ico"
+    ${endIf}
+
+    CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Uninstall lsFusion.lnk" "$INSTDIR\uninstall.exe"
 FunctionEnd

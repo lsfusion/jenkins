@@ -30,8 +30,10 @@ Function serverConfigPagePre
     ${if} ${SectionIsSelected} ${SecServer}
         ${LS_CreatePassword} "$(strPasswordRetype)" $serverPassword $tfServerPassword2
 
-        ${LS_CreateCheckBox} "$(strServerCreateService)" $cbServerCreateService
-        ${NSD_SetState} $cbServerCreateService $serverCreateService
+        ${ifNot} ${SectionIsSelected} ${SecIdea}
+            ${LS_CreateCheckBox} "$(strServerCreateService)" $cbServerCreateService
+            ${NSD_SetState} $cbServerCreateService $serverCreateService
+        ${endIf}
     ${endIf}
 
     nsDialogs::Show
@@ -69,7 +71,9 @@ Function serverConfigPageLeave
             Abort
         ${endif}
     
-        ${NSD_GetState} $cbServerCreateService $serverCreateService
+        ${ifNot} ${SectionIsSelected} ${SecIdea}
+            ${NSD_GetState} $cbServerCreateService $serverCreateService
+        ${endIf}
     ${endIf}
     
     StrCpy $serverPassword $9
