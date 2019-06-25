@@ -66,7 +66,6 @@ RequestExecutionLevel user
 Var javaVersion
 Var javaDir
 Var javaHome
-Var javaExe
 Var jvmDll
 
 Var pgHost
@@ -544,7 +543,7 @@ Function createShortcuts
             CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Stop Server.lnk" "${INSTSERVERDIR}\bin\lsfusion${LSFUSION_MAJOR_VERSION}_server.exe" "//SS//$serverServiceName" "$INSTDIR\lsfusion.ico"
         ${else}
             CreateShortCut "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}\Start Server as console application.lnk" \
-                            "$javaExe" \
+                            "$javaHome\bin\java.exe" \
                             "-Xmx1200m -cp ${INSTSERVERDIR}\${SERVER_JAR};${INSTSERVERDIR}\lib\*;${INSTSERVERDIR}\lib lsfusion.server.logics.BusinessLogicsBootstrap" \
                             "$INSTDIR\lsfusion.ico"
         ${endIf}
