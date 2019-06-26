@@ -16,7 +16,7 @@ Release:    1
 License:    GNU Lesser General Public License v3.0
 Group:      Networking/Daemons
 URL:        https://lsfusion.org
-Source0:    apache-tomcat-9.0.20.tar.gz
+Source0:    apache-tomcat-9.0.21.tar.gz
 Source1:    client.war
 Source2:    lsfusion.conf
 Source3:    %{lsfusion_name}.service
@@ -30,7 +30,7 @@ BuildRoot:  %{_tmppath}/lsfusion%{lsfusion_major_version}-%{version}-%{release}-
 
 %prep
 unzip %{SOURCE1} -d client
-%setup -q -n apache-tomcat-9.0.20
+%setup -q -n apache-tomcat-9.0.21
 
 %build
 
