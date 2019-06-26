@@ -1,5 +1,5 @@
 def call(int majorVersion, String platformVersion) {
-    def downloadDir = "${Paths.download}/yum/${platformVersion}"
+    def downloadDir = "${Paths.download}/yum"
     
     buildServerInstaller(majorVersion, platformVersion)
     buildClientInstaller(majorVersion, platformVersion)
@@ -38,12 +38,14 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
             sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
             sh "mv -f SOURCES/server-$platformVersion-assembly.jar SOURCES/server.jar"
 
-            sh '''#!/usr/bin/expect
+            withCredentials([usernameColonPassword(credentialsId: 'gpg_sign_key', variable: 'PASSWORD')]) {
+                sh """#!/usr/bin/expect
 set timeout -1
 spawn bash -c {rpmbuild --buildroot `pwd`/BUILDROOT --sign SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"}
 expect -exact "Enter pass phrase: "
-send -- "f7y45cnb\r"
-expect eof'''
+send -- "${PASSWORD}\r"
+expect eof"""
+            }
             
             sh "cp -fa RPMS/noarch/* ${Paths.rpm}/yum/"
         }
@@ -77,12 +79,14 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
             sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
             sh "mv -f SOURCES/web-client-${platformVersion}.war SOURCES/client.war"
 
-            sh '''#!/usr/bin/expect
+            withCredentials([usernameColonPassword(credentialsId: 'gpg_sign_key', variable: 'PASSWORD')]) {
+                sh """#!/usr/bin/expect
 set timeout -1
 spawn bash -c {rpmbuild --buildroot `pwd`/BUILDROOT --sign SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"}
 expect -exact "Enter pass phrase: "
-send -- "f7y45cnb\r"
-expect eof'''
+send -- "${PASSWORD}\r"
+expect eof"""
+            }
             
             sh "cp -fa RPMS/noarch/* ${Paths.rpm}/yum/"
         }

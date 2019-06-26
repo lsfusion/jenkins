@@ -1,0 +1,22 @@
+# Systemd unit file for tomcat
+[Unit]
+Description=<lsfusion-description>
+After=syslog.target network.target
+
+[Service]
+Type=forking
+User=lsfusion
+Group=lsfusion
+UMask=0007
+
+Environment="CATALINA_HOME=/usr/share/<lsfusion-client>"
+EnvironmentFile=/etc/<lsfusion-client>/lsfusion.conf
+
+ExecStart=/usr/share/<lsfusion-client>/bin/startup.sh
+ExecStop=/bin/kill -15 $MAINPID
+
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

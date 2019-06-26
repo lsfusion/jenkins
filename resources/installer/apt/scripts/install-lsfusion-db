@@ -1,0 +1,13 @@
+# Install PostgreSQL repo
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+codename=`lsb_release --codename | cut -f2`
+echo deb http://apt.postgresql.org/pub/repos/apt/ $codename-pgdg main > /etc/apt/sources.list.d/postgresql.list
+apt update
+
+# Install PostgreSQL
+apt install -y postgresql-10 postgresql-client-10
+
+# Allow trust connection from localhost
+sed -i 's/md5/trust/g' /etc/postgresql/10/main/pg_hba.conf
+su - postgres -c "/usr/lib/postgresql/10/bin/pg_ctl reload -D /var/lib/postgresql/10/main"

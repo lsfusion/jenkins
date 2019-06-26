@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+# Add lsFusion user
+getent group lsfusion >/dev/null || groupadd lsfusion
+getent passwd lsfusion >/dev/null || useradd --comment "lsFusion Daemon User" -M -s /bin/nologin -g lsfusion lsfusion
+
+# Change owner
+chown -R lsfusion /var/log/<lsfusion-server>
+chown -R lsfusion /var/run/<lsfusion-server>
+
+#DEBHELPER#

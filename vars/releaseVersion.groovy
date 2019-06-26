@@ -100,7 +100,8 @@ def call(int branch) {
                                  [sourceFiles: "${tagVersion}/", remoteDirectory: "java", flatten: true], 
                                  [sourceFiles: "changelog/CHANGELOG-${tagVersion}.txt", remoteDirectory: "changelog", flatten: true], 
                                  [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true],
-                                 [sourceFiles: "yum/${tagVersion}/", remoteDirectory: "yum", removePrefix: "yum/${tagVersion}"]
+                                 [sourceFiles: "yum/", remoteDirectory: "yum", removePrefix: "yum"],
+                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"]
                          ], 
                          verbose: true]
                 ]
