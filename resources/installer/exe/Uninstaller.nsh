@@ -11,15 +11,20 @@ RequestExecutionLevel user
 !macroend
 
 # Uninstaller sections
-;Section "!un.${PLATFORM_SECTION_NAME}" UnSecPlatform
-;    SectionIn RO
-;SectionEnd
+Section /o "un.${PG_SECTION_NAME}" UnSecPG
+SectionEnd
 
 Section /o "un.${JAVA_SECTION_NAME}" UnSecJava
     SectionIn RO
 SectionEnd
 
-Section /o "un.${PG_SECTION_NAME}" UnSecPG
+Section /o "un.${SERVER_SECTION_NAME}" UnSecServer
+SectionEnd
+
+Section /o "un.${CLIENT_SECTION_NAME}" UnSecClient
+SectionEnd
+
+Section /o "un.${DESKTOP_CLIENT_SECTION_NAME}" UnSecDesktopClient
 SectionEnd
 
 Section /o "un.${IDEA_SECTION_NAME}" UnSecIdea
@@ -28,40 +33,76 @@ SectionEnd
 Section /o "un.${JASPER_SECTION_NAME}" UnSecJasper
 SectionEnd
 
+Var hasComponents
 Section -un.Uninstall
-    ; has to be first string by spec
-    Delete /REBOOTOK $INSTDIR\uninstall.exe
+    StrCpy $hasComponents 0    
+    ${if} ${SectionIsSelected} ${UnSecServer}
+        StrCpy $serverServiceName "lsfusion${LSFUSION_MAJOR_VERSION}_server"
+        StrCpy $serviceFile "${INSTSERVERDIR}\bin\$serverServiceName.exe"
 
-    ${if} ${FileExists} "$INSTDIR\bin\lsfusion.exe"
-        DetailPrint "Removing lsFusion Server service"
-        ReadRegStr $0 HKLM "${REGKEY}" "serverServiceName"
-        ${ifNot} ${Errors}
-        ${andIfNot} $0 == ""
-            nsExec::ExecToLog '"$INSTDIR\bin\lsfusion.exe" //DS//$0'
+        ${if} ${FileExists} "$serviceFile" ; checking if service was created
+            DetailPrint "Removing lsFusion Server service"
+            nsExec::ExecToLog '"$serviceFile" //DS//$serverServiceName'
+
+            DetailPrint "Removing lsFusion Server shortcuts"
+            Delete "$SMPROGRAMS\${LSFUSION_NAME}\Start Server.lnk"
+            Delete "$SMPROGRAMS\${LSFUSION_NAME}\Stop Server.lnk"
         ${else}
-            DetailPrint "Can't find lsFusion Server service information in registry"
-        ${endIf}
-    ${endIf}
-
-
-    ReadRegStr $0 HKLM "${REGKEY}" "tomcatInstallDir"
-    ${ifNot} ${Errors}
-    ${andIfNot} $0 == ""
-        DetailPrint "Removing Apache Tomcat"
+            DetailPrint "Removing lsFusion Server shortcuts"
+            Delete "$SMPROGRAMS\${LSFUSION_NAME}\Start Server as console application.lnk"
+        ${endIf}            
         
-        DetailPrint "Removing tomcat service"
-        ReadRegStr $1 HKLM "${REGKEY}" "clientServiceName"
-        ${ifNot} ${Errors}
-        ${andIfNot} $1 == ""
-            nsExec::ExecToLog '"$0\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" //DS//$1'
-        ${else}
-            DetailPrint "Can't find Apache Tomcat service information in registry"
+        DetailPrint "Removing lsFusion Server directory"
+        ${RMDir_Silent} ${INSTSERVERDIR}
+        
+        WriteRegStr HKLM "${REGKEY}\Components" "${SERVER_SECTION_NAME}" ""
+    ${else}
+        SectionGetText ${UnSecServer} $0
+        ${ifNot} $0 == "" ; if not hidden and not uninstalled 
+            StrCpy $hasComponents 1
         ${endIf}
-
-        DetailPrint "Removing tomcat directory"
-        RMDir /r $0
     ${endIf}
-    
+
+    ${if} ${SectionIsSelected} ${UnSecClient}
+        StrCpy $clientServiceName "lsfusion${LSFUSION_MAJOR_VERSION}_client"
+        StrCpy $serviceFile "${INSTCLIENTDIR}\bin\$clientServiceName.exe"
+
+        DetailPrint "Removing lsFusion Client service"
+        nsExec::ExecToLog '"$serviceFile" //DS//$clientServiceName'
+
+        DetailPrint "Removing lsFusion Client shortcuts"
+        Delete "$SMPROGRAMS\${LSFUSION_NAME}\Open Web Client.lnk"
+        Delete "$SMPROGRAMS\${LSFUSION_NAME}\Start Client.lnk"
+        Delete "$SMPROGRAMS\${LSFUSION_NAME}\Stop Client.lnk"        
+        Delete "$DESKTOP\lsFusion Web Client.lnk"
+
+        DetailPrint "Removing lsFusion Client directory"
+        ${RMDir_Silent} ${INSTCLIENTDIR}
+         
+        WriteRegStr HKLM "${REGKEY}\Components" "${CLIENT_SECTION_NAME}" ""
+    ${else}
+        SectionGetText ${UnSecClient} $0
+        ${ifNot} $0 == "" ; if not hidden and not uninstalled 
+            StrCpy $hasComponents 1
+        ${endIf}
+    ${endIf}
+
+    ${if} ${SectionIsSelected} ${UnSecDesktopClient}
+        DetailPrint "Removing lsFusion Desktop Client shortcuts"
+        Delete "$SMPROGRAMS\${LSFUSION_NAME}\Open Desktop Client.lnk"
+        Delete "$DESKTOP\lsFusion Desktop Client.lnk"
+
+        DetailPrint "Removing lsFusion Desktop Client file"
+        Delete "$INSTDIR\${CLIENT_JAR}"
+
+        WriteRegStr HKLM "${REGKEY}\Components" "${DESKTOP_CLIENT_SECTION_NAME}" ""
+    ${else}
+        SectionGetText ${UnSecDesktopClient} $0
+        ${ifNot} $0 == "" ; if not hidden and not uninstalled 
+            StrCpy $hasComponents 1
+        ${endIf}
+    ${endIf}
+
     ${if} ${SectionIsSelected} ${UnSecPG}
         ReadRegStr $0 HKLM "${REGKEY}" "postgreInstallDir"
         ${ifNot} ${Errors}
@@ -70,6 +111,8 @@ Section -un.Uninstall
             DetailPrint "Removing PostgreSQL"
             nsExec::ExecToLog '"$0\uninstall-postgresql.exe" --mode unattended'
         ${endIf}
+
+        WriteRegStr HKLM "${REGKEY}\Components" "${PG_SECTION_NAME}" ""
     ${endIf}
         
     ${if} ${SectionIsSelected} ${UnSecIdea}
@@ -84,6 +127,8 @@ Section -un.Uninstall
             Delete "$SMPROGRAMS\JetBrains\IntelliJ IDEA Community Edition ${IDEA_VERSION}.lnk"
             RMDir "$SMPROGRAMS\JetBrains"
         ${endIf}
+
+        WriteRegStr HKLM "${REGKEY}\Components" "${IDEA_SECTION_NAME}" ""
     ${endIf}
     
     ${if} ${SectionIsSelected} ${UnSecJasper}
@@ -95,20 +140,24 @@ Section -un.Uninstall
             DetailPrint "Removing Jaspersoft Studio"
             nsExec::ExecToLog "$0\uninst.exe /S"
         ${endIf}
+
+        WriteRegStr HKLM "${REGKEY}\Components" "${JASPER_SECTION_NAME}" ""
     ${endIf}
-        
-    DetailPrint "Cleaning registry"
-    DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
-    DeleteRegKey HKLM "${REGKEY}"
 
-    DetailPrint "Removing shortcuts"
-    Delete "$DESKTOP\lsFusion Web Client.lnk"
-    Delete "$DESKTOP\lsFusion Desktop Client.lnk"
-    RMDir /r "$SMPROGRAMS\lsFusion ${LSFUSION_MAJOR_VERSION}"
+    ${ifNot} $hasComponents == 1        
+        DetailPrint "Cleaning registry"
+        DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
+        DeleteRegKey HKLM "${REGKEY}"
 
+        DetailPrint "Removing shortcuts"
+        Delete "$SMPROGRAMS\${LSFUSION_NAME}\Uninstall.lnk"
+        ; in theory we don't need /r but just in case
+        RMDir /r /REBOOTOK "$SMPROGRAMS\${LSFUSION_NAME}"
 
-    DetailPrint "Removing program directory"
-    RmDir /r $INSTDIR
+        Delete /REBOOTOK $INSTDIR\lsfusion.ico
+        Delete /REBOOTOK $INSTDIR\uninstall.exe
+        RmDir /r /REBOOTOK $INSTDIR
+    ${endIf}
 SectionEnd
 
 # Uninstaller functions
@@ -120,16 +169,21 @@ Function un.onInit
     !insertmacro MUI_UNGETLANGUAGE
 
     !insertmacro HideUnsection "${PG_SECTION_NAME}" ${UnSecPG}
+    !insertmacro HideUnsection "${JAVA_SECTION_NAME}" ${UnSecJava}
+    !insertmacro HideUnsection "${SERVER_SECTION_NAME}" ${UnSecServer}
+    !insertmacro HideUnsection "${CLIENT_SECTION_NAME}" ${UnSecClient}
+    !insertmacro HideUnsection "${DESKTOP_CLIENT_SECTION_NAME}" ${UnSecDesktopClient}
     !insertmacro HideUnsection "${IDEA_SECTION_NAME}" ${UnSecIdea}
     !insertmacro HideUnsection "${JASPER_SECTION_NAME}" ${UnSecJasper}
-    !insertmacro HideUnsection "${JAVA_SECTION_NAME}" ${UnSecJava}
 FunctionEnd
 
 # Section Descriptions
 !insertmacro MUI_UNFUNCTION_DESCRIPTION_BEGIN
-;!insertmacro MUI_DESCRIPTION_TEXT ${UnSecPlatform} $(strPlatformUnSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${UnSecPG} $(strPgUnSectionDescription)
+!insertmacro MUI_DESCRIPTION_TEXT ${UnSecJava} $(strJavaUnSectionDescription)
+!insertmacro MUI_DESCRIPTION_TEXT ${UnSecServer} $(strServerUnSectionDescription)
+!insertmacro MUI_DESCRIPTION_TEXT ${UnSecClient} $(strClientUnSectionDescription)
+!insertmacro MUI_DESCRIPTION_TEXT ${UnSecDesktopClient} $(strDesktopClientUnSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${UnSecIdea} $(strIdeaUnSectionDescription)
 !insertmacro MUI_DESCRIPTION_TEXT ${UnSecJasper} $(strJasperUnSectionDescription)
-!insertmacro MUI_DESCRIPTION_TEXT ${UnSecJava} $(strJavaUnSectionDescription)
 !insertmacro MUI_UNFUNCTION_DESCRIPTION_END

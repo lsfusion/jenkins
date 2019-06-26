@@ -44,6 +44,10 @@ def call(int majorVersion, String platformVersion) {
         sh "chmod -x x32-dev.exe"
         sh "cp -f x32-dev.exe ${downloadDir}/lsfusion-dev-${platformVersion}.exe"
 
+        sh "wine ${makensis} Installer-x32-desktop.nsi"
+        sh "chmod -x x32-desktop.exe"
+        sh "cp -f x32-desktop.exe ${downloadDir}/lsfusion-desktop-${platformVersion}.exe"
+
         sh "wine ${makensis} Installer-x64.nsi"
         sh "chmod -x x64.exe"
         sh "cp -f x64.exe ${downloadDir}/lsfusion-${platformVersion}-x64.exe"
@@ -51,6 +55,10 @@ def call(int majorVersion, String platformVersion) {
         sh "wine ${makensis} Installer-x64-dev.nsi"
         sh "chmod -x x64-dev.exe"
         sh "cp -f x64-dev.exe ${downloadDir}/lsfusion-dev-${platformVersion}-x64.exe"
+
+        sh "wine ${makensis} Installer-x64-desktop.nsi"
+        sh "chmod -x x64-desktop.exe"
+        sh "cp -f x64-desktop.exe ${downloadDir}/lsfusion-desktop-${platformVersion}-x64.exe"
     }
 }
 

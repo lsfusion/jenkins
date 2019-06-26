@@ -9,11 +9,13 @@ LangString strDesktopClientSectionDescription ${LANG_RUSSIAN} "Десктоп к
 LangString strIdeaSectionDescription ${LANG_RUSSIAN} "Среда разработки - IntelliJ IDEA Community Edition ${IDEA_VERSION} с установленным плагином lsFusion"
 LangString strJasperSectionDescription ${LANG_RUSSIAN} "Среда разработки отчетов - Jaspersoft Studio ${JASPER_VERSION}"
 
-LangString strPlatformUnSectionDescription ${LANG_RUSSIAN} "Удалить lsFusion"
-LangString strPgUnSectionDescription ${LANG_RUSSIAN} "Удалить PostgresSQL database"
+LangString strPgUnSectionDescription ${LANG_RUSSIAN} "Удалить сервер баз данных - PostgresSQL ${PG_VERSION}"
 LangString strJavaUnSectionDescription ${LANG_RUSSIAN} "Java Development Kit ${JDK_VERSION} не может быть удалена автоматически, поэтому удалите её вручную с помощью консоли 'Удаление программ'"
-LangString strIdeaUnSectionDescription ${LANG_RUSSIAN} "Удалить IntelliJ IDEA Community Edition ${IDEA_VERSION}"
-LangString strJasperUnSectionDescription ${LANG_RUSSIAN} "Удалить Jaspersoft Studio ${JASPER_VERSION}"
+LangString strServerUnSectionDescription ${LANG_RUSSIAN} "Удалить сервер приложений - lsFusion Server ${LSFUSION_VERSION}"
+LangString strClientUnSectionDescription ${LANG_RUSSIAN} "Удалить веб сервер - lsFusion Client ${LSFUSION_VERSION}"
+LangString strDesktopClientUnSectionDescription ${LANG_RUSSIAN} "Удалить десктоп клиент - lsFusion Desktop Client ${LSFUSION_VERSION}"
+LangString strIdeaUnSectionDescription ${LANG_RUSSIAN} "Удалить среду разработки - IntelliJ IDEA Community Edition ${IDEA_VERSION} с установленным плагином lsFusion"
+LangString strJasperUnSectionDescription ${LANG_RUSSIAN} "Удалить среду разработки отчетов - Jaspersoft Studio ${JASPER_VERSION}"
 
 LangString strPostgreDirHeader ${LANG_RUSSIAN} "Выберите папку для установки PotgreSQL ${PG_MAJORVERSION}."
 LangString strPostgreDirTextTop ${LANG_RUSSIAN} "Программа установит PostgreSQL ${PG_MAJORVERSION} в указанную папку."

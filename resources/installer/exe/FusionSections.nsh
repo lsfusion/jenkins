@@ -29,9 +29,11 @@ Section "${SERVER_SECTION_NAME}" SecServer
     ${GetDirectFile} "${DOWNLOAD_SERVER_JAR}" "${INSTSERVERDIR}" ${SERVER_JAR}  
     ${GetDirectFile} "${DOWNLOAD_SERVER_SOURCES_JAR}" "${INSTSERVERDIR}" ${SERVER_SOURCES_JAR}  
     
-    SetOutPath ${INSTSERVERDIR}\bin
-    File /oname=$serverServiceName.exe bin\lsfusion${ARCH}.exe
-    File /oname=$serverServiceNamew.exe bin\lsfusionw.exe
+    ${if} $serverCreateService == "1"
+        SetOutPath ${INSTSERVERDIR}\bin
+        File /oname=$serverServiceName.exe bin\lsfusion${ARCH}.exe
+        File /oname=$serverServiceNamew.exe bin\lsfusionw.exe
+    ${endIf}
 
     WriteRegStr HKLM "${REGKEY}\Components" "${SERVER_SECTION_NAME}" 1
 SectionEnd

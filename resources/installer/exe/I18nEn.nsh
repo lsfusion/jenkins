@@ -9,11 +9,13 @@ LangString strDesktopClientSectionDescription ${LANG_ENGLISH} "Desktop Client - 
 LangString strIdeaSectionDescription ${LANG_ENGLISH} "IDE - IntelliJ IDEA Community Edition ${IDEA_VERSION} with bundled lsFusion plugin"
 LangString strJasperSectionDescription ${LANG_ENGLISH} "Reports IDE - Jaspersoft Studio ${JASPER_VERSION}"
 
-LangString strPlatformUnSectionDescription ${LANG_ENGLISH} "Uninstall lsFusion"
-LangString strPgUnSectionDescription ${LANG_ENGLISH} "Uninstall PostgresSQL database"
+LangString strPgUnSectionDescription ${LANG_ENGLISH} "Uninstall Database Server - PostgresSQL ${PG_VERSION}"
 LangString strJavaUnSectionDescription ${LANG_ENGLISH} "Java Development Kit ${JDK_VERSION} can't be uninstalled automatically, please uninstall it manually from 'Add or remove programs' console"
-LangString strIdeaUnSectionDescription ${LANG_ENGLISH} "Uninstall IntelliJ IDEA Community Edition ${IDEA_VERSION}"
-LangString strJasperUnSectionDescription ${LANG_ENGLISH} "Uninstall Jaspersoft Studio ${JASPER_VERSION}"
+LangString strServerUnSectionDescription ${LANG_ENGLISH} "Uninstall Application Server - lsFusion Server ${LSFUSION_VERSION}"
+LangString strClientUnSectionDescription ${LANG_ENGLISH} "Uninstall Web Server - lsFusion Client ${LSFUSION_VERSION} (Web & Desktop)"
+LangString strDesktopClientUnSectionDescription ${LANG_ENGLISH} "Uninstall Desktop Client - lsFusion Desktop Client ${LSFUSION_VERSION}"
+LangString strIdeaUnSectionDescription ${LANG_ENGLISH} "Uninstall IDE - IntelliJ IDEA Community Edition ${IDEA_VERSION} with bundled lsFusion plugin"
+LangString strJasperUnSectionDescription ${LANG_ENGLISH} "Uninstall Reports IDE - Jaspersoft Studio ${JASPER_VERSION}"
 
 LangString strPostgreDirHeader ${LANG_ENGLISH} "Choose the folder in which to install PostgreSQL ${PG_MAJORVERSION}."
 LangString strPostgreDirTextTop ${LANG_ENGLISH} "Setup will install PostgreSQL ${PG_MAJORVERSION} to the following folder."
