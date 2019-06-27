@@ -165,7 +165,7 @@ Page custom clientConfigPagePre clientConfigPageLeave
 # Reserved Files
 !insertmacro MUI_RESERVEFILE_LANGDLL
 ; NSIS 2 
-ReserveFile "${NSISDIR}\Plugins\x86-ansi\AdvSplash.dll"
+ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 ;ReserveFile "${NSISDIR}\Plugins\x86-unicode\AdvSplash.dll"
 
 # Installer languages
