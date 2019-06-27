@@ -76,7 +76,7 @@ def call(int branch) {
             def downloadDir = "${Paths.download}/${tagVersion}"
             sh "mkdir -p ${downloadDir}"
             sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:sources -DoutputDirectory=${downloadDir}"
+            sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly-sources -DoutputDirectory=${downloadDir}"
             sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
             sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:pack.gz:assembly -DoutputDirectory=${downloadDir}"
             sh "mvn dependency:copy -Dartifact=lsfusion.platform:web-client:${tagVersion}:war -DoutputDirectory=${downloadDir}"
@@ -84,7 +84,7 @@ def call(int branch) {
     
             dir(downloadDir) {
                 sh "mv -f server-${tagVersion}-assembly.jar lsfusion-server-${tagVersion}.jar"
-                sh "mv -f server-${tagVersion}-sources.jar lsfusion-server-${tagVersion}-sources.jar"
+                sh "mv -f server-${tagVersion}-assembly-sources.jar lsfusion-server-${tagVersion}-sources.jar"
                 sh "mv -f desktop-client-${tagVersion}-assembly.jar lsfusion-client-${tagVersion}.jar"
                 sh "mv -f desktop-client-${tagVersion}-assembly.pack.gz lsfusion-client-${tagVersion}.pack.gz"
                 sh "mv -f web-client-${tagVersion}.war lsfusion-client-${tagVersion}.war"
