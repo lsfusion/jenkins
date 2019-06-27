@@ -5,7 +5,7 @@ def call(int majorVersion, String platformVersion) {
 
     generateScripts(majorVersion)
     
-    sh 'scp -r root@116.203.185.52:/root/apt/repo/* ${Paths.download}/apt/'
+    sh "scp -r root@116.203.185.52:/root/apt/repo/* ${Paths.download}/apt/"
 }
 
 def buildServerInstaller(int majorVersion, String platformVersion) {
@@ -85,7 +85,7 @@ def generateScripts(int majorVersion) {
     dir(Paths.rpm) {
         sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion > ${Paths.download}/apt/install-lsfusion$majorVersion"
         sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion-client > ${Paths.download}/apt/install-$clientName"
-        sh "cp -fa $templatesDir/install-lsfusion-db ${Paths.apt}/install-lsfusion$majorVersion-db"
+        sh "cp -fa $templatesDir/install-lsfusion-db ${Paths.download}/apt/install-lsfusion$majorVersion-db"
         sh "sed 's/<lsfusion-server>/$serverName/g' $templatesDir/install-lsfusion-server > ${Paths.download}/apt/install-$serverName"
     }
 }
