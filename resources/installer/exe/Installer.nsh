@@ -34,7 +34,7 @@ RequestExecutionLevel user
 !define DOWNLOAD_CLIENT_JAR "${DOWNLOADURL_JAVA}/lsfusion-client-${LSFUSION_VERSION}.jar"
 !define DOWNLOAD_CLIENT_WAR "${DOWNLOADURL_JAVA}/lsfusion-client-${LSFUSION_VERSION}.war"
 
-!define PG_SECTION_NAME "DB" ; "PostgreSQL ${PG_MAJORVERSION}"
+!define PG_SECTION_NAME "Database" ; "PostgreSQL ${PG_MAJORVERSION}"
 !define JAVA_SECTION_NAME "Java" ; "JDK ${JDK_VERSION}"
 !define SERVER_SECTION_NAME "Server"
 !define CLIENT_SECTION_NAME "Client (Web & Desktop)"
