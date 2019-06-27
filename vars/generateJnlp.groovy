@@ -7,8 +7,9 @@ def call(String platformVersion) {
     sh """sed -i -e 's|\${jnlp.codebase}|http://download.lsfusion.org/${platformVersion}|' \\
 -e "s/\$\"{jnlp.url}\"/lsfusion-client-${platformVersion}.jnlp/" \\
 -e 's|\${jnlp.appName}|lsFusion|' \\
--e 's|\${jnlp.initHeapSize}|256m|' \\
--e 's|\${jnlp.maxHeapSize}|1024m|' \\
+-e 's|\${jnlp.initHeapSize}|32m|' \\
+-e 's|\${jnlp.maxHeapSize}|800m|' \\
+-e 's|\${jnlp.minHeapFreeRatio}|30|' \\
 -e 's|\${jnlp.maxHeapFreeRatio}|70|' \\
 -e 's|\${jnlp.vmargs}||' \\
 -e 's|\${jnlp.registryHost}|localhost|' \\

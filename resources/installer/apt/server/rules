@@ -1,0 +1,46 @@
+#!/usr/bin/make -f
+
+LSFUSIONNAME := <lsfusion-server>
+BUILDDIR := debian/$(LSFUSIONNAME)
+
+SHAREDIR := /usr/share
+SHAREPATH := $(SHAREDIR)/$(LSFUSIONNAME)
+SHAREBUILD := $(BUILDDIR)$(SHAREPATH)
+
+LOGDIR := /var/log
+LOGPATH := $(LOGDIR)/$(LSFUSIONNAME)
+LOGBUILD := $(BUILDDIR)$(LOGPATH)
+
+SYSCONFDIR := /etc
+SYSCONFPATH := $(SYSCONFDIR)/$(LSFUSIONNAME)
+SYSCONFBUILD := $(BUILDDIR)$(SYSCONFPATH)
+
+%:
+	dh $@
+
+override_dh_strip_nondeterminism:
+
+
+override_dh_install:
+	dh_install
+	
+	install -d -m 755 $(SHAREBUILD)
+	install    -m 644 server.jar $(SHAREBUILD)
+
+	# Put logging in /var/log and link back.
+	install -d -m 755 $(LOGBUILD)
+	ln -s $(LOGPATH) $(SHAREBUILD)/logs
+
+	# Put conf in /etc/ and link back.
+	install -d -m 755 $(SYSCONFBUILD)
+	install    -m 644 settings.properties $(SYSCONFBUILD)
+	install    -m 644 lsfusion.conf $(SYSCONFBUILD)
+	ln -s $(SYSCONFPATH) $(SHAREBUILD)/conf
+
+	# Create lib directory
+	install -d -m 755 $(BUILDDIR)/var/lib/lsfusion
+
+	# Create run directory
+	install -d -m 755 $(BUILDDIR)/var/run/$(LSFUSIONNAME)
+
+	dh_installsystemd

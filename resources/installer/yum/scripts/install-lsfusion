@@ -1,0 +1,36 @@
+yum install -y java-1.8.0-openjdk
+
+# Install PostgreSQL repo
+yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+
+# Install PostgreSQL
+yum install -y postgresql11 postgresql11-server
+
+# Initialize PostgreSQL database
+/usr/pgsql-11/bin/postgresql-11-setup initdb
+
+# Allow trust connection from localhost
+sed -i 's/ident/trust/g' /var/lib/pgsql/11/data/pg_hba.conf
+
+# Autostart PostgreSQL
+systemctl enable postgresql-11
+
+# Run PostgreSQL
+systemctl start postgresql-11
+
+# Install lsFusion repo
+yum-config-manager --add-repo https://download.lsfusion.org/yum
+
+# Import lsFusion GPG Key
+rpm --import https://download.lsfusion.org/yum/GPG-KEY-lsfusion
+
+# Install lsFusion server and client
+yum install -y <lsfusion-server> <lsfusion-client>
+
+# Autostart lsFusion server and client
+systemctl enable <lsfusion-server>
+systemctl enable <lsfusion-client>
+
+# Run lsFusion server and client
+systemctl start <lsfusion-server>
+systemctl start <lsfusion-client>

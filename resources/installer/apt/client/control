@@ -1,0 +1,9 @@
+Source: <lsfusion-client>
+Section: devel
+Priority: optional
+Maintainer: lsFusion <info@lsfusion.org>
+Build-Depends: build-essential, debhelper (>= 9)
+
+Package: <lsfusion-client>
+Architecture: all
+Description: <lsfusion-description>

@@ -1,0 +1,80 @@
+#!/usr/bin/make -f
+
+BUILDDIR := debian/<lsfusion-client>
+
+SHAREDIR := /usr/share
+SHAREPATH := $(SHAREDIR)/<lsfusion-client>
+SHAREBUILD := $(BUILDDIR)$(SHAREPATH)
+
+LOGDIR := /var/log
+LOGPATH := $(LOGDIR)/<lsfusion-client>
+LOGBUILD := $(BUILDDIR)$(LOGPATH)
+
+SYSCONFDIR := /etc
+SYSCONFPATH := $(SYSCONFDIR)/<lsfusion-client>
+SYSCONFBUILD := $(BUILDDIR)$(SYSCONFPATH)
+
+CACHEDIR := /var/cache
+CACHEPATH := $(CACHEDIR)/<lsfusion-client>
+CACHEBUILD := $(BUILDDIR)$(CACHEPATH)
+
+TOMCATVERSION := 9.0.21
+
+%:
+	dh $@
+
+override_dh_strip_nondeterminism:
+
+
+override_dh_install:
+	dh_install
+
+	# Put Tomcat
+	install -d -m 755 $(BUILDDIR)$(SHAREDIR)
+	tar -zxvf apache-tomcat-$(TOMCATVERSION).tar.gz -C $(BUILDDIR)$(SHAREDIR)
+
+	mv $(BUILDDIR)$(SHAREDIR)/apache-tomcat-$(TOMCATVERSION) $(SHAREBUILD)
+
+	# Remove all webapps. Put webapps in /var/lib and link back.
+	rm -rf $(SHAREBUILD)/webapps
+	install -d -m 755 $(SHAREBUILD)/webapps
+
+	# Put lsFusion
+	install -d -m 755 $(SHAREBUILD)/lsfusion
+	unzip client.war -d $(SHAREBUILD)/lsfusion
+
+	# Remove *.bat
+	rm -f $(SHAREBUILD)/bin/*.bat
+
+	# Put logging in /var/log and link back.
+	rm -rf $(SHAREBUILD)/logs
+	install -d -m 755 $(LOGBUILD)
+	ln -s $(LOGPATH) $(SHAREBUILD)/logs
+
+	# Put conf in /etc/ and link back.
+	install -d -m 755 $(BUILDDIR)$(SYSCONFDIR)
+	mv $(SHAREBUILD)/conf $(SYSCONFBUILD)
+	ln -s $(SYSCONFPATH) $(SHAREBUILD)/conf
+
+	# Put temp and work to /var/cache and link back.
+	install -d -m 775 $(CACHEBUILD)
+	mv $(SHAREBUILD)/temp $(CACHEBUILD)
+	mv $(SHAREBUILD)/work $(CACHEBUILD)
+	ln -s $(CACHEPATH)/temp $(SHAREBUILD)/temp
+	ln -s $(CACHEPATH)/work $(SHAREBUILD)/work
+
+	# Drop sysconfig script
+	install    -m 644 lsfusion.conf $(SYSCONFBUILD)
+
+	# Drop context xml
+	install -d -m 755 $(SYSCONFBUILD)/Catalina/localhost
+	install    -m 644 ROOT.xml $(SYSCONFBUILD)/Catalina/localhost
+
+	# Drop logrotate script
+	install -d -m 755 $(BUILDDIR)$(SYSCONFDIR)/logrotate.d
+	install    -m 644 lsfusion.logrotate $(BUILDDIR)$(SYSCONFDIR)/logrotate.d/<lsfusion-client>
+
+	# Create run directory
+	install -d -m 755 $(BUILDDIR)/var/run/<lsfusion-client>
+
+	dh_installsystemd

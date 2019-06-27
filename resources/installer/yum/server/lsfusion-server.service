@@ -1,0 +1,18 @@
+[Unit]
+Description=<lsfusion-description>
+After=network.target
+
+[Service]
+Type=simple
+User=lsfusion
+Group=lsfusion
+
+EnvironmentFile=/etc/<lsfusion-server>/lsfusion.conf
+
+WorkingDirectory=/usr/share/<lsfusion-server>
+
+ExecStart=/usr/bin/java $FUSION_OPTS -server -cp ${CLASSPATH}:server.jar lsfusion.server.logics.BusinessLogicsBootstrap
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
