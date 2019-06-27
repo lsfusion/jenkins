@@ -38,7 +38,7 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
             sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
             sh "mv -f SOURCES/server-$platformVersion-assembly.jar SOURCES/server.jar"
 
-            withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', passwordVariable: 'PASSWORD')]) {
+            withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh '''#!/usr/bin/expect
 set timeout -1
 spawn bash -c {rpmbuild --buildroot `pwd`/BUILDROOT --sign SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"}
@@ -79,7 +79,7 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
             sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
             sh "mv -f SOURCES/web-client-${platformVersion}.war SOURCES/client.war"
 
-            withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', passwordVariable: 'PASSWORD')]) {
+            withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh '''#!/usr/bin/expect
 set timeout -1
 spawn bash -c {rpmbuild --buildroot `pwd`/BUILDROOT --sign SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"}
