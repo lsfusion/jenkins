@@ -60,6 +60,8 @@ def call(int branch) {
         stage('Build installers') {
     //        steps {
             buildInstallers majorVersion, tagVersion
+            buildRPMInstallers majorVersion, tagVersion
+            buildAPTInstallers majorVersion, tagVersion
     //        }
         }
 
