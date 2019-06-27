@@ -3,6 +3,8 @@ def call(int majorVersion, String platformVersion) {
     buildClientInstaller(majorVersion, platformVersion)
     sh "ssh root@116.203.185.52 'cd /root/apt; reprepro -b repo/ includedeb all server/lsfusion$majorVersion-server_$platformVersion-1_all.deb; reprepro -b repo/ includedeb all client/lsfusion$majorVersion-client_$platformVersion-1_all.deb'"
 
+    sh "mkdir -p ${Paths.download}/apt"
+    
     generateScripts(majorVersion)
     
     sh "scp -r root@116.203.185.52:/root/apt/repo/* ${Paths.download}/apt/"
