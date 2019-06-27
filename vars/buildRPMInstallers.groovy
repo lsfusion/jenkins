@@ -39,12 +39,12 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
             sh "mv -f SOURCES/server-$platformVersion-assembly.jar SOURCES/server.jar"
 
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh '''#!/usr/bin/expect
+                sh """#!/usr/bin/expect
 set timeout -1
 spawn bash -c {rpmbuild --buildroot `pwd`/BUILDROOT --sign SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"}
 expect -exact "Enter pass phrase: "
 send -- "${PASSWORD}\r"
-expect eof'''
+expect eof"""
             }
             
             sh "cp -fa RPMS/noarch/* ${Paths.rpm}/yum/"
@@ -80,12 +80,12 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
             sh "mv -f SOURCES/web-client-${platformVersion}.war SOURCES/client.war"
 
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh '''#!/usr/bin/expect
+                sh """#!/usr/bin/expect
 set timeout -1
 spawn bash -c {rpmbuild --buildroot `pwd`/BUILDROOT --sign SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"}
 expect -exact "Enter pass phrase: "
 send -- "${PASSWORD}\r"
-expect eof'''
+expect eof"""
             }
             
             sh "cp -fa RPMS/noarch/* ${Paths.rpm}/yum/"
