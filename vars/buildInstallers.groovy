@@ -23,7 +23,7 @@ def call(int majorVersion, String platformVersion) {
     }
 
     dir(workspace) {
-        def makensis = "${installerSrc}/nsis-unicode-win-old/makensis.exe"
+        def makensis = "${installerSrc}/nsis-unicode-win/makensis.exe"
         def downloadDir = "${Paths.download}/exe/${platformVersion}"
 
         sh "echo '\n!define LSFUSION_MAJOR_VERSION ${majorVersion}' >> Versions.nsh"

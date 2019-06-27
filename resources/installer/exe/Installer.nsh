@@ -3,7 +3,7 @@
 Name ${LSFUSION_NAME}
 
 ; NSIS 2 - use another nsis version for unicode 
-;Unicode true
+Unicode true
 
 SetCompressor lzma
 
@@ -165,14 +165,14 @@ Page custom clientConfigPagePre clientConfigPageLeave
 # Reserved Files
 !insertmacro MUI_RESERVEFILE_LANGDLL
 ; NSIS 2 
-ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
-;ReserveFile "${NSISDIR}\Plugins\x86-unicode\AdvSplash.dll"
+;ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
+ReserveFile "${NSISDIR}\Plugins\x86-unicode\AdvSplash.dll"
 
 # Installer languages
 !insertmacro MUI_LANGUAGE English
-!insertmacro MUI_LANGUAGE Russian
+;!insertmacro MUI_LANGUAGE Russian
 !include I18nEn.nsh
-!include I18nRu.nsh
+;!include I18nRu.nsh
 
 LicenseLangString lsLicense ${LANG_ENGLISH} "resources\license-english.txt"
 LicenseLangString lsLicense ${LANG_RUSSIAN} "resources\license-russian.txt"
