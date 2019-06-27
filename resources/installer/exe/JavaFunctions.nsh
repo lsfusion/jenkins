@@ -40,14 +40,15 @@ Function javaConfigPageLeave
 
     ; Need path to jvm.dll to configure the service - uses $javaHome
     Call setJvmPath
+    
+    StrCpy $javaHome $0
+    StrCpy $jvmDll $2
     ${If} $jvmDll == ""
         MessageBox MB_OK|MB_ICONSTOP "$(strNoJavaError)$0"
         DetailPrint "$(strNoJavaError)$0"
         Abort
     ${EndIf}
 
-    StrCpy $javaHome $0
-    StrCpy $jvmDll "$2"
 
 FunctionEnd
 
