@@ -15,7 +15,4 @@
 
 !define ANT_VERSION 1.9.14
 
-!define LSFUSION_MAJOR_VERSION 2
-!define LSFUSION_VERSION 2.0
-!define VI_LSFUSION_VERSION 2.0.0.0
 # LSFUSION_MAJOR_VERSION, LSFUSION_VERSION and VI_LSFUSION_VERSION will be added automatically before building installers
