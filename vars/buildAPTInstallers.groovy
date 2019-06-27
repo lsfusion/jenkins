@@ -35,7 +35,7 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
 
             sh 'scp -r * root@116.203.185.52:/root/apt/server/debbuild'
             
-            withCredentials([usernameColonPassword(credentialsId: 'gpg_sign_key', variable: 'PASSWORD')]) {
+            withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh "ssh root@116.203.185.52 'export GPG_TTY=\$(tty); cd /root/apt/server/debbuild; dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --passphrase ${PASSWORD}\"'"
             }
         }
@@ -70,7 +70,7 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
 
             sh 'scp -r * root@116.203.185.52:/root/apt/client/debbuild/'
 
-            withCredentials([usernameColonPassword(credentialsId: 'gpg_sign_key', variable: 'PASSWORD')]) {
+            withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh "ssh root@116.203.185.52 'export GPG_TTY=\$(tty); cd /root/apt/client/debbuild; dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --passphrase ${PASSWORD}\"'"
             }
         }
