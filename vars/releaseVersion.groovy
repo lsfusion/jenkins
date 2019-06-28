@@ -61,7 +61,7 @@ def call(int branch) {
     //        steps {
             buildInstallers majorVersion, tagVersion
             buildRPMInstallers majorVersion, tagVersion
-//            buildAPTInstallers majorVersion, tagVersion
+            buildAPTInstallers majorVersion, tagVersion
     //        }
         }
 
@@ -103,8 +103,8 @@ def call(int branch) {
                                  [sourceFiles: "${tagVersion}/", remoteDirectory: "java", flatten: true], 
                                  [sourceFiles: "changelog/CHANGELOG-${tagVersion}.txt", remoteDirectory: "changelog", flatten: true], 
                                  [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true],
-                                 [sourceFiles: "yum/", remoteDirectory: "yum", removePrefix: "yum"]/*,
-                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"]*/
+                                 [sourceFiles: "yum/", remoteDirectory: "yum", removePrefix: "yum"],
+                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"]
                          ], 
                          verbose: true]
                 ]
@@ -120,19 +120,6 @@ def call(int branch) {
                     sh "curl -X POST 'http://jenkins.lsfusion.luxsoft.by/job/updateAssembleVersions/build' --user ${USERPASS}"
                 }
     //        }
-            }
-        }
-        
-        stage('build APT') {
-            buildAPTInstallers majorVersion, tagVersion
-            dir(Paths.download) {
-                ftpPublisher failOnError: true, publishers: [
-                        [configName: 'Download FTP server',
-                         transfers: [
-                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"]
-                         ],
-                         verbose: true]
-                ]
             }
         }
     } catch (e) {
