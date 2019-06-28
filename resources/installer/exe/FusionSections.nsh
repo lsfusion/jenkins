@@ -2,6 +2,7 @@
 ;!define SKIP_FILES 1
 
 Section "${PG_SECTION_NAME}" SecPG
+    AddSize 471818 ;directory size
     ${RunLinkFile} "${PG_INSTALLER}" "exe" "PostgreSQL" '--mode unattended --unattendedmodeui none --prefix "$pgDir" --datadir "$pgDir\data" --superpassword "$pgPassword" --serverport $pgPort --servicename "$pgServiceName"' 
     
     WriteRegStr HKLM "${REGKEY}\Components" "${PG_SECTION_NAME}" 1
@@ -9,6 +10,7 @@ Section "${PG_SECTION_NAME}" SecPG
 SectionEnd
 
 Section "${JAVA_SECTION_NAME}" SecJava
+    AddSize 206832 ;directory size
     ${RunLinkFile} ${JAVA_INSTALLER} ${JAVA_INSTALLER_EXT} "Java" '${JAVA_INSTALLER_PARAMS}' 
 
     Call initJavaFromRegistry
@@ -26,7 +28,8 @@ Section "${SERVER_SECTION_NAME}" SecServer
     File /r "lib"
     File /r "conf"
 
-    ${GetDirectFile} "${DOWNLOAD_SERVER_JAR}" "${INSTSERVERDIR}" ${SERVER_JAR}  
+    AddSize 108871 ;directory size
+    ${GetDirectFile} "${DOWNLOAD_SERVER_JAR}" "${INSTSERVERDIR}" ${SERVER_JAR}
     ${GetDirectFile} "${DOWNLOAD_SERVER_SOURCES_JAR}" "${INSTSERVERDIR}" ${SERVER_SOURCES_JAR}  
     
     ${if} $serverCreateService == "1"
@@ -40,7 +43,7 @@ SectionEnd
 
 Var clientContextFile
 Section "${CLIENT_SECTION_NAME}" SecClient
-
+    AddSize 402263 ;directory size
     ${RunLinkFile} ${TOMCAT_ARCHIVE} "zip" "Tomcat" "$INSTDIR" ; because in current installation tomcat is inside folder with name apache-tomcat-{VERSION}
     Rename "$INSTDIR\apache-tomcat-${TOMCAT_VERSION}" ${INSTCLIENTDIR}
     
@@ -64,7 +67,7 @@ SectionEnd
 
 Var ideaConfigFile
 Section "${IDEA_SECTION_NAME}" SecIdea
-
+    AddSize 1024336 ;directory size
     SetOutPath ${INSTCONFDIR}
     File install-config\silent.config
 
@@ -84,6 +87,7 @@ Section "${IDEA_SECTION_NAME}" SecIdea
 SectionEnd
 
 Section "${JASPER_SECTION_NAME}" SecJasper
+    AddSize 537122 ;directory size
     ${RunLinkFile} ${JASPER_INSTALLER} "exe" "Jaspersoft Studio" '/S /D="$jasperDir"' 
 
     WriteRegStr HKLM "${REGKEY}\Components" "${JASPER_SECTION_NAME}" 1
