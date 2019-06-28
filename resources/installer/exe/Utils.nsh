@@ -69,8 +69,10 @@
 !macroend
 
 !macro _LS_ConfigWriteSE FILE KEY VALUE RESULT
-    ${StrRep} $0 ${VALUE} '\' '\\'
-    ${ConfigWriteS} ${FILE} ${KEY} $0 ${RESULT}
+    ${If} ${VALUE} != ''
+        ${StrRep} $0 ${VALUE} '\' '\\'
+        ${ConfigWriteS} ${FILE} ${KEY} $0 ${RESULT}
+    ${EndIf}
 !macroend
 !define ConfigWriteSE "!insertmacro _LS_ConfigWriteSE"
 
