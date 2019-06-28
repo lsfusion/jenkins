@@ -75,6 +75,7 @@ def call(int branch) {
     //        steps {
             def downloadDir = "${Paths.download}/${tagVersion}"
             sh "mkdir -p ${downloadDir}"
+            sh "mkdir -p ${Paths.download}/changelog"
             sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
             sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly-sources -DoutputDirectory=${downloadDir}"
             sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
