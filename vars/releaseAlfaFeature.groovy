@@ -52,7 +52,7 @@ def call() {
                 stage('Change custom parent versions') {
         //        steps {
                     withCredentials([usernameColonPassword(credentialsId: 'jenkins_lsfusion_org', variable: 'USERPASS')]) {
-                        sh "curl -X POST 'http://jenkins.lsfusion.luxsoft.by/job/updateParentVersions/build' --user ${USERPASS}"
+                        sh "curl -X POST 'http://jenkins.lsfusion.luxsoft.by/job/updateParentVersions/build' --user ${USERPASS} -H 'Jenkins-Crumb:440561953171ba4497e4740562d172bb'"
                     }
         //        }
                 }
