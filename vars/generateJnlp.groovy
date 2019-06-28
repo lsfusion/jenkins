@@ -2,7 +2,7 @@ def call(String platformVersion) {
     def downloadDir = "${Paths.download}/${platformVersion}"
     sh "mkdir -p ${downloadDir}"
     
-    sh "cp -fa web-api/src/main/resources/client.jnlp ${downloadDir}/lsfusion-client-${platformVersion}.jnlp"
+    sh "cp -fa server/src/main/resources/client.jnlp ${downloadDir}/lsfusion-client-${platformVersion}.jnlp"
 
     sh """sed -i -e 's|\${jnlp.codebase}|http://download.lsfusion.org/${platformVersion}|' \\
 -e "s/\$\"{jnlp.url}\"/lsfusion-client-${platformVersion}.jnlp/" \\
