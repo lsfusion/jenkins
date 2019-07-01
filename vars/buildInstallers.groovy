@@ -27,7 +27,7 @@ def call(int majorVersion, String platformVersion) {
         def downloadDir = "${Paths.download}/exe/${platformVersion}"
 
         sh "echo '\n!define LSFUSION_MAJOR_VERSION ${majorVersion}' >> Versions.nsh"
-        sh "echo '\n!define LSFUSION_VERSION ${platformVersion}' >> Versions.nsh"
+        sh "echo '\n!define LSFUSION_VERSION ${platformVersion.replace('-SNAPSHOT', '')}' >> Versions.nsh"
         String viVersion = platformVersion.replace('beta', '999').replace('-SNAPSHOT', '') + '.0'
         if (!platformVersion.contains('beta')) {
             viVersion += '.0'

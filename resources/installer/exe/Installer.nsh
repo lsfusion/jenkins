@@ -1,14 +1,10 @@
-!define LSFUSION_NAME "lsFusion ${LSFUSION_MAJOR_VERSION}"
-
-Name ${LSFUSION_NAME}
+Name "lsFusion ${LSFUSION_MAJOR_VERSION}"
 
 ; NSIS 3 doesn't work under wine (can't find a lot of files)
 ; NSIS 2 - use another nsis version for unicode 
 ;Unicode true
 
 SetCompressor lzma
-
-RequestExecutionLevel user
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
@@ -39,7 +35,7 @@ RequestExecutionLevel user
 !define JAVA_SECTION_NAME "Java" ; "JDK ${JDK_VERSION}"
 !define SERVER_SECTION_NAME "Server"
 !define CLIENT_SECTION_NAME "Client (Web & Desktop)"
-!define DESKTOP_CLIENT_SECTION_NAME "Desktop Client"
+!define DESKTOP_CLIENT_SECTION_NAME "Client (Desktop)"
 !define IDEA_SECTION_NAME "IDE" ; "IntelliJ IDEA Community Edition ${IDEA_VERSION} with lsFusion plugin"
 !define JASPER_SECTION_NAME "Reports IDE" ; "Jaspersoft Studio ${JASPER_VERSION}"
 
@@ -180,6 +176,7 @@ LicenseLangString lsLicense ${LANG_RUSSIAN} "resources\license-russian.txt"
 
 # Installer attributes
 OutFile ${OUT_FILE}
+RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
 InstallDir "$ProgramFiles${ARCH}\${LSFUSION_NAME}"
 CRCCheck on
 XPStyle on
@@ -206,7 +203,7 @@ Function .onInit
     
     InitPluginsDir
     
-;    Call checkUserAdmin
+    Call checkUserAdmin
 
     Push $R1
     File /oname=$PLUGINSDIR\spltmp.bmp resources\lsfusion.bmp
@@ -294,23 +291,23 @@ Section -post SecPost
     RMDir ${INSTCONFDIR}
 SectionEnd
 
-;Function CheckUserAdmin
-;    ClearErrors
-;    UserInfo::GetName
-;    ${if} ${Errors}
-;        MessageBox MB_OK "Error! This DLL can't run under Windows 9x!"
-;        Quit
-;    ${endIf}
+Function CheckUserAdmin
+    ClearErrors
+    UserInfo::GetName
+    ${if} ${Errors}    
+        MessageBox MB_OK|MB_ICONSTOP "$(strNoWindows9x)"
+        Quit
+    ${endIf}
     
-;    Pop $0
-;    UserInfo::GetAccountType
-;    Pop $1
+    Pop $0
+    UserInfo::GetAccountType
+    Pop $1
   
-;    ${ifNot} $1 == "Admin"
-;        MessageBox MB_OK|MB_ICONSTOP "$(strUserShouldBeAdmin)"
-;        Quit
-;    ${endIf}
-;FunctionEnd
+    ${ifNot} $1 == "Admin"
+        MessageBox MB_OK|MB_ICONSTOP "$(strUserShouldBeAdmin)"
+        Quit
+    ${endIf}
+FunctionEnd
 
 Function initJavaFromRegistry
     ClearErrors

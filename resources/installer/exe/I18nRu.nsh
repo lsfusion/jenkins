@@ -1,19 +1,20 @@
 # Russian locale
 LangString strUserShouldBeAdmin ${LANG_RUSSIAN} "Инсталлятор должен быть запущен с правами администратора."
+LangString strNoWindows9x ${LANG_RUSSIAN} "Инсталлятор не работает на Windows 9x."
 
 LangString strPgSectionDescription ${LANG_RUSSIAN} "Сервер баз данных - PostgresSQL ${PG_VERSION}"
 LangString strJavaSectionDescription ${LANG_RUSSIAN} "Java Development Kit ${JDK_VERSION}"
 LangString strServerSectionDescription ${LANG_RUSSIAN} "Сервер приложений - lsFusion Server ${LSFUSION_VERSION}"
-LangString strClientSectionDescription ${LANG_RUSSIAN} "Веб сервер - lsFusion Client ${LSFUSION_VERSION}"
-LangString strDesktopClientSectionDescription ${LANG_RUSSIAN} "Десктоп клиент - lsFusion Desktop Client ${LSFUSION_VERSION}"
+LangString strClientSectionDescription ${LANG_RUSSIAN} "Веб сервер - lsFusion Client (Web & Desktop) ${LSFUSION_VERSION}"
+LangString strDesktopClientSectionDescription ${LANG_RUSSIAN} "Десктоп клиент - lsFusion Client (Desktop) ${LSFUSION_VERSION}"
 LangString strIdeaSectionDescription ${LANG_RUSSIAN} "Среда разработки - IntelliJ IDEA Community Edition ${IDEA_VERSION} с установленным плагином lsFusion"
 LangString strJasperSectionDescription ${LANG_RUSSIAN} "Среда разработки отчетов - Jaspersoft Studio ${JASPER_VERSION}"
 
 LangString strPgUnSectionDescription ${LANG_RUSSIAN} "Удалить сервер баз данных - PostgresSQL ${PG_VERSION}"
 LangString strJavaUnSectionDescription ${LANG_RUSSIAN} "Java Development Kit ${JDK_VERSION} не может быть удалена автоматически, поэтому удалите её вручную с помощью консоли 'Удаление программ'"
 LangString strServerUnSectionDescription ${LANG_RUSSIAN} "Удалить сервер приложений - lsFusion Server ${LSFUSION_VERSION}"
-LangString strClientUnSectionDescription ${LANG_RUSSIAN} "Удалить веб сервер - lsFusion Client ${LSFUSION_VERSION}"
-LangString strDesktopClientUnSectionDescription ${LANG_RUSSIAN} "Удалить десктоп клиент - lsFusion Desktop Client ${LSFUSION_VERSION}"
+LangString strClientUnSectionDescription ${LANG_RUSSIAN} "Удалить веб сервер - lsFusion Client (Web & Desktop) ${LSFUSION_VERSION}"
+LangString strDesktopClientUnSectionDescription ${LANG_RUSSIAN} "Удалить десктоп клиент - lsFusion Client (Desktop) ${LSFUSION_VERSION}"
 LangString strIdeaUnSectionDescription ${LANG_RUSSIAN} "Удалить среду разработки - IntelliJ IDEA Community Edition ${IDEA_VERSION} с установленным плагином lsFusion"
 LangString strJasperUnSectionDescription ${LANG_RUSSIAN} "Удалить среду разработки отчетов - Jaspersoft Studio ${JASPER_VERSION}"
 
