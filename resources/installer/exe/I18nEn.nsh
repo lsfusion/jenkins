@@ -1,5 +1,6 @@
 # English locale
-LangString strUserShouldBeAdmin ${LANG_ENGLISH} "Installer requres administrator permissions to run."
+LangString strUserShouldBeAdmin ${LANG_ENGLISH} "Installer requires administrator rights to run."
+LangString strNoWindows9x ${LANG_ENGLISH} "Installer can't run on Windows 9x."
 
 LangString strPgSectionDescription ${LANG_ENGLISH} "Database Server - PostgresSQL ${PG_VERSION}"
 LangString strJavaSectionDescription ${LANG_ENGLISH} "Java Development Kit ${JDK_VERSION}"

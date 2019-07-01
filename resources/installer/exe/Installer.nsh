@@ -206,7 +206,7 @@ Function .onInit
     
     InitPluginsDir
     
-;    Call checkUserAdmin
+    Call checkUserAdmin
 
     Push $R1
     File /oname=$PLUGINSDIR\spltmp.bmp resources\lsfusion.bmp
@@ -294,23 +294,23 @@ Section -post SecPost
     RMDir ${INSTCONFDIR}
 SectionEnd
 
-;Function CheckUserAdmin
-;    ClearErrors
-;    UserInfo::GetName
-;    ${if} ${Errors}
-;        MessageBox MB_OK "Error! This DLL can't run under Windows 9x!"
-;        Quit
-;    ${endIf}
+Function CheckUserAdmin
+    ClearErrors
+    UserInfo::GetName
+    ${if} ${Errors}    
+        MessageBox MB_OK|MB_ICONSTOP "$(strNoWindows9x)"
+        Quit
+    ${endIf}
     
-;    Pop $0
-;    UserInfo::GetAccountType
-;    Pop $1
+    Pop $0
+    UserInfo::GetAccountType
+    Pop $1
   
-;    ${ifNot} $1 == "Admin"
-;        MessageBox MB_OK|MB_ICONSTOP "$(strUserShouldBeAdmin)"
-;        Quit
-;    ${endIf}
-;FunctionEnd
+    ${ifNot} $1 == "Admin"
+        MessageBox MB_OK|MB_ICONSTOP "$(strUserShouldBeAdmin)"
+        Quit
+    ${endIf}
+FunctionEnd
 
 Function initJavaFromRegistry
     ClearErrors

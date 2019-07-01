@@ -1,5 +1,6 @@
 # Russian locale
 LangString strUserShouldBeAdmin ${LANG_RUSSIAN} "Инсталлятор должен быть запущен с правами администратора."
+LangString strNoWindows9x ${LANG_RUSSIAN} "Инсталлятор не работает на Windows 9x."
 
 LangString strPgSectionDescription ${LANG_RUSSIAN} "Сервер баз данных - PostgresSQL ${PG_VERSION}"
 LangString strJavaSectionDescription ${LANG_RUSSIAN} "Java Development Kit ${JDK_VERSION}"
