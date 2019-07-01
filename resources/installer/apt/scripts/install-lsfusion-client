@@ -1,3 +1,5 @@
+apt-get install -y openjdk-8-jdk
+
 # Import lsFusion GPG Key
 wget --quiet -O - https://download.lsfusion.org/apt/GPG-KEY-lsfusion | sudo apt-key add -
 
