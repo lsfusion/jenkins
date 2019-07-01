@@ -1,6 +1,4 @@
-!define LSFUSION_NAME "lsFusion ${LSFUSION_MAJOR_VERSION}"
-
-Name ${LSFUSION_NAME}
+Name "lsFusion ${LSFUSION_MAJOR_VERSION}"
 
 ; NSIS 3 doesn't work under wine (can't find a lot of files)
 ; NSIS 2 - use another nsis version for unicode 
