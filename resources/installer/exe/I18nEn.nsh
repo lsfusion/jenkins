@@ -71,7 +71,7 @@ LangString strPortMessage ${LANG_ENGLISH} "Please select the port number the ser
 LangString strPort ${LANG_ENGLISH} "Port"
 LangString strHost ${LANG_ENGLISH} "Hostname"
 LangString strUser ${LANG_ENGLISH} "Username"
-LangString strDbName ${LANG_ENGLISH} "Datbase name"
+LangString strDbName ${LANG_ENGLISH} "Database name"
 LangString strNotIdenticalPasswords ${LANG_ENGLISH} "The passwords you have entered are not identical."
 LangString strPasswordTooShort ${LANG_ENGLISH} "The password is too short (<5 characters)."
 LangString strPasswordEmpty ${LANG_ENGLISH} "Password should not be empty."
