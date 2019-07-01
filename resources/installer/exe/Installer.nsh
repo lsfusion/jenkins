@@ -1,3 +1,5 @@
+!define LSFUSION_NAME "lsFusion ${LSFUSION_MAJOR_VERSION}"
+
 Name "lsFusion ${LSFUSION_MAJOR_VERSION}"
 
 ; NSIS 3 doesn't work under wine (can't find a lot of files)
