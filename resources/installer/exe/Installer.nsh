@@ -8,7 +8,8 @@ Name ${LSFUSION_NAME}
 
 SetCompressor lzma
 
-RequestExecutionLevel user
+Outfile RequireAdmin.exe
+RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
@@ -39,7 +40,7 @@ RequestExecutionLevel user
 !define JAVA_SECTION_NAME "Java" ; "JDK ${JDK_VERSION}"
 !define SERVER_SECTION_NAME "Server"
 !define CLIENT_SECTION_NAME "Client (Web & Desktop)"
-!define DESKTOP_CLIENT_SECTION_NAME "Desktop Client"
+!define DESKTOP_CLIENT_SECTION_NAME "Client (Desktop)"
 !define IDEA_SECTION_NAME "IDE" ; "IntelliJ IDEA Community Edition ${IDEA_VERSION} with lsFusion plugin"
 !define JASPER_SECTION_NAME "Reports IDE" ; "Jaspersoft Studio ${JASPER_VERSION}"
 
