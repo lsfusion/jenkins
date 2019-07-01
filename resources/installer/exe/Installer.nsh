@@ -8,9 +8,6 @@ Name ${LSFUSION_NAME}
 
 SetCompressor lzma
 
-Outfile RequireAdmin.exe
-RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
-
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
 !define VERSION ${LSFUSION_VERSION}
@@ -181,6 +178,7 @@ LicenseLangString lsLicense ${LANG_RUSSIAN} "resources\license-russian.txt"
 
 # Installer attributes
 OutFile ${OUT_FILE}
+RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
 InstallDir "$ProgramFiles${ARCH}\${LSFUSION_NAME}"
 CRCCheck on
 XPStyle on
