@@ -12,8 +12,8 @@ def call(String platformVersion) {
 -e 's|\${jnlp.minHeapFreeRatio}|30|' \\
 -e 's|\${jnlp.maxHeapFreeRatio}|70|' \\
 -e 's|\${jnlp.vmargs}||' \\
--e 's|\${jnlp.registryHost}|localhost|' \\
--e 's|\${jnlp.registryPort}|7652|' \\
+-e 's|\${jnlp.host}|localhost|' \\
+-e 's|\${jnlp.port}|7652|' \\
 -e 's|\${jnlp.exportName}|default|' \\
 -e 's|\${jnlp.singleInstance}|false|' \\
 -e "s|lsfusion-client.jar|lsfusion-client-${platformVersion}.jar|" ${downloadDir}/lsfusion-client-${platformVersion}.jnlp"""
