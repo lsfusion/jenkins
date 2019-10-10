@@ -9,7 +9,7 @@ def call(int majorVersion, String platformVersion) {
         sh 'createrepo --update yum'
 
         sh "mkdir -p ${downloadDir}"
-        sh "cp -fa yum/* ${downloadDir}/"
+//        sh "cp -fa yum/* ${downloadDir}/"
     }
 }
 

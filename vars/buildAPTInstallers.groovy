@@ -7,7 +7,7 @@ def call(int majorVersion, String platformVersion) {
     
     generateScripts(majorVersion)
     
-    sh "scp -r root@116.203.185.52:/root/apt/repo/* ${Paths.download}/apt/"
+//    sh "scp -r root@116.203.185.52:/root/apt/repo/* ${Paths.download}/apt/"
 }
 
 def buildServerInstaller(int majorVersion, String platformVersion) {
