@@ -14,4 +14,7 @@ class Paths {
     static String slackChannel = "#jenkinstest"
     
     static String githubCredentials = "1237e973-dddd-450b-b46d-6b8ef824a1c3"
+    
+    static String updateAssembleVersionsJob = 'updateAssembleVersions'
+    static String updateParentVersionsJob = 'updateParentVersions'
 }
