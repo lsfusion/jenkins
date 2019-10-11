@@ -14,7 +14,7 @@ def call() {
             sh "cp -f lsfusion-idea-plugin.zip ${Paths.jenkinsHome}/installer-src/"
 
             withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
-                sh "curl -i --header 'Authorization: Bearer perm:${token}' -F pluginId=7601 -F file=@lsfusion-idea-plugin.zip https://plugins.jetbrains.com/plugin/uploadPlugin"
+                sh "curl -i --header 'Authorization: Bearer ${token}' -F pluginId=7601 -F file=@lsfusion-idea-plugin.zip https://plugins.jetbrains.com/plugin/uploadPlugin"
             }
 
             slack.message "Plugin v.${getPluginVersion()} was built successfully.\n```${getReleaseNotes()}```"
