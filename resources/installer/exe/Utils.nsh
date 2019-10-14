@@ -84,7 +84,7 @@
 !define SFile "!insertmacro _LS_File" 
 
 !macro _LS_DownloadFileAnyWay SRC DEST
-    inetc::get /POPUP /PROXY /TOSTACK ${SRC} ${DEST} /END
+    inetc::get ${SRC} ${DEST} /END
     Pop $0
     ${ifNot} $0 == "OK"
 ;        DetailPrint "Trying without current proxy..."
