@@ -14,20 +14,20 @@ def call(int branch) {
 //        }
         }
 
-//        stage('Update') {
-////        steps {
-//            update "v$branch"
-////        }
+        stage('Update') {
+//        steps {
+            update "v$branch"
 //        }
-//
-//        stage('Generate changelog') {
-////                steps {
-////                    dir(Paths.src) {
-//            changeLog = generateChangeLog(tagVersion)
-//            sh "mvn scm:checkin -Dmessage=\"Generated change log\""
-////                    }
-////                }
-//        }
+        }
+
+        stage('Generate changelog') {
+//                steps {
+//                    dir(Paths.src) {
+            changeLog = generateChangeLog(tagVersion)
+            sh "mvn scm:checkin -Dmessage=\"Generated change log\""
+//                    }
+//                }
+        }
 
         stage('Release branch') {
 //        steps {
