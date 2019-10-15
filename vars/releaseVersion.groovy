@@ -6,14 +6,14 @@ def call(int branch) {
     String changeLog = null
 
     try {
-//        stage('Get branch version info') {
-////        steps {
-//            (isBeta, minorVersion) = getBranchVersion(branch)
-//            majorVersion = branch
-//            tagVersion = majorVersion + '.' + (isBeta ? 'beta.' : '') + minorVersion
-////        }
+        stage('Get branch version info') {
+//        steps {
+            (isBeta, minorVersion) = getBranchVersion(branch)
+            majorVersion = branch
+            tagVersion = majorVersion + '.' + (isBeta ? 'beta.' : '') + minorVersion
 //        }
-//
+        }
+
 //        stage('Update') {
 ////        steps {
 //            update "v$branch"
