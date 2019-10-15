@@ -6,28 +6,28 @@ def call(int branch) {
     String changeLog = null
 
     try {
-        stage('Get branch version info') {
-//        steps {
-            (isBeta, minorVersion) = getBranchVersion(branch)
-            majorVersion = branch
-            tagVersion = majorVersion + '.' + (isBeta ? 'beta.' : '') + minorVersion
+//        stage('Get branch version info') {
+////        steps {
+//            (isBeta, minorVersion) = getBranchVersion(branch)
+//            majorVersion = branch
+//            tagVersion = majorVersion + '.' + (isBeta ? 'beta.' : '') + minorVersion
+////        }
 //        }
-        }
-
-        stage('Update') {
-//        steps {
-            update "v$branch"
+//
+//        stage('Update') {
+////        steps {
+//            update "v$branch"
+////        }
 //        }
-        }
-
-        stage('Generate changelog') {
-//                steps {
-//                    dir(Paths.src) {
-            changeLog = generateChangeLog(tagVersion)
-            sh "mvn scm:checkin -Dmessage=\"Generated change log\""
-//                    }
-//                }
-        }
+//
+//        stage('Generate changelog') {
+////                steps {
+////                    dir(Paths.src) {
+//            changeLog = generateChangeLog(tagVersion)
+//            sh "mvn scm:checkin -Dmessage=\"Generated change log\""
+////                    }
+////                }
+//        }
 
         stage('Release branch') {
 //        steps {
