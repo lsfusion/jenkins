@@ -111,6 +111,8 @@ ${StrRep}
 !include WordFunc.nsh
 !include Utils.nsh
 
+!include URLEncode.nsh
+
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
 
@@ -267,6 +269,66 @@ Function .onInit
     !endif
 FunctionEnd
 
+Function .onInstFailed
+    Call AfterInstall
+FunctionEnd
+
+Function .onInstSuccess
+    Call AfterInstall
+FunctionEnd
+
+Function AfterInstall
+    SetOutPath $INSTDIR
+
+    Var /GLOBAL file
+    Var /GLOBAL line
+    Var /GLOBAL installText
+    Var /GLOBAL configText
+    ClearErrors
+    FileOpen $file "install.log" r
+    ${Do}
+        FileRead $file $line
+        ${If} ${Errors}
+            ${ExitDo}
+        ${EndIf}
+        StrCpy $installText "$installText$line"
+    ${Loop}
+    FileClose $file
+    
+    FileOpen $file "${INSTCONFDIR}\configure.log" r
+    ${Do}
+        FileRead $file $line
+        ${If} ${Errors}
+            ${ExitDo}
+        ${EndIf}
+        StrCpy $configText "$configText$line"
+    ${Loop}
+    FileClose $file
+
+    nsJSON::Quote $installText
+    Pop $R0
+    
+    nsJSON::Quote $configText
+    Pop $R1
+    
+    Push `{ "installLog" : $R0, "configureLog" : $R1 }`
+    Call URLEncode
+    Pop $0  
+    
+    ${ForEach} $downloadTry 1 5 + 1
+        inetc::post `p=$0` /WEAKSECURITY "https://tryonline.lsfusion.org/exec?action=saveInstallLog" "result.htm" /END
+        Pop $0
+        ${if} $0 != "SendRequest Error"
+            ${ExitFor}
+        ${endIf}
+        Sleep 1000
+    ${Next}
+    
+    Delete install.log
+    Delete result.htm
+    RMDir /r ${INSTCONFDIR}
+FunctionEnd
+
 Section -post SecPost
     WriteRegStr HKLM "${REGKEY}" Path $INSTDIR
     
@@ -290,7 +352,6 @@ Section -post SecPost
     CALL createShortcuts
     
     RMDir ${INSTBINDIR}
-    RMDir ${INSTCONFDIR}
 SectionEnd
 
 Function CheckUserAdmin
@@ -367,10 +428,10 @@ Var serverSettingsFile
 Var antArchive
 Function execAntConfiguration
 
-    DetailPrint "Configuring lsFusion"
+    ${LogMessage} "Configuring lsFusion"
     
     ${if} ${SectionIsSelected} ${SecServer}
-        DetailPrint "Configuring server"
+        ${LogMessage} "Configuring server"
         StrCpy $serverSettingsFile "${INSTSERVERDIR}\conf\settings.properties"
         ${ConfigWriteSE} "$serverSettingsFile" "db.server=" "$pgHost:$pgPort" $R0
         ${ConfigWriteSE} "$serverSettingsFile" "db.name=" "$pgDbName" $R0
@@ -395,7 +456,7 @@ Function execAntConfiguration
         StrCpy $antArchive ${INSTBINDIR}\${ANT_ARCHIVE}
     
         ${if} ${SectionIsSelected} ${SecClient}
-            DetailPrint "Configuring Client (Web & Desktop)"
+            ${LogMessage} "Configuring Client (Web & Desktop)"
             
             File install-config\tomcat.xml
     
@@ -412,13 +473,13 @@ Function execAntConfiguration
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "server.port=" "$serverPort" $R0
             nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" "$antArchive" configureClient'
             Pop $0    
-            DetailPrint "Ant returned $0"
+            ${LogMessage} "Ant returned $0"
             
             Delete tomcat.xml
         ${endIf}
     
         ${if} ${SectionIsSelected} ${SecIdea}
-            DetailPrint "Configuring Intellij IDEA"
+            ${LogMessage} "Configuring Intellij IDEA"
 
             File install-config\jdk.table.xml
             File install-config\options.xml
@@ -438,13 +499,13 @@ Function execAntConfiguration
             ${ConfigWriteSE} "${INSTCONFDIR}\configure.properties" "admin.pass=" "$serverPassword" $R0
             nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" "$antArchive" configureIdea'
             Pop $0
-            DetailPrint "Ant returned $0"
+            ${LogMessage} "Ant returned $0"
 
             Delete jdk.table.xml
             Delete options.xml
 
             ${if} ${SectionIsSelected} ${SecServer}
-                DetailPrint "Configuring Intellij IDEA lsFusion Server Library"
+                ${LogMessage} "Configuring Intellij IDEA lsFusion Server Library"
 
                 File install-config\applicationLibraries.xml
 
@@ -454,17 +515,12 @@ Function execAntConfiguration
 
                 nsExec::ExecToLog '"${INSTCONFDIR}\configure.bat" "$antArchive" configureIdeaServer'
                 Pop $0
-                DetailPrint "Ant returned $0"
+                ${LogMessage} "Ant returned $0"
 
                 Delete applicationLibraries.xml
             ${endIf}
         ${endIf}
 
-        Delete configure.bat
-        Delete configure.xml
-        Delete configure.properties
-        Delete configure.log
-        
         ${RMDir_Silent} $antArchive ; we don't need ant anymore
     ${endIf}
 FunctionEnd
@@ -474,7 +530,7 @@ Function createServices
         StrCpy $serviceFile "${INSTCLIENTDIR}\bin\$clientServiceName.exe"
     
         ClearErrors
-        DetailPrint "Installing Client service"
+        ${LogMessage} "Installing Client service"
         
         Rename "${INSTCLIENTDIR}\bin\tomcat${TOMCAT_MAJOR_VERSION}.exe" $serviceFile
         Rename "${INSTCLIENTDIR}\bin\tomcat${TOMCAT_MAJOR_VERSION}w.exe" "${INSTCLIENTDIR}\bin\$clientServiceNamew.exe"
@@ -483,17 +539,17 @@ Function createServices
         Pop $0
         Pop $1
         ${ifNot} $0 == "0"
-            DetailPrint $1
+            ${LogMessage} $1
             MessageBox MB_OK|MB_ICONSTOP $(strErrorInstallingClientService)
         ${else}
-            DetailPrint "Configuring $clientServiceName service"
+            ${LogMessage} "Configuring $clientServiceName service"
     
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Startup auto'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Classpath "${INSTCLIENTDIR}\bin\bootstrap.jar;${INSTCLIENTDIR}\bin\tomcat-juli.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop --StartMode jvm --StopMode jvm'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions "-Dcatalina.home=${INSTCLIENTDIR}#-Dcatalina.base=${INSTCLIENTDIR}#-Djava.endorsed.dirs=${INSTCLIENTDIR}\endorsed#-Djava.io.tmpdir=${INSTCLIENTDIR}\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=${INSTCLIENTDIR}\conf\logging.properties"'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --StdOutput auto --StdError auto'
 
-            DetailPrint "Starting $clientServiceName service"
+            ${LogMessage} "Starting $clientServiceName service"
             nsExec::ExecToLog '"$serviceFile" //ES//$clientServiceName'
         ${endIf}
     ${endIf}
@@ -503,23 +559,23 @@ Function createServices
         StrCpy $serviceFile "${INSTSERVERDIR}\bin\$serverServiceName.exe"
 
         ClearErrors
-        DetailPrint "Installing Server service"
+        ${LogMessage} "Installing Server service"
 
         nsExec::ExecToStack '"$serviceFile" //IS//$serverServiceName --DisplayName "$serverDisplayServiceName" --Description "lsFusion Application Server" --LogPath "${INSTSERVERDIR}\logs" --Install "$serviceFile" --Jvm "$jvmDll" --StartPath "${INSTSERVERDIR}" --StopPath "${INSTSERVERDIR}"'
         Pop $0
         Pop $1
         ${ifNot} $0 == "0"
-            DetailPrint $1
+            ${LogMessage} $1
             MessageBox MB_OK|MB_ICONSTOP $(strErrorInstallingServerService)
         ${else}
-            DetailPrint "Configuring $serverServiceName service"
+            ${LogMessage} "Configuring $serverServiceName service"
 
             nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --Startup auto'
             nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --Classpath "${INSTSERVERDIR}\${SERVER_JAR};${INSTSERVERDIR}\lib\*;${INSTSERVERDIR}\lib" --StartClass lsfusion.server.logics.BusinessLogicsBootstrap --StopClass lsfusion.server.logics.BusinessLogicsBootstrap --StartMethod start --StopMethod stop --StartMode jvm --StopMode jvm'
             nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --JvmMs=512 --JvmMx=1024'
             nsExec::ExecToLog '"$serviceFile" //US//$serverServiceName --StdOutput auto --StdError auto'
 
-            DetailPrint "Starting $serverServiceName service"
+            ${LogMessage} "Starting $serverServiceName service"
             nsExec::ExecToLog '"$serviceFile" //ES//$serverServiceName'
         ${endIf}
     ${endIf}
@@ -527,7 +583,7 @@ Function createServices
 FunctionEnd
 
 Function createShortcuts
-    DetailPrint "Creating shortcuts"
+    ${LogMessage} "Creating shortcuts"
 
     SetOutPath $INSTDIR
     File "resources\lsfusion.ico"
