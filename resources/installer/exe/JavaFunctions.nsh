@@ -33,7 +33,7 @@ Function javaConfigPageLeave
     ${if} $0 == ""
     ${orIfNot} ${FileExists} "$0\bin\java.exe"
         MessageBox MB_OK|MB_ICONSTOP "$(strNoJavaError)$0"
-        DetailPrint "$(strNoJavaError)$0"
+        ${LogMessage} "$(strNoJavaError)$0"
         Abort
     ${EndIf}
     
@@ -45,7 +45,7 @@ Function javaConfigPageLeave
     StrCpy $jvmDll $2
     ${If} $jvmDll == ""
         MessageBox MB_OK|MB_ICONSTOP "$(strNoJavaError)$0"
-        DetailPrint "$(strNoJavaError)$0"
+        ${LogMessage} "$(strNoJavaError)$0"
         Abort
     ${EndIf}
 

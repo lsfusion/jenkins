@@ -83,15 +83,25 @@
 !macroend
 !define SFile "!insertmacro _LS_File" 
 
+Var /GLOBAL downloadTry
 !macro _LS_DownloadFileAnyWay SRC DEST
-    inetc::get ${SRC} ${DEST} /END
-    Pop $0
+    ${ForEach} $downloadTry 1 10 + 1
+        inetc::get /WEAKSECURITY ${SRC} ${DEST} /END
+        Pop $0
+        ${if} $0 == "OK"
+            ${ExitFor}
+        ${endIf}
+        Sleep 1000
+    ${Next}
+    
+    
+    #Pop $0
     ${ifNot} $0 == "OK"
 ;        DetailPrint "Trying without current proxy..."
 ;        inetc::get /POPUP /PROXY /TOSTACK ${SRC} ${DEST} /END ; it's hard to tell why but sometimes only with this options in that order of /POPUP /PROXY it works 
 ;        Pop $0
 ;        ${ifNot} $0 == "OK"
-            DetailPrint "Downloading failed : $0"
+            ${LogMessage} "Downloading failed : $0"
 ;        ${endIf}
     ${endIf}
 !macroend
@@ -100,16 +110,16 @@
 ; Dest dir should exist
 !macro _LS_DownloadFile SRC LINK DEST
     ${if} ${LINK} == 1
-        DetailPrint "Downloading link from ${SRC}"
+        ${LogMessage} "Downloading link from ${SRC}"
         ${DownloadFileAnyWay} ${SRC} filelink
         FileOpen $4 filelink r ;read url from downloaded link
         FileRead $4 $1 ; we read until the end of line (including carriage return and new line) and save it to $1
         FileClose $4 ; and close the file
         Delete filelink ; delete temp link file
-        DetailPrint "Downloading file from $1"
+        ${LogMessage} "Downloading file from $1"
         ${DownloadFileAnyWay} $1 ${DEST}
     ${else}
-        DetailPrint "Downloading file from ${SRC}"
+        ${LogMessage} "Downloading file from ${SRC}"
         ${DownloadFileAnyWay} ${SRC} ${DEST} ;download link
     ${endIf}
 !macroend
@@ -139,20 +149,20 @@ Var runFileName
 
     StrCpy $runFileName "${INSTBINDIR}\${FILE}"
     ${if} ${EXT} == "zip"
-        DetailPrint 'Extracting ${INSTNAME} - $runFileName to ${PARAMS}'
+        ${LogMessage} 'Extracting ${INSTNAME} - $runFileName to ${PARAMS}'
         nsisunz::Unzip "$runFileName" '${PARAMS}'
     ${else}
-        DetailPrint "Installing ${INSTNAME}"
+        ${LogMessage} "Installing ${INSTNAME}"
         ${if} ${EXT} == "msi"
             nsExec::ExecToLog 'msiexec /i "$runFileName" ${PARAMS}'
         ${else}
-            DetailPrint '"$runFileName" ${PARAMS}'
+            ${LogMessage} '"$runFileName" ${PARAMS}'
             nsExec::ExecToLog '"$runFileName" ${PARAMS}'
         ${endif}
     ${endif}
     
     Pop $0
-    DetailPrint "${INSTNAME} installation returned $0"
+    ${LogMessage} "${INSTNAME} installation returned $0"
         
     Delete "$runFileName"
 !macroend
@@ -174,7 +184,7 @@ Var isZip
 !define RunDirectFile "!insertmacro _Run_Direct_File" 
 
 !macro _RMDir_Silent DIR
-    DetailPrint "Deleting ${DIR}"
+    ${LogMessage} "Deleting ${DIR}"
     SetDetailsPrint none
     RMDir /r "${DIR}" ; will be recreated in next command 
     SetDetailsPrint both
@@ -236,6 +246,25 @@ Var isZip
 !macroend
 !define DirExists `"" DirExists`
 
+Var prevOutPath
+!macro _LogMessage TEXT
+    StrCpy $prevOutPath $OUTDIR
+    SetDetailsPrint none
+    SetOutPath "$INSTDIR"
+    SetDetailsPrint both
+
+    DetailPrint `${TEXT}`
+        
+    FileOpen $9 `install.log` a
+    FileSeek $9 0 END
+    FileWrite $9 `${TEXT}$\r$\n`
+    FileClose $9
+    
+    SetDetailsPrint none
+    SetOutPath $prevOutPath
+    SetDetailsPrint both
+!macroend
+!define LogMessage "!insertmacro _LogMessage"
 
 ; Validates that a string name does not use any of the invalid characters: <>:"/\:|?*
 Function validateMaybeEmptyNameString

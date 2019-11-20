@@ -15,7 +15,7 @@ Section "${JAVA_SECTION_NAME}" SecJava
 
     Call initJavaFromRegistry
     ${if} $javaHome == ""
-        DetailPrint "JDK wasn't isntalled succesfully: can't find javaHome in registry. Try to install JDK manually and restart installer"
+        ${LogMessage} "JDK wasn't installed successfully: can't find javaHome in registry. Try to install JDK manually and restart installer"
         Abort
     ${endIf}
 
