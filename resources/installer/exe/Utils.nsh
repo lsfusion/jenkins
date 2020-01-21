@@ -85,7 +85,7 @@
 
 Var /GLOBAL downloadTry
 !macro _LS_DownloadFileAnyWay SRC DEST
-    ${ForEach} $downloadTry 1 10 + 1
+    ${ForEach} $downloadTry 1 100 + 1
         inetc::get /WEAKSECURITY ${SRC} ${DEST} /END
         Pop $0
         ${if} $0 == "OK"
