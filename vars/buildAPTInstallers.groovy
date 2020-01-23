@@ -1,7 +1,8 @@
 def call(int majorVersion, String platformVersion) {
     buildServerInstaller(majorVersion, platformVersion)
     buildClientInstaller(majorVersion, platformVersion)
-    sh "ssh root@116.203.185.52 'cd /root/apt; reprepro -b repo/ includedeb all server/lsfusion$majorVersion-server_$platformVersion-1_all.deb; reprepro -b repo/ includedeb all client/lsfusion$majorVersion-client_$platformVersion-1_all.deb'"
+    // reprepro stores only one latest version of the package. For some reason it refuses to remove previous version if it was in beta (e.g. when adding 3.0 after 3.beta.0). Therefore we delete packages manually.
+    sh "ssh root@116.203.185.52 'cd /root/apt; reprepro -b repo remove all lsfusion$majorVersion-server; reprepro -b repo remove all lsfusion$majorVersion-client; reprepro -b repo/ includedeb all server/lsfusion$majorVersion-server_$platformVersion-1_all.deb; reprepro -b repo/ includedeb all client/lsfusion$majorVersion-client_$platformVersion-1_all.deb'"
 
     sh "mkdir -p ${Paths.download}/apt"
     
