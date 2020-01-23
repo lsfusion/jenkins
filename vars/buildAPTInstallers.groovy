@@ -5,6 +5,10 @@ def call(int majorVersion, String platformVersion) {
     sh "ssh root@116.203.185.52 'cd /root/apt; reprepro -b repo remove all lsfusion$majorVersion-server; reprepro -b repo remove all lsfusion$majorVersion-client; reprepro -b repo/ includedeb all server/lsfusion$majorVersion-server_$platformVersion-1_all.deb; reprepro -b repo/ includedeb all client/lsfusion$majorVersion-client_$platformVersion-1_all.deb'"
 
     sh "mkdir -p ${Paths.download}/apt"
+    sh "rm -rf ${Paths.download}/apt/conf"
+    sh "rm -rf ${Paths.download}/apt/db"
+    sh "rm -rf ${Paths.download}/apt/dists"
+    sh "rm -rf ${Paths.download}/apt/pool"
     
     generateScripts(majorVersion)
     
