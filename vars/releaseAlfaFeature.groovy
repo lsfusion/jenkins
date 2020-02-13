@@ -37,7 +37,7 @@ def call() {
                             masterVersion = lastVersion + 1
                             Integer nextMasterVersion = masterVersion + 1
 //                        }
-                        sh "mvn release:clean release:branch -DbranchName=v$masterVersion -DdevelopmentVersion=$nextMasterVersion"+".beta.0-SNAPSHOT"
+                        sh "mvn release:clean release:branch -DbranchName=v$masterVersion -DdevelopmentVersion=$nextMasterVersion"+".0-beta.0-SNAPSHOT"
 //                }
             }
 

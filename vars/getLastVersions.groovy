@@ -2,12 +2,12 @@ def call() {
     update "master"
 
     String masterVersion = readVersion()
-    String[] masterVersionParts = masterVersion.split("\\.")
     
-    int majorVersion = Integer.valueOf(masterVersionParts[0])
-    if(masterVersionParts.size() != 3 || !masterVersionParts[1].equals("beta") || !masterVersionParts[2].equals("0-SNAPSHOT"))
-        error("Version in master should be *.beta.0-SNAPSHOT")
+    if (!(masterVersion =~ /[0-9]+\.0-beta0-SNAPSHOT/)) {
+        error('Version in master should be *.0-beta0-SNAPSHOT')
+    }
 
+    int majorVersion = Integer.valueOf(masterVersion.substring(0, masterVersion.indexOf('.')))
     int lastVersion = majorVersion - 1
     int minorLastVersion
     boolean isLastBeta
