@@ -7,7 +7,7 @@ def call(int version) {
         error("Version in branch should be either *.0-beta*-SNAPSHOT or *.*-SNAPSHOT")
 
     if (Integer.valueOf(versionString.substring(0, versionString.indexOf('.'))) != version)
-        error("Major version in branch should be $version.*.*-SNAPSHOT")
+        error("Major version in branch should be $version")
 
     boolean isBeta
     String minorVersionString
