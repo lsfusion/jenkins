@@ -128,6 +128,6 @@ def call(int branch) {
         throw e
     }
 
-    slack.message "<${env.BUILD_URL}|${currentBuild.fullDisplayName}> (v. " + tagVersion + ") suceeded.\n```" + changeLog + "```"
+    slack.message "<${env.BUILD_URL}|${currentBuild.fullDisplayName}> (v. " + tagVersion + ") succeeded.\n```" + changeLog + "```"
 }
 
