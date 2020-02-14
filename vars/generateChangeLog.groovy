@@ -59,30 +59,25 @@ def call(String to) {
 }
 
 static String getPrevVersion(String versionString) {
-    String[] versionParts = versionString.split("\\.")
-
-    if (versionParts.size() != 3 && versionParts.size() != 2)
-        error("Version in branch should be either *.beta.* or *.*")
+    if (!(versionString =~ /[0-9]+\.0-beta[0-9]+/ || versionString =~ /[0-9]+\.[0-9]+/))
+        error("Version in branch should be either *.0-beta* or *.*")
 
     String minorVersionString
     String majorVersionString
-    if (versionParts.size() == 3) {
-        if (!versionParts[1].equals("beta"))
-            error("Beta version in branch should be *.beta.*")
-
-        minorVersionString = versionParts[2]
-        majorVersionString = versionParts[0] + "." + versionParts[1]
+    if (versionString =~ /[0-9]+\.0-beta[0-9]+/) {
+        minorVersionString = versionString.substring(versionString.indexOf('beta') + 4)
+        majorVersionString = versionString.substring(0, versionString.indexOf('beta') + 4)
     } else {
-        minorVersionString = versionParts[1]
-        majorVersionString = versionParts[0]
+        minorVersionString = versionString.substring(versionString.indexOf('.') + 1)
+        majorVersionString = versionString.substring(0, versionString.indexOf('.') + 1) // with '.' at the end
     }
 
-    String prevVersion;
-    def minorVersion = Integer.valueOf(minorVersionString.substring(0, minorVersionString.length()));
+    String prevVersion
+    def minorVersion = Integer.valueOf(minorVersionString)
     if(minorVersion > 0)
-        prevVersion = majorVersionString + "." + (minorVersion - 1)
+        prevVersion = majorVersionString + "" + (minorVersion - 1)
     else {
-        int prevMajorVersion = Integer.valueOf(versionParts[0]) - 1
+        int prevMajorVersion = Integer.valueOf(versionString.substring(0, versionString.indexOf('.'))) - 1
         if(prevMajorVersion < 2)
             return null
         prevVersion = prevMajorVersion + ".0"
