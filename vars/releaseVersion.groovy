@@ -34,7 +34,7 @@ def call(int branch) {
             String releaseCommand = "mvn -B release:clean release:prepare release:perform"
             if (isBeta) {
                 // release plugin automatically sets next version to x+1.beta.y-SNAPSHOT (not x.beta.y+1)
-                String nextVersion = majorVersion + ".0-beta-" + (minorVersion + 1) + "-SNAPSHOT"
+                String nextVersion = majorVersion + ".0-beta" + (minorVersion + 1) + "-SNAPSHOT"
                 releaseCommand += " -DdevelopmentVersion=$nextVersion"
             }
             sh releaseCommand
