@@ -1,12 +1,12 @@
 
-def call(boolean forceAlphaRelease) {
+def call(boolean releaseBeta) {
     String lastVersionState
     Integer lastVersion, lastSupportedVersion
     (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
 
-    def lastPublicVersion = lastVersion - (lastVersionState.equals("ALPHA") && !forceAlphaRelease ? 1 : 0)
+    def lastPublicVersion = lastVersion - (lastVersionState.equals("ALPHA") && !releaseBeta ? 1 : 0)
     def branches = (lastSupportedVersion..lastPublicVersion).collect{it}
     for (branch in branches) {
-        releaseVersion branch
+        releaseVersion branch, releaseBeta
     }
 }

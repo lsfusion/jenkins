@@ -1,4 +1,4 @@
-def call(int branch) {
+def call(int branch, boolean releaseBeta) {
     boolean isBeta
     int majorVersion, minorVersion
     String tagVersion = "unknown"
@@ -11,6 +11,7 @@ def call(int branch) {
             (isBeta, minorVersion) = getBranchVersion(branch)
             majorVersion = branch
             tagVersion = majorVersion + '.' + (isBeta ? '0-beta' : '') + minorVersion
+//            tagVersion = majorVersion + '.' + (isBeta ? '0-beta' : '') + minorVersion
 //        }
         }
 
@@ -32,12 +33,16 @@ def call(int branch) {
         stage('Release branch') {
 //        steps {
             String releaseCommand = "mvn -B release:clean release:prepare release:perform"
-            if (isBeta) {
-                // release plugin automatically sets next version to x+1.beta.y-SNAPSHOT (not x.beta.y+1)
-                String nextVersion = majorVersion + ".0-beta" + (minorVersion + 1) + "-SNAPSHOT"
-                releaseCommand += " -DdevelopmentVersion=$nextVersion"
+            if (releaseBeta && isBeta) {
+                String releaseVersion = "$majorVersion.0-beta$minorVersion"
+                releaseCommand += " -DdevelopmentVersion=$majorVersion.0-SNAPSHOT -DreleaseVersion=$releaseVersion"
             }
+            
             sh releaseCommand
+            
+            if (releaseBeta && isBeta) {
+                latestBetaVersion.set(minorVersion + 1)
+            }
 //        }
         }
 
