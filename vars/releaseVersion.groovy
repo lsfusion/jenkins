@@ -55,78 +55,78 @@ def call(int branch, boolean releaseBeta) {
 //                }
         }
     
-        stage('Update tag') {
-    //        steps {
-            update.tag tagVersion
-    //        }
-        }
-    //
-    //    // Next 3 tasks to local folder
-        stage('Build installers') {
-    //        steps {
-            buildInstallers majorVersion, tagVersion
-            buildRPMInstallers majorVersion, tagVersion
-            buildAPTInstallers majorVersion, tagVersion
-    //        }
-        }
-
-        stage('Generate JNLP') {
-    //        steps {
-            generateJnlp tagVersion     
-    //        }
-        }
-    
-        stage('Copy dependencies') {
-    //        steps {
-            def downloadDir = "${Paths.download}/${tagVersion}"
-            sh "mkdir -p ${downloadDir}"
-            sh "mkdir -p ${Paths.download}/changelog"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly-sources -DoutputDirectory=${downloadDir}"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:pack.gz:assembly -DoutputDirectory=${downloadDir}"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:web-client:${tagVersion}:war -DoutputDirectory=${downloadDir}"
-            sh "cp -f CHANGELOG.md ${Paths.download}/changelog/CHANGELOG-${tagVersion}.txt"
-    
-            dir(downloadDir) {
-                sh "mv -f server-${tagVersion}-assembly.jar lsfusion-server-${tagVersion}.jar"
-                sh "mv -f server-${tagVersion}-assembly-sources.jar lsfusion-server-${tagVersion}-sources.jar"
-                sh "mv -f desktop-client-${tagVersion}-assembly.jar lsfusion-client-${tagVersion}.jar"
-                sh "mv -f desktop-client-${tagVersion}-assembly.pack.gz lsfusion-client-${tagVersion}.pack.gz"
-                sh "mv -f web-client-${tagVersion}.war lsfusion-client-${tagVersion}.war"
-            }
-    //        }
-        }
-
-    //    // Upload from local folder to global
-        stage('Upload to CDN') {
-    //        steps {
-            dir(Paths.download) {
-                ftpPublisher failOnError: true, publishers: [
-                        [configName: 'Download FTP server', 
-                         transfers: [
-                                 [sourceFiles: "${tagVersion}/", remoteDirectory: "java", flatten: true], 
-                                 [sourceFiles: "changelog/CHANGELOG-${tagVersion}.txt", remoteDirectory: "changelog", flatten: true], 
-                                 [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true],
-                                 [sourceFiles: "yum/", remoteDirectory: "yum", removePrefix: "yum"],
-                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"]
-                         ], 
-                         verbose: true]
-                ]
-            }          
-    //        }
-        }
-
-    
-        if(!Paths.noCustomUpdates) {
-            stage('Change custom assemble versions') {
-    //        steps {
-                withCredentials([usernameColonPassword(credentialsId: 'jenkins_lsfusion_org', variable: 'USERPASS')]) {
-                    sh "curl -X POST 'http://jenkins.lsfusion.luxsoft.by/job/${Paths.updateAssembleVersionsJob}/build' --user ${USERPASS} -H 'Jenkins-Crumb:440561953171ba4497e4740562d172bb'"
-                }
-    //        }
-            }
-        }
+//        stage('Update tag') {
+//    //        steps {
+//            update.tag tagVersion
+//    //        }
+//        }
+//    //
+//    //    // Next 3 tasks to local folder
+//        stage('Build installers') {
+//    //        steps {
+//            buildInstallers majorVersion, tagVersion
+//            buildRPMInstallers majorVersion, tagVersion
+//            buildAPTInstallers majorVersion, tagVersion
+//    //        }
+//        }
+//
+//        stage('Generate JNLP') {
+//    //        steps {
+//            generateJnlp tagVersion     
+//    //        }
+//        }
+//    
+//        stage('Copy dependencies') {
+//    //        steps {
+//            def downloadDir = "${Paths.download}/${tagVersion}"
+//            sh "mkdir -p ${downloadDir}"
+//            sh "mkdir -p ${Paths.download}/changelog"
+//            sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
+//            sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly-sources -DoutputDirectory=${downloadDir}"
+//            sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
+//            sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:pack.gz:assembly -DoutputDirectory=${downloadDir}"
+//            sh "mvn dependency:copy -Dartifact=lsfusion.platform:web-client:${tagVersion}:war -DoutputDirectory=${downloadDir}"
+//            sh "cp -f CHANGELOG.md ${Paths.download}/changelog/CHANGELOG-${tagVersion}.txt"
+//    
+//            dir(downloadDir) {
+//                sh "mv -f server-${tagVersion}-assembly.jar lsfusion-server-${tagVersion}.jar"
+//                sh "mv -f server-${tagVersion}-assembly-sources.jar lsfusion-server-${tagVersion}-sources.jar"
+//                sh "mv -f desktop-client-${tagVersion}-assembly.jar lsfusion-client-${tagVersion}.jar"
+//                sh "mv -f desktop-client-${tagVersion}-assembly.pack.gz lsfusion-client-${tagVersion}.pack.gz"
+//                sh "mv -f web-client-${tagVersion}.war lsfusion-client-${tagVersion}.war"
+//            }
+//    //        }
+//        }
+//
+//    //    // Upload from local folder to global
+//        stage('Upload to CDN') {
+//    //        steps {
+//            dir(Paths.download) {
+//                ftpPublisher failOnError: true, publishers: [
+//                        [configName: 'Download FTP server', 
+//                         transfers: [
+//                                 [sourceFiles: "${tagVersion}/", remoteDirectory: "java", flatten: true], 
+//                                 [sourceFiles: "changelog/CHANGELOG-${tagVersion}.txt", remoteDirectory: "changelog", flatten: true], 
+//                                 [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true],
+//                                 [sourceFiles: "yum/", remoteDirectory: "yum", removePrefix: "yum"],
+//                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"]
+//                         ], 
+//                         verbose: true]
+//                ]
+//            }          
+//    //        }
+//        }
+//
+//    
+//        if(!Paths.noCustomUpdates) {
+//            stage('Change custom assemble versions') {
+//    //        steps {
+//                withCredentials([usernameColonPassword(credentialsId: 'jenkins_lsfusion_org', variable: 'USERPASS')]) {
+//                    sh "curl -X POST 'http://jenkins.lsfusion.luxsoft.by/job/${Paths.updateAssembleVersionsJob}/build' --user ${USERPASS} -H 'Jenkins-Crumb:440561953171ba4497e4740562d172bb'"
+//                }
+//    //        }
+//            }
+//        }
     } catch (e) {
         slack.error "Warning! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> (v. " + tagVersion + ") failed."
         
