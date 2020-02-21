@@ -12,6 +12,7 @@ def call() {
     int minorLastVersion
     boolean isLastBeta
     (isLastBeta, minorLastVersion) = getBranchVersion(lastVersion)
+    println 'isLastBeta: ' + isLastBeta 
     
     String lastVersionState
     if(isLastBeta) {

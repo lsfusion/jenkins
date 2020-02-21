@@ -4,7 +4,7 @@ def call(int version) {
     String versionString = readVersion()
 
     if (!(versionString =~ /[0-9]+\.[0-9]+-SNAPSHOT/))
-        error("Version in branch should be either *.*-SNAPSHOT")
+        error("Version in branch should be *.*-SNAPSHOT")
 
     if (Integer.valueOf(versionString.substring(0, versionString.indexOf('.'))) != version)
         error("Major version in branch should be $version")
@@ -14,6 +14,7 @@ def call(int version) {
     if (versionString =~ /[0-9]+\.0-SNAPSHOT/) {
         isBeta = true
         String betaVersion = latestBetaVersion.get()
+        println "beta: " + betaVersion
         if (betaVersion =~ /[0-9]+/) { // ??
             minorVersion = Integer.valueOf(betaVersion)
         } else {
