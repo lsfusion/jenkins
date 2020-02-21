@@ -7,6 +7,6 @@ def call(boolean releaseBeta) {
     def lastPublicVersion = lastVersion - (lastVersionState.equals("ALPHA") && !releaseBeta ? 1 : 0)
     def branches = (lastSupportedVersion..lastPublicVersion).collect{it}
     for (branch in branches) {
-        releaseVersion branch, releaseBeta
+        releaseVersion branch
     }
 }
