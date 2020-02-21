@@ -38,7 +38,7 @@ def call() {
 
             stage('Release fixes') {
 //                steps {
-                    releaseFixes() //build 'releaseFixes'
+                    releaseVersions false, true
 //                }
             }
 //        }
