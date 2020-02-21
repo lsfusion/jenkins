@@ -3,7 +3,7 @@ def call() {
 
     String masterVersion = readVersion()
     
-    if (!(masterVersion =~ /[0-9]+\.0-beta0-SNAPSHOT/)) {
+    if (!(masterVersion =~ /[0-9]+\.0-SNAPSHOT/)) {
         error('Version in master should be *.0-SNAPSHOT')
     }
 
