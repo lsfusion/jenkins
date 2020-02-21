@@ -17,6 +17,7 @@ def call(int version) {
         println "beta: " + betaVersion
         if (betaVersion =~ /[0-9]+/) { // ??
             minorVersion = Integer.valueOf(betaVersion)
+            println "betaVersion: " + minorVersion
         } else {
             minorVersion = 0
         }
@@ -24,6 +25,6 @@ def call(int version) {
         isBeta = false
         minorVersion = Integer.valueOf(versionString.substring(versionString.indexOf('.') + 1, versionString.indexOf("-SNAPSHOT")))
     }
-    println 'getBranchVersion' + isBeta + ', ' + minorVersion
+    println 'getBranchVersion: ' + isBeta + ', ' + minorVersion
     return [isBeta, minorVersion]
 }
