@@ -10,7 +10,7 @@ def call(int version) {
         error("Major version in branch should be $version")
 
     boolean isBeta
-    String minorVersion
+    Integer minorVersion
     if (versionString =~ /[0-9]+\.0-SNAPSHOT/) {
         isBeta = true
         String betaVersion = latestBetaVersion.get()
