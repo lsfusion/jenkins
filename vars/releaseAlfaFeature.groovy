@@ -39,7 +39,7 @@ def call() {
 //                        }
                         sh "mvn release:clean release:branch -DbranchName=v$masterVersion -DdevelopmentVersion=$nextMasterVersion"+".0-SNAPSHOT"
                         
-                        latestBetaVersion.set('0')
+//                        latestBetaVersion.set('0')
 //                }
             }
 
