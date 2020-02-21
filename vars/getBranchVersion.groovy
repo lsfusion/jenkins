@@ -24,6 +24,6 @@ def call(int version) {
         isBeta = false
         minorVersion = Integer.valueOf(versionString.substring(versionString.indexOf('.') + 1, versionString.indexOf("-SNAPSHOT")))
     }
-
+    println 'getBranchVersion' + isBeta + ', ' + minorVersion
     return [isBeta, minorVersion]
 }
