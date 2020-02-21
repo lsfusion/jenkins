@@ -13,10 +13,8 @@ def call(int branch, boolean releaseFinal) {
             (isBeta, minorVersion) = getBranchVersion(branch)
             majorVersion = branch
             releaseBeta = isBeta && !releaseFinal
-            if (releaseBeta) {
-                minorVersion += 1
-            }
             tagVersion = majorVersion + '.' + (releaseBeta ? '0-beta' : '') + minorVersion
+            println tagVersion
 //        }
         }
 
@@ -45,7 +43,7 @@ def call(int branch, boolean releaseFinal) {
             sh releaseCommand
             
             if (releaseBeta) {
-                latestBetaVersion.set(minorVersion)
+                nextBetaVersion.set(minorVersion + 1)
             }
 //        }
         }

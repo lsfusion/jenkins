@@ -60,7 +60,7 @@ def call(String to) {
 
 static String getPrevVersion(String versionString) {
     if (!(versionString =~ /[0-9]+\.0-beta[0-9]+/ || versionString =~ /[0-9]+\.[0-9]+/))
-        error("Version in branch should be either *.0-beta* or *.*")
+        error("Version should be either *.0-beta* or *.*")
 
     String minorVersionString
     String majorVersionString

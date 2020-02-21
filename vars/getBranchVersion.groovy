@@ -13,7 +13,7 @@ def call(int version) {
     Integer minorVersion
     if (versionString =~ /[0-9]+\.0-SNAPSHOT/) {
         isBeta = true
-        String betaVersion = latestBetaVersion.get()
+        String betaVersion = nextBetaVersion.get()
         println "beta: " + betaVersion
         if (betaVersion =~ /[0-9]+/) { // ??
             minorVersion = Integer.valueOf(betaVersion)
