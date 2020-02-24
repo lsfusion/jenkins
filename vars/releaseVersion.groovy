@@ -13,6 +13,9 @@ def call(int branch, boolean releaseFinal) {
             (isBeta, minorVersion) = getBranchVersion(branch)
             majorVersion = branch
             releaseBeta = isBeta && !releaseFinal
+            if (isBeta && releaseFinal) {
+                minorVersion = 0
+            }
             tagVersion = majorVersion + '.' + (releaseBeta ? '0-beta' : '') + minorVersion
             println tagVersion
 //        }
