@@ -10,7 +10,6 @@ def call() {
         //                steps {
         ///                    script {
                 (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
-                println "lastVersions: " + lastVersion + ", " + lastVersionState + ", " + lastSupportedVersion
         //                    }
         //                }
             }
