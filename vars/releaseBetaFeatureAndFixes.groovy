@@ -22,7 +22,7 @@ def call() {
 
             stage('Release fixes') {
 //                steps {
-                    releaseVersions true
+                    releaseVersions true, false
 //                }
             }
 //        }

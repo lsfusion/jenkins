@@ -3,8 +3,8 @@ def call() {
 
     String masterVersion = readVersion()
     
-    if (!(masterVersion =~ /[0-9]+\.0-beta0-SNAPSHOT/)) {
-        error('Version in master should be *.0-beta0-SNAPSHOT')
+    if (!(masterVersion =~ /[0-9]+\.0-SNAPSHOT/)) {
+        error('Version in master should be *.0-SNAPSHOT')
     }
 
     int majorVersion = Integer.valueOf(masterVersion.substring(0, masterVersion.indexOf('.')))
@@ -13,6 +13,7 @@ def call() {
     boolean isLastBeta
     (isLastBeta, minorLastVersion) = getBranchVersion(lastVersion)
     
+    String lastVersionState
     if(isLastBeta) {
         if(minorLastVersion == 0)
             lastVersionState = "ALPHA"

@@ -26,19 +26,9 @@ def call() {
 //                }
             }
 
-            // update version from a.beta.x TO a.0
-            stage('Update version') {
-//                steps {
-//                    dir(Paths.src) {
-                        sh "mvn release:clean release:update-versions -DdevelopmentVersion=$lastVersion.0-SNAPSHOT"
-                        sh "mvn scm:checkin -Dmessage=\"Out of beta\""
-//                    }
-//                }
-            }
-
             stage('Release fixes') {
 //                steps {
-                    releaseFixes() //build 'releaseFixes'
+                    releaseVersions false, true
 //                }
             }
 //        }
