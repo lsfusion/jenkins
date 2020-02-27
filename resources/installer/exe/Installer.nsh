@@ -62,6 +62,8 @@ SetCompressor lzma
 !define MUI_LANGDLL_REGISTRY_VALUENAME InstallerLanguage
 ; !define MUI_LANGDLL_ALWAYSSHOW 1
 
+!define IE_NETCONFIG "Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+
 # Needed Variables
 Var javaVersion
 Var javaDir
@@ -98,6 +100,9 @@ Var clientContext
 
 # no locals in nsis
 Var serviceFile
+
+Var secureProtocols
+Var secureProtocolsChanged
 
 # Included files
 !include Sections.nsh
@@ -205,9 +210,26 @@ FunctionEnd
 Function .onInit
     SetRegView ${ARCH}
     
+    ReadRegDWORD $secureProtocols HKCU "${IE_NETCONFIG}" "SecureProtocols"
+    
+    StrCpy $1 0x00000800 ; we need TLS 1.2
+    IntOp $2 $secureProtocols & $1
+    ${If} $2 == 0
+        WriteRegDWORD HKCU "${IE_NETCONFIG}" "SecureProtocols" 0x00000A80
+        StrCpy $secureProtocolsChanged "TRUE"
+    ${EndIf}
+    
     InitPluginsDir
     
     Call checkUserAdmin
+    
+    Call getWindowsVersion
+    Pop $R0
+    ${LogMessage} "Windows version: $R0"
+    
+    Call getIEVersion
+    Pop $R0
+    ${LogMessage} "IE version: $R0"
 
     Push $R1
     File /oname=$PLUGINSDIR\spltmp.bmp resources\lsfusion.bmp
@@ -323,6 +345,10 @@ Function AfterInstall
         ${endIf}
         Sleep 1000
     ${Next}
+    
+    ${If} $secureProtocolsChanged == "TRUE"
+        WriteRegDWORD HKCU "${IE_NETCONFIG}" "SecureProtocols" $secureProtocols
+    ${EndIf}
     
     Delete install.log
     Delete result.htm
