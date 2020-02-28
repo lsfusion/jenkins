@@ -1,5 +1,6 @@
-!define IDEA_MAJORVERSION 2019.3
-!define IDEA_VERSION ${IDEA_MAJORVERSION}.3
+!define IDEA_MAJORVERSION 2019.1
+!define IDEA_VERSION ${IDEA_MAJORVERSION}.4
+; newer versions of IDEA contain JRE 11 not compatible with 32-bit versions of Windows
 
 !define JDK_MAJORVERSION 1.8 ; used in version compare and idea SDK
 !define JDK_VERSION ${JDK_MAJORVERSION}.0_212 ; log, idea SDK
