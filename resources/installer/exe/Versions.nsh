@@ -1,4 +1,4 @@
-!define IDEA_MAJORVERSION 2019.1
+!define IDEA_MAJORVERSION 2019.3
 !define IDEA_VERSION ${IDEA_MAJORVERSION}.3
 
 !define JDK_MAJORVERSION 1.8 ; used in version compare and idea SDK
