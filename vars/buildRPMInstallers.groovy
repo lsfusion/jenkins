@@ -2,11 +2,11 @@ def call(int majorVersion, String platformVersion) {
     def downloadDir = "${Paths.download}/yum"
     
     def rpmVersion = platformVersion
-    def rpmRelease = ''
+    def rpmRelease = '1'
     if (platformVersion.contains('-beta')) {
         def betaIndex = platformVersion.indexOf('-beta')
         rpmVersion = platformVersion.substring(0, betaIndex)
-        rpmRelease = 'Release:    ' + platformVersion.substring(betaIndex + 1)
+        rpmRelease = platformVersion.substring(betaIndex + 1)
     }
     echo "rpmVersion: " + rpmVersion 
     echo "rpmRelease: " + rpmRelease 
