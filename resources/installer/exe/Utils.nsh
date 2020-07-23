@@ -85,7 +85,7 @@
 
 Var /GLOBAL downloadTry
 !macro _LS_DownloadFileAnyWay SRC DEST
-    ${ForEach} $downloadTry 1 100 + 1
+    ${ForEach} $downloadTry 1 10 + 1
         inetc::get /WEAKSECURITY ${SRC} ${DEST} /END
         Pop $0
         ${if} $0 == "OK"
@@ -337,4 +337,149 @@ Function validateServiceName
 
     end:
     
+FunctionEnd
+
+Function getIEVersion
+  Push $R0
+  ClearErrors
+  
+  ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "svcVersion"
+  IfErrors lbl_18 lbl_done ; ie 9+
+
+    lbl_18:
+      ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "Version"
+      IfErrors lbl_123 lbl_done ; ie 4+
+   
+    lbl_123: ; older ie version
+      ClearErrors
+      ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "IVer"
+      IfErrors lbl_error
+ 
+      StrCpy $R0 $R0 3
+        StrCmp $R0 '100' lbl_ie1
+        StrCmp $R0 '101' lbl_ie2
+        StrCmp $R0 '102' lbl_ie2
+        StrCpy $R0 '3' ; default to ie3 if not 100, 101, or 102.
+        Goto lbl_done
+          lbl_ie1:
+            StrCpy $R0 '1'
+          Goto lbl_done
+          lbl_ie2:
+            StrCpy $R0 '2'
+          Goto lbl_done
+       lbl_error:
+         StrCpy $R0 ''
+   lbl_done:
+   Exch $R0
+FunctionEnd
+
+Function getWindowsVersion
+ 
+  Push $R0
+  Push $R1
+ 
+  ; check if Windows 10 family (CurrentMajorVersionNumber is new introduced in Windows 10)
+  ReadRegStr $R0 HKLM \
+    "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentMajorVersionNumber
+ 
+  StrCmp $R0 '' 0 lbl_winnt
+ 
+  ClearErrors
+ 
+  ; check if Windows NT family
+  ReadRegStr $R0 HKLM \
+  "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+ 
+  IfErrors 0 lbl_winnt
+ 
+  ; we are not NT
+  ReadRegStr $R0 HKLM \
+  "SOFTWARE\Microsoft\Windows\CurrentVersion" VersionNumber
+ 
+  StrCpy $R1 $R0 1
+  StrCmp $R1 '4' 0 lbl_error
+ 
+  StrCpy $R1 $R0 3
+ 
+  StrCmp $R1 '4.0' lbl_win32_95
+  StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
+ 
+  lbl_win32_95:
+    StrCpy $R0 '95'
+  Goto lbl_done
+ 
+  lbl_win32_98:
+    StrCpy $R0 '98'
+  Goto lbl_done
+ 
+  lbl_win32_ME:
+    StrCpy $R0 'ME'
+  Goto lbl_done
+ 
+  lbl_winnt:
+ 
+  StrCpy $R1 $R0 1
+ 
+  StrCmp $R1 '3' lbl_winnt_x
+  StrCmp $R1 '4' lbl_winnt_x
+ 
+  StrCpy $R1 $R0 3
+ 
+  StrCmp $R1 '5.0' lbl_winnt_2000
+  StrCmp $R1 '5.1' lbl_winnt_XP
+  StrCmp $R1 '5.2' lbl_winnt_2003
+  StrCmp $R1 '6.0' lbl_winnt_vista
+  StrCmp $R1 '6.1' lbl_winnt_7
+  StrCmp $R1 '6.2' lbl_winnt_8
+  StrCmp $R1 '6.3' lbl_winnt_81
+  StrCmp $R1 '10' lbl_winnt_10 ; CurrentMajorVersionNumber is a dword
+ 
+  StrCpy $R1 $R0 4
+ 
+  StrCmp $R1 '10.0' lbl_winnt_10 ; This can never happen?
+  Goto lbl_error
+ 
+  lbl_winnt_x:
+    StrCpy $R0 "NT $R0" 6
+  Goto lbl_done
+ 
+  lbl_winnt_2000:
+    Strcpy $R0 '2000'
+  Goto lbl_done
+ 
+  lbl_winnt_XP:
+    Strcpy $R0 'XP'
+  Goto lbl_done
+ 
+  lbl_winnt_2003:
+    Strcpy $R0 '2003'
+  Goto lbl_done
+ 
+  lbl_winnt_vista:
+    Strcpy $R0 'Vista'
+  Goto lbl_done
+ 
+  lbl_winnt_7:
+    Strcpy $R0 '7'
+  Goto lbl_done
+ 
+  lbl_winnt_8:
+    Strcpy $R0 '8'
+  Goto lbl_done
+ 
+  lbl_winnt_81:
+    Strcpy $R0 '8.1'
+  Goto lbl_done
+ 
+  lbl_winnt_10:
+    Strcpy $R0 '10.0'
+  Goto lbl_done
+ 
+  lbl_error:
+    Strcpy $R0 ''
+  lbl_done:
+ 
+  Pop $R1
+  Exch $R0
+ 
 FunctionEnd
