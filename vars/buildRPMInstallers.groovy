@@ -6,7 +6,7 @@ def call(int majorVersion, String platformVersion) {
     if (platformVersion.contains('-beta')) {
         def betaIndex = platformVersion.indexOf('-beta')
         rpmVersion = platformVersion.substring(0, betaIndex)
-        rpmRelease = platformVersion.substring(betaIndex + 1)
+        rpmRelease = 'Release:    ' + platformVersion.substring(betaIndex + 1)
     }
     echo "rpmVersion: " + rpmVersion 
     echo "rpmRelease: " + rpmRelease 
