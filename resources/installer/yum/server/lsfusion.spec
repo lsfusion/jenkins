@@ -1,6 +1,7 @@
 %define __jar_repack %{nil}
 %define lsfusion_major_version <lsfusion-major-version>
 %define lsfusion_version <lsfusion-version>
+%define lsfusion_release <lsfusion-release>
 %define lsfusion_title <lsfusion-title>
 %define lsfusion_name lsfusion%{lsfusion_major_version}-server
 %define lsfusion_home /usr/share/%{lsfusion_name}
@@ -11,7 +12,7 @@ Summary:    %{lsfusion_title}
 Name:       %{lsfusion_name}
 Version:    %{lsfusion_version}
 BuildArch:  noarch
-Release:    1
+Release:    %{lsfusion_release}
 License:    GNU Lesser General Public License v3.0
 Group:      Networking/Daemons
 URL:        https://lsfusion.org
