@@ -2,14 +2,12 @@ def call(int majorVersion, String platformVersion) {
     def downloadDir = "${Paths.download}/yum"
     
     def rpmVersion = platformVersion
-    def rpmRelease = '1'
+    def rpmRelease = '1' // though Release is optional, without it we get "error: Release field must be present in package"
     if (platformVersion.contains('-beta')) {
         def betaIndex = platformVersion.indexOf('-beta')
         rpmVersion = platformVersion.substring(0, betaIndex)
         rpmRelease = platformVersion.substring(betaIndex + 1)
     }
-    echo "rpmVersion: " + rpmVersion 
-    echo "rpmRelease: " + rpmRelease 
     
     buildServerInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease)
     buildClientInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease)
