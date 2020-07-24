@@ -1,8 +1,16 @@
 def call(int majorVersion, String platformVersion) {
     def downloadDir = "${Paths.download}/yum"
     
-    buildServerInstaller(majorVersion, platformVersion)
-    buildClientInstaller(majorVersion, platformVersion)
+    def rpmVersion = platformVersion
+    def rpmRelease = '1' // though Release is optional, without it we get "error: Release field must be present in package"
+    if (platformVersion.contains('-beta')) {
+        def betaIndex = platformVersion.indexOf('-beta')
+        rpmVersion = platformVersion.substring(0, betaIndex)
+        rpmRelease = platformVersion.substring(betaIndex + 1)
+    }
+    
+    buildServerInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease)
+    buildClientInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease)
     generateScripts(majorVersion)
 
     dir(Paths.rpm) {
@@ -13,7 +21,7 @@ def call(int majorVersion, String platformVersion) {
     }
 }
 
-def buildServerInstaller(int majorVersion, String platformVersion) {
+def buildServerInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease) {
     def title = "lsFusion $majorVersion Server"
     def serverName = "lsfusion$majorVersion-server"
     def templatesDir = getResourcesDir() + '/installer/yum/server'
@@ -31,7 +39,7 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
             
             sh "cp -fa $templatesDir/lsfusion.conf SOURCES/"
             sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g' $templatesDir/lsfusion-server.service > SOURCES/${serverName}.service"
-            sh "sed 's/<lsfusion-major-version>/$majorVersion/g; s/<lsfusion-version>/$platformVersion/g; s/<lsfusion-title>/$title/g' $templatesDir/lsfusion.spec > SPECS/lsfusion.spec"
+            sh "sed 's/<lsfusion-major-version>/$majorVersion/g; s/<lsfusion-version>/$rpmVersion/g; s/<lsfusion-release>/$rpmRelease/g; s/<lsfusion-title>/$title/g' $templatesDir/lsfusion.spec > SPECS/lsfusion.spec"
             
             sh "cp -fa $templatesDir/settings.properties SOURCES/"
             
@@ -52,7 +60,7 @@ expect eof"""
     }
 }
 
-def buildClientInstaller(int majorVersion, String platformVersion) {
+def buildClientInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease) {
     def title = "lsFusion $majorVersion Client"
     def clientName = "lsfusion$majorVersion-client"
     def templatesDir = getResourcesDir() + '/installer/yum/client'
@@ -71,7 +79,7 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion.conf > SOURCES/lsfusion.conf"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion.logrotate > SOURCES/lsfusion.logrotate"
             sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g' $templatesDir/lsfusion-client.service > SOURCES/${clientName}.service"
-            sh "sed 's/<lsfusion-major-version>/$majorVersion/g; s/<lsfusion-version>/$platformVersion/g; s/<lsfusion-title>/$title/g' $templatesDir/lsfusion.spec > SPECS/lsfusion.spec"
+            sh "sed 's/<lsfusion-major-version>/$majorVersion/g; s/<lsfusion-version>/$rpmVersion/g; s/<lsfusion-release>/$rpmRelease/g; s/<lsfusion-title>/$title/g' $templatesDir/lsfusion.spec > SPECS/lsfusion.spec"
 
             sh 'cp -fa ../apache-tomcat-9.0.21.tar.gz SOURCES/'
             sh "cp -fa $templatesDir/ROOT.xml SOURCES/"
