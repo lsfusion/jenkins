@@ -1,4 +1,4 @@
-yum install -y java-11-openjdk
+yum install -y java-12-openjdk
 
 yum install -y yum-utils
 
@@ -6,19 +6,19 @@ yum install -y yum-utils
 yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 
 # Install PostgreSQL
-yum install -y postgresql11 postgresql11-server
+yum install -y postgresql12 postgresql12-server
 
 # Initialize PostgreSQL database
-/usr/pgsql-11/bin/postgresql-11-setup initdb
+/usr/pgsql-12/bin/postgresql-12-setup initdb
 
 # Allow trust connection from localhost
-sed -i 's/ident/trust/g' /var/lib/pgsql/11/data/pg_hba.conf
+sed -i 's/ident/trust/g' /var/lib/pgsql/12/data/pg_hba.conf
 
 # Autostart PostgreSQL
-systemctl enable postgresql-11
+systemctl enable postgresql-12
 
 # Run PostgreSQL
-systemctl start postgresql-11
+systemctl start postgresql-12
 
 # Install lsFusion repo
 yum-config-manager --add-repo https://download.lsfusion.org/yum
