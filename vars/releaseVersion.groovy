@@ -103,34 +103,34 @@ def call(int branch, boolean releaseFinal) {
         }
 
     //    // Upload from local folder to global
-        stage('Upload to CDN') {
-    //        steps {
-            dir(Paths.download) {
-                ftpPublisher failOnError: true, publishers: [
-                        [configName: 'Download FTP server', 
-                         transfers: [
-                                 [sourceFiles: "${tagVersion}/", remoteDirectory: "java", flatten: true], 
-                                 [sourceFiles: "changelog/CHANGELOG-${tagVersion}.txt", remoteDirectory: "changelog", flatten: true], 
-                                 [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true],
-                                 [sourceFiles: "yum/", remoteDirectory: "yum", removePrefix: "yum"],
-                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"]
-                         ], 
-                         verbose: true]
-                ]
-            }          
-    //        }
-        }
+//        stage('Upload to CDN') {
+//    //        steps {
+//            dir(Paths.download) {
+//                ftpPublisher failOnError: true, publishers: [
+//                        [configName: 'Download FTP server', 
+//                         transfers: [
+//                                 [sourceFiles: "${tagVersion}/", remoteDirectory: "java", flatten: true], 
+//                                 [sourceFiles: "changelog/CHANGELOG-${tagVersion}.txt", remoteDirectory: "changelog", flatten: true], 
+//                                 [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true],
+//                                 [sourceFiles: "yum/", remoteDirectory: "yum", removePrefix: "yum"],
+//                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"]
+//                         ], 
+//                         verbose: true]
+//                ]
+//            }          
+//    //        }
+//        }
 
 
-        if(!Paths.noCustomUpdates) {
-            stage('Change custom assemble versions') {
-    //        steps {
-                withCredentials([usernameColonPassword(credentialsId: 'jenkins_lsfusion_org', variable: 'USERPASS')]) {
-                    sh "curl -X POST 'http://jenkins.lsfusion.luxsoft.by/job/${Paths.updateAssembleVersionsJob}/build' --user ${USERPASS} -H 'Jenkins-Crumb:440561953171ba4497e4740562d172bb'"
-                }
-    //        }
-            }
-        }
+//        if(!Paths.noCustomUpdates) {
+//            stage('Change custom assemble versions') {
+//    //        steps {
+//                withCredentials([usernameColonPassword(credentialsId: 'jenkins_lsfusion_org', variable: 'USERPASS')]) {
+//                    sh "curl -X POST 'http://jenkins.lsfusion.luxsoft.by/job/${Paths.updateAssembleVersionsJob}/build' --user ${USERPASS} -H 'Jenkins-Crumb:440561953171ba4497e4740562d172bb'"
+//                }
+//    //        }
+//            }
+//        }
     } catch (e) {
         slack.error "Warning! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> (v. " + tagVersion + ") failed."
         
