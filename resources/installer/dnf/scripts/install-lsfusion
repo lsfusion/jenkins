@@ -1,0 +1,46 @@
+dnf install -y java-11-openjdk
+
+dnf install -y dnf-utils
+
+# Install the repository RPM:
+dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+
+# Disable the built-in PostgreSQL module:
+dnf -qy module disable postgresql
+
+# Install PostgreSQL:
+dnf install -y postgresql12 postgresql12-server
+
+# Optionally initialize the database and enable automatic start:
+/usr/pgsql-12/bin/postgresql-12-setup initdb
+
+# Allow trust connection from localhost
+sed -i 's/ident/trust/g' /var/lib/pgsql/12/data/pg_hba.conf
+
+# Autostart PostgreSQL
+systemctl enable postgresql-12
+
+# Run PostgreSQL
+systemctl start postgresql-12
+
+# Install lsFusion repo
+dnf config-manager --add-repo https://download.lsfusion.org/yum
+
+# Import lsFusion GPG Key
+rpm --import https://download.lsfusion.org/yum/GPG-KEY-lsfusion
+
+# Install lsFusion server and client
+dnf install -y <lsfusion-server> <lsfusion-client>
+
+# Autostart lsFusion server and client
+systemctl enable <lsfusion-server>
+systemctl enable <lsfusion-client>
+
+#Allow connections to server 
+firewall-cmd --permanent --add-port=8080/tcp
+firewall-cmd --permanent --add-port=7652/tcp
+firewall-cmd --reload
+
+# Run lsFusion server and client
+systemctl start <lsfusion-server>
+systemctl start <lsfusion-client>
