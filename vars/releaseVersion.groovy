@@ -71,6 +71,7 @@ def call(int branch, boolean releaseFinal) {
             buildInstallers majorVersion, tagVersion
             buildRPMInstallers majorVersion, tagVersion
             buildAPTInstallers majorVersion, tagVersion
+            generateDNFScripts majorVersion
     //        }
         }
 
