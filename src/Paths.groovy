@@ -7,7 +7,7 @@ class Paths {
     static String dnf = "$jenkinsHome/dnf"
     static String apt = "$jenkinsHome/apt"
     
-    static String githubRepo = "nomojenkins/platform"
+    static String githubRepo = "nomojenkins/platform-1"
 
     // for testing purposes
     static String githubIssuesRepo = null
