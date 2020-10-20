@@ -1,6 +1,7 @@
-def call() {
-    Integer lastVersion
-    (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
+def call(String tagVersion, int majorVersion) {
+    String clientName = "lsfusion$majorVersion-client"
+    String serverName = "lsfusion$majorVersion-server"
+
     pipeline {
         environment {
             registryCredential = 'docker-hub'
@@ -11,17 +12,11 @@ def call() {
         agent any
 
         stages {
-            stage('Git update') {
-                steps {
-                    update "v$lastVersion"
-                }
-            }
-
             stage('Building images') {
                 steps {
                     script {
-                        client = docker.build("lsfusion/client:$lastVersion-build_$BUILD_NUMBER", "./web-client")
-                        server = docker.build("lsfusion/server:$lastVersion-build_$BUILD_NUMBER", "./server")
+                        client = docker.build("lsfusion/client:$tagVersion", "--build-arg APT_PACKAGE=$clientName --build-arg APT_VERSION=$tagVersion ./web-client") // eg. lsfusion/client:4.0-beta4
+                        server = docker.build("lsfusion/server:$tagVersion", "--build-arg APT_PACKAGE=$serverName --build-arg APT_VERSION=$tagVersion ./server")
                     }
                 }
             }
@@ -39,8 +34,8 @@ def call() {
 
             stage('Cleaning up') {
                 steps {
-                    sh "docker rmi lsfusion/client:$lastVersion-build_$BUILD_NUMBER"
-                    sh "docker rmi lsfusion/server:$lastVersion-build_$BUILD_NUMBER"
+                    sh "docker rmi lsfusion/client:$tagVersion"
+                    sh "docker rmi lsfusion/server:$tagVersion"
                 }
             }
         }
