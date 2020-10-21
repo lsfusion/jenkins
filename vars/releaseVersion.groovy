@@ -127,7 +127,7 @@ def call(int branch, boolean releaseFinal) {
         }
 
         stage('Build docker images') {
-            buildAndDeployDockerImages tagVersion, majorVersion
+            buildAndDeployDockerImages tagVersion
         }
     
         if(!Paths.noCustomUpdates) {

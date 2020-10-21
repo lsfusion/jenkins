@@ -1,6 +1,4 @@
-def call(String tagVersion, int majorVersion) {
-    String clientName = "lsfusion$majorVersion-client"
-    String serverName = "lsfusion$majorVersion-server"
+def call(String tagVersion) {
 
     pipeline {
         environment {
@@ -15,8 +13,8 @@ def call(String tagVersion, int majorVersion) {
             stage('Building images') {
                 steps {
                     script {
-                        client = docker.build("lsfusion/client:$tagVersion", "--build-arg APT_PACKAGE=$clientName --build-arg APT_VERSION=$tagVersion ./web-client") // eg. lsfusion/client:4.0-beta4
-                        server = docker.build("lsfusion/server:$tagVersion", "--build-arg APT_PACKAGE=$serverName --build-arg APT_VERSION=$tagVersion ./server")
+                        client = docker.build("lsfusion/client:$tagVersion", "./web-client") // eg. lsfusion/client:4.0-beta4
+                        server = docker.build("lsfusion/server:$tagVersion", "./server")
                     }
                 }
             }
