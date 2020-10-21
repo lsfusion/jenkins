@@ -35,6 +35,12 @@ def call(int branch, boolean releaseFinal) {
 //                }
         }
 
+        stage('Update dockerfiles') {
+            if (releaseBeta) {
+                updateDockerImagesVersions tagVersion, majorVersion
+            }
+        }
+
         stage('Release branch') {
 //        steps {
             String releaseCommand = "mvn -B release:clean release:prepare release:perform"
@@ -51,7 +57,8 @@ def call(int branch, boolean releaseFinal) {
         }
 
         stage('Update dockerfiles') {
-            updateDockerImagesVersions tagVersion, majorVersion
+            String version = majorVersion + '.' + (releaseBeta ? 0 : minorVersion+1)
+                updateDockerImagesVersions version, majorVersion
         }
 
         // merging version changes

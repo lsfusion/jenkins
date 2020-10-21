@@ -1,5 +1,5 @@
 def call(String tagVersion, int majorVersion) {
-    stage('update dockerfiles') {
+    stage('Update dockerfiles') {
         String oldServerPackageWithVersion
         String oldServerPackage
         String oldClientPackageWithVersion
