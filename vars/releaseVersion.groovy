@@ -50,6 +50,10 @@ def call(int branch, boolean releaseFinal) {
 //        }
         }
 
+        stage('Update dockerfiles') {
+            updateDockerImagesVersions tagVersion, majorVersion
+        }
+
         // merging version changes
         stage('Fake merge version') {
 //                steps {
@@ -122,9 +126,8 @@ def call(int branch, boolean releaseFinal) {
     //        }
         }
 
-        stage('Build docker images and update versions') {
+        stage('Build docker images') {
             buildAndDeployDockerImages tagVersion, majorVersion
-            updateDockerImagesVersions tagVersion, branch
         }
     
         if(!Paths.noCustomUpdates) {

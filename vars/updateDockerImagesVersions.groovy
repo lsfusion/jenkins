@@ -1,6 +1,14 @@
-//need "content replace" jenkins plugin
-def call(String tagVersion, int branch) {
-    stage('change line') {
+def call(String tagVersion, int majorVersion) {
+    stage('update dockerfiles') {
+        String oldServerPackageWithVersion
+        String oldServerPackage
+        String oldClientPackageWithVersion
+        String oldClientPackage
+        String serverDockerfile = readFile "server/Dockerfile"
+        String clientDockerfile = readFile "web-client/Dockerfile"
+        (oldServerPackageWithVersion, oldServerPackage) = stringsForReplace(serverDockerfile)
+        (oldClientPackageWithVersion, oldClientPackage) = stringsForReplace(clientDockerfile)
+
         contentReplace(
                 configs: [
                         fileContentReplaceConfig(
@@ -15,11 +23,42 @@ def call(String tagVersion, int branch) {
                                                 matchCount: 0)
                                 ],
                                 fileEncoding: 'UTF-8',
-                                filePath: 'docker-compose.yml')
+                                filePath: 'docker-compose.yml'),
+                        fileContentReplaceConfig(
+                                configs: [
+                                        fileContentReplaceItemConfig(
+                                                search: oldServerPackageWithVersion,
+                                                replace: "lsfusion$majorVersion-server=$tagVersion",
+                                                matchCount: 0),
+                                        fileContentReplaceItemConfig(
+                                                search: oldServerPackage,
+                                                replace: "lsfusion$majorVersion-server",
+                                                matchCount: 0)
+                                ],
+                                fileEncoding: 'UTF-8',
+                                filePath: 'server/Dockerfile'),
+                        fileContentReplaceConfig(
+                                configs: [
+                                        fileContentReplaceItemConfig(
+                                                search: oldClientPackageWithVersion,
+                                                replace: "lsfusion$majorVersion-client=$tagVersion",
+                                                matchCount: 0),
+                                        fileContentReplaceItemConfig(
+                                                search: oldClientPackage,
+                                                replace: "lsfusion$majorVersion-client",
+                                                matchCount: 0)
+                                ],
+                                fileEncoding: 'UTF-8',
+                                filePath: 'web-client/Dockerfile')
+
                 ])
-        withCredentials([usernamePassword(credentialsId: Paths.githubCredentials, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh 'git commit -am "Update docker images versions"'
-            sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/' + Paths.githubRepo + '.git ' + branch + ":" + branch
-        }
+        sh "mvn scm:checkin -Dmessage=\"Update docker images versions\""
     }
+}
+
+//get old version and apt package name from comment in first line of Dockerfile
+static def stringsForReplace(String file){
+    def packageNameWithVersion = file.split("\n")[0].split(" ")[1]
+    def packageName = packageNameWithVersion.split("=")[0]
+    return [packageNameWithVersion, packageName]
 }
