@@ -37,7 +37,7 @@ def call(int branch, boolean releaseFinal) {
 
         stage('Update dockerfiles') {
             if (releaseBeta) {
-                updateDockerImagesVersions tagVersion
+                updateDockerImagesVersions tagVersion, majorVersion
             }
         }
 
@@ -58,7 +58,7 @@ def call(int branch, boolean releaseFinal) {
 
         stage('Update dockerfiles') {
             String version = majorVersion + '.' + (releaseBeta ? 0 : minorVersion+1)
-                updateDockerImagesVersions version
+                updateDockerImagesVersions version, majorVersion
         }
 
         // merging version changes
