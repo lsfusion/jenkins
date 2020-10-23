@@ -13,8 +13,8 @@ def call(String tagVersion) {
             stage('Building images') {
                 steps {
                     script {
-                        client = docker.build("lsfusion/client:$tagVersion", "./web-client") // eg. lsfusion/client:4.0-beta4
-                        server = docker.build("lsfusion/server:$tagVersion", "./server")
+                        client = docker.build("lsfusion/client:$tagVersion", "--build-arg PACKAGE=${Paths.download}/${tagVersion}/lsfusion-client-${tagVersion}.war./web-client") // eg. lsfusion/client:4.0-beta4
+                        server = docker.build("lsfusion/server:$tagVersion", "--build-arg PACKAGE=${Paths.download}/${tagVersion}/lsfusion-server-${tagVersion}.jar ./server")
                     }
                 }
             }
