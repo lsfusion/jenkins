@@ -1,8 +1,5 @@
 def call(String tagVersion) {
     stage('Update dockerfiles') {
-        String serverDockerfile = readFile "server/Dockerfile"
-        String clientDockerfile = readFile "web-client/Dockerfile"
-
         contentReplace(
                 configs: [
                         fileContentReplaceConfig(
@@ -21,7 +18,7 @@ def call(String tagVersion) {
                         fileContentReplaceConfig(
                                 configs: [
                                         fileContentReplaceItemConfig(
-                                                search: stringForReplace(serverDockerfile),
+                                                search: "(lsfusion-server).+?jar",
                                                 replace: "lsfusion-server-${tagVersion}.jar",
                                                 matchCount: 0)
                                 ],
@@ -30,7 +27,7 @@ def call(String tagVersion) {
                         fileContentReplaceConfig(
                                 configs: [
                                         fileContentReplaceItemConfig(
-                                                search: stringForReplace(clientDockerfile),
+                                                search: "(lsfusion-client).+?war",
                                                 replace: "lsfusion-client-${tagVersion}.war",
                                                 matchCount: 0)
                                 ],
@@ -40,9 +37,4 @@ def call(String tagVersion) {
                 ])
         sh "mvn scm:checkin -Dmessage=\"Update docker images versions\""
     }
-}
-
-//get old package name from comment in first line of Dockerfile
-static def stringForReplace(String file){
-    return file.split("\n")[0].split(" ")[1]
 }
