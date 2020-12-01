@@ -38,7 +38,7 @@ def call(String tagVersion) {
 
         sh "mkdir -p ${Paths.download}/docker"
         sh "rm -rf ${Paths.download}/docker/*"
-        sh "cp docker-compose.yml ${Paths.download}/docker/${tagVersion}/"
+        sh "cp -f docker-compose.yml ${Paths.download}/docker/${tagVersion}/"
 
         sh "mvn scm:checkin -Dmessage=\"Update docker images versions\""
     }
