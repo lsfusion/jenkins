@@ -35,6 +35,12 @@ def call(int branch, boolean releaseFinal) {
 //                }
         }
 
+        stage('Update dockerfiles') {
+            if (releaseBeta) {
+                updateDockerImagesVersions tagVersion, majorVersion
+            }
+        }
+
         stage('Release branch') {
 //        steps {
             String releaseCommand = "mvn -B release:clean release:prepare release:perform"
@@ -48,6 +54,11 @@ def call(int branch, boolean releaseFinal) {
                 nextBetaVersion.set(minorVersion + 1)
             }
 //        }
+        }
+
+        stage('Update dockerfiles') {
+            String version = majorVersion + '.' + (releaseBeta ? 0 : minorVersion+1)
+                updateDockerImagesVersions version, majorVersion
         }
 
         // merging version changes
@@ -114,7 +125,8 @@ def call(int branch, boolean releaseFinal) {
 //                                 [sourceFiles: "changelog/CHANGELOG-${tagVersion}.txt", remoteDirectory: "changelog", flatten: true], 
 //                                 [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true],
 //                                 [sourceFiles: "yum/", remoteDirectory: "yum", removePrefix: "yum"],
-//                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"]
+//                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"],
+//                                 [sourceFiles: "docker/", remoteDirectory: "docker", removePrefix: "docker"]
 //                         ], 
 //                         verbose: true]
 //                ]
@@ -122,7 +134,10 @@ def call(int branch, boolean releaseFinal) {
 //    //        }
 //        }
 
-
+stage('Build docker images') {
+            buildAndDeployDockerImages tagVersion
+        }
+    
 //        if(!Paths.noCustomUpdates) {
 //            stage('Change custom assemble versions') {
 //    //        steps {
