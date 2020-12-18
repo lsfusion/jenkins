@@ -16,7 +16,7 @@ def call() {
     }
 
     stage('Release final') {
-        releaseVersions lastVersion, true
+        releaseVersion lastVersion, true
     }
 }
 
