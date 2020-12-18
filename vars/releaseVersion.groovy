@@ -17,6 +17,9 @@ def call(int branch, boolean releaseFinal) {
                 minorVersion = 0
             }
             tagVersion = majorVersion + '.' + (releaseBeta ? '0-beta' : '') + minorVersion
+
+            (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
+            isLastVersion = lastVersion == branch
 //        }
         }
 
@@ -36,8 +39,8 @@ def call(int branch, boolean releaseFinal) {
         }
 
         stage('Update dockerfiles') {
-            if (releaseBeta) {
-                updateDockerImagesVersions tagVersion, majorVersion
+            if (releaseBeta || releaseFinal) {
+                updateDockerImagesVersions tagVersion
             }
         }
 
@@ -58,7 +61,7 @@ def call(int branch, boolean releaseFinal) {
 
         stage('Update dockerfiles') {
             String version = majorVersion + '.' + (releaseBeta ? 0 : minorVersion+1)
-                updateDockerImagesVersions version, majorVersion
+                updateDockerImagesVersions version
         }
 
         // merging version changes
@@ -84,6 +87,11 @@ def call(int branch, boolean releaseFinal) {
             buildAPTInstallers majorVersion, tagVersion
             generateDNFScripts majorVersion
     //        }
+        }
+
+        stage('Copy docker-compose.yml') {
+            sh "mkdir -p ${Paths.download}/docker/${tagVersion}"
+            sh "cp -f docker-compose.yml ${Paths.download}/docker/${tagVersion}/"
         }
 
         stage('Generate JNLP') {
@@ -126,7 +134,8 @@ def call(int branch, boolean releaseFinal) {
 //                                 [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true],
 //                                 [sourceFiles: "yum/", remoteDirectory: "yum", removePrefix: "yum"],
 //                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"],
-//                                 [sourceFiles: "docker/", remoteDirectory: "docker", removePrefix: "docker"]
+//                                 [sourceFiles: "dnf/", remoteDirectory: "dnf", removePrefix: "dnf"],
+//                                 [sourceFiles: "docker/${tagVersion}/", remoteDirectory: "docker", removePrefix: "docker"]
 //                         ], 
 //                         verbose: true]
 //                ]
@@ -136,8 +145,11 @@ def call(int branch, boolean releaseFinal) {
 
 stage('Build docker images') {
             buildAndDeployDockerImages tagVersion
+            if (isLastVersion && !releaseBeta) {
+                buildAndDeployDockerImages 'latest'
+            }
         }
-    
+
 //        if(!Paths.noCustomUpdates) {
 //            stage('Change custom assemble versions') {
 //    //        steps {

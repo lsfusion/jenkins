@@ -11,7 +11,7 @@ class Paths {
 
     // for testing purposes
     static String githubIssuesRepo = null
-    static boolean noCustomUpdates = false
+    static boolean noCustomUpdates = true
     static String slackChannel = "#jenkinstest"
     
     static String githubCredentials = "1237e973-dddd-450b-b46d-6b8ef824a1c3"
