@@ -17,8 +17,6 @@ SetCompressor lzma
 !define JAVA_INSTALLER "java-${JDK_VERSION}-${ARCH}"
 !define JAVA_INSTALLER_EXT "msi"
 ;!define JAVA_INSTALLER_EXT "exe"
-!define JAVA_INSTALLER_PARAMS '/quiet INSTALLDIR="$javaDir" ADDLOCAL=jdk,jdk_registry_standard,jdk_env_path,jdk_env_java_home,jdk_registry_jar,webstart,webstart_registry,webstart_env'
-;!define JAVA_INSTALLER_PARAMS '/s ADDLOCAL="ToolsFeature,SourceFeature,PublicjreFeature"'
 !define PG_INSTALLER "postgresql-${PG_VERSION}-${ARCH}"
 !define IDEA_INSTALLER "ideaIC-${IDEA_VERSION}"
 !define IDEA_PLUGIN "lsfusion-idea-plugin"
@@ -80,7 +78,7 @@ Var pgDir
 Var pgServiceName
 
 Var ideaDir
-!define IDEA_CONFIG_DIR "$PROFILE\.IdeaIC${IDEA_MAJORVERSION}\config"
+!define IDEA_CONFIG_DIR "$PROFILE\AppData\Roaming\JetBrains\IdeaIC${IDEA_MAJORVERSION}"
 
 Var jasperDir
 
@@ -401,9 +399,16 @@ FunctionEnd
 Function initJavaFromRegistry
     ClearErrors
 
-    ReadRegStr $javaVersion HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
-    ReadRegStr $javaHome HKLM "SOFTWARE\JavaSoft\Java Development Kit\$javaVersion" "JavaHome"
-    ReadRegStr $jvmDll HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$javaVersion" "RuntimeLib"
+    ReadRegStr $javaVersion HKLM "SOFTWARE\JavaSoft\JDK" "CurrentVersion"
+    ${if} $javaVersion == ""
+        ReadRegStr $javaVersion HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
+        ReadRegStr $javaHome HKLM "SOFTWARE\JavaSoft\Java Development Kit\$javaVersion" "JavaHome"
+        ReadRegStr $jvmDll HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$javaVersion" "RuntimeLib"
+    ${else}        
+        ReadRegStr $javaHome HKLM "SOFTWARE\JavaSoft\JDK\$javaVersion" "JavaHome"
+        ReadRegStr $jvmDll HKLM "SOFTWARE\JavaSoft\JDK\$javaVersion" "RuntimeLib"
+    ${endIf}
+    
 ;    ${VersionCompare} $javaVersion "${JDK_MAJORVERSION}" $0
 
     IfFileExists $jvmDll noProblem
@@ -572,7 +577,8 @@ Function createServices
     
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Startup auto'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Classpath "${INSTCLIENTDIR}\bin\bootstrap.jar;${INSTCLIENTDIR}\bin\tomcat-juli.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop --StartMode jvm --StopMode jvm'
-            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions "-Dcatalina.home=${INSTCLIENTDIR}#-Dcatalina.base=${INSTCLIENTDIR}#-Djava.endorsed.dirs=${INSTCLIENTDIR}\endorsed#-Djava.io.tmpdir=${INSTCLIENTDIR}\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=${INSTCLIENTDIR}\conf\logging.properties"'
+            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions "-Dcatalina.home=${INSTCLIENTDIR}#-Dcatalina.base=${INSTCLIENTDIR}#-Djava.io.tmpdir=${INSTCLIENTDIR}\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=${INSTCLIENTDIR}\conf\logging.properties"'
+            ;nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions9 "-Dcatalina.home=${INSTCLIENTDIR}#-Dcatalina.base=${INSTCLIENTDIR}#-Djava.io.tmpdir=${INSTCLIENTDIR}\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=${INSTCLIENTDIR}\conf\logging.properties"'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --StdOutput auto --StdError auto'
 
             ${LogMessage} "Starting $clientServiceName service"

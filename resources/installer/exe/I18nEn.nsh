@@ -26,7 +26,7 @@ LangString strJavaDirHeader ${LANG_ENGLISH} "Choose the folder in which to insta
 LangString strJavaDirTextTop ${LANG_ENGLISH} "Setup will install JDK ${JDK_VERSION} to the following folder."
 LangString strJavaTitle ${LANG_ENGLISH} "Java Virtual Machine"
 LangString strJavaSubtitle ${LANG_ENGLISH} "Java Virtual Machine path selection."
-LangString strSelectJavaMessage ${LANG_ENGLISH} "Please select the path of a Java SE 7.0 or later JDK installed on your system."
+LangString strSelectJavaMessage ${LANG_ENGLISH} "Please select the path of a Java SE 8.0 or later JDK installed on your system."
 LangString strNoJavaError ${LANG_ENGLISH} "No Java Virtual Machine found in folder:$\r$\n"
 
 LangString strClientOptions ${LANG_ENGLISH} "Options for lsFusion Client installation."
