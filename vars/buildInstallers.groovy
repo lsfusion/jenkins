@@ -26,13 +26,16 @@ def call(int majorVersion, String platformVersion) {
         def makensis = "${installerSrc}/nsis-unicode-win/makensis.exe"
         def downloadDir = "${Paths.download}/exe/${platformVersion}"
 
-        sh "echo '\n!define LSFUSION_MAJOR_VERSION ${majorVersion}' >> Versions.nsh"
-        sh "echo '\n!define LSFUSION_VERSION ${platformVersion.replace('-SNAPSHOT', '')}' >> Versions.nsh"
+        sh "echo '\n!define LSFUSION_MAJOR_VERSION ${majorVersion}' >> Versions-x32.nsh"
+        sh "echo '\n!define LSFUSION_MAJOR_VERSION ${majorVersion}' >> Versions-x64.nsh"
+        sh "echo '\n!define LSFUSION_VERSION ${platformVersion.replace('-SNAPSHOT', '')}' >> Versions-x32.nsh"
+        sh "echo '\n!define LSFUSION_VERSION ${platformVersion.replace('-SNAPSHOT', '')}' >> Versions-x64.nsh"
         String viVersion = platformVersion.replace('-beta', '.999.').replace('-SNAPSHOT', '')
         if (!platformVersion.contains('beta')) {
             viVersion += '.0.0'
         }
-        sh "echo '\n!define VI_LSFUSION_VERSION ${viVersion}' >> Versions.nsh"
+        sh "echo '\n!define VI_LSFUSION_VERSION ${viVersion}' >> Versions-x32.nsh"
+        sh "echo '\n!define VI_LSFUSION_VERSION ${viVersion}' >> Versions-x64.nsh"
         
         sh "mkdir -p ${downloadDir}"
         

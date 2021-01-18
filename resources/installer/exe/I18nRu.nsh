@@ -26,7 +26,7 @@ LangString strJavaDirHeader ${LANG_RUSSIAN} "Выберите папку для 
 LangString strJavaDirTextTop ${LANG_RUSSIAN} "Программа установит JDK ${JDK_VERSION} в указанную папку."
 LangString strJavaTitle ${LANG_RUSSIAN} "Виртуальная машина Java"
 LangString strJavaSubtitle ${LANG_RUSSIAN} "Выбор папки установленной JVM."
-LangString strSelectJavaMessage ${LANG_RUSSIAN} "Выберите пожалуйста папку с установленной Java SE 7.0 или новее."
+LangString strSelectJavaMessage ${LANG_RUSSIAN} "Выберите, пожалуйста, папку с установленной Java SE 8.0 или новее."
 LangString strNoJavaError ${LANG_RUSSIAN} "JVM не найдена в папке:$\r$\n"
 
 LangString strClientOptions ${LANG_RUSSIAN} "Настройки для установки lsFusion Client."
