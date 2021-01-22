@@ -143,11 +143,11 @@ def call(int branch, boolean releaseFinal) {
     //        }
         }
 
-stage('Build docker images') {
+        stage('Build docker images') {
             buildAndDeployDockerImages tagVersion
-            if (isLastVersion && !releaseBeta) {
-                buildAndDeployDockerImages 'latest'
-            }
+//            if (isLastVersion && !releaseBeta) {
+//                buildAndDeployDockerImages 'latest'
+//            }
         }
 
 //        if(!Paths.noCustomUpdates) {
