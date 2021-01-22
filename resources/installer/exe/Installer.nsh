@@ -96,6 +96,9 @@ Var clientServiceName
 Var clientDisplayServiceName 
 Var clientContext
 
+Var serverLanguage
+Var serverCountry
+
 # no locals in nsis
 Var serviceFile
 
@@ -144,6 +147,12 @@ Page custom javaConfigPagePre javaConfigPageLeave
 Page custom serverConfigPagePre serverConfigPageLeave
 ; directory - main
 
+!ifdef MYCOMPANY
+    # MyCompany pages
+    !include MyCompanyFunctions.nsh
+    Page custom myCompanyConfigPagePre myCompanyConfigPageLeave
+!endif
+
 # Client pages
 !include ClientFunctions.nsh
 Page custom clientConfigPagePre clientConfigPageLeave
@@ -177,6 +186,10 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 !insertmacro MUI_LANGUAGE Russian
 !include I18nEn.nsh
 !include I18nRu.nsh
+!ifdef MYCOMPANY
+    !include MycompanyEn.nsh
+    !include MycompanyRu.nsh
+!endif
 
 LicenseLangString lsLicense ${LANG_ENGLISH} "resources\license-english.txt"
 LicenseLangString lsLicense ${LANG_RUSSIAN} "resources\license-russian.txt"
@@ -471,6 +484,12 @@ Function execAntConfiguration
         ${ConfigWriteSE} "$serverSettingsFile" "rmi.host=" "$serverHost" $R0
         ${ConfigWriteSE} "$serverSettingsFile" "rmi.port=" "$serverPort" $R0
         ${ConfigWriteSE} "$serverSettingsFile" "logics.initialAdminPassword=" "$serverPassword" $R0
+        ${ifNot} $serverLanguage == ""
+            ${ConfigWriteSE} "$serverSettingsFile" "user.setLanguage=" $serverLanguage $R0
+        ${endIf}
+        ${ifNot} $serverCountry == ""
+            ${ConfigWriteSE} "$serverSettingsFile" "user.setCountry=" $serverCountry $R0
+        ${endIf}
     ${endIf}
     
     ${if} ${SectionIsSelected} ${SecClient}
