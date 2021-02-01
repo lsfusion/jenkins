@@ -6,6 +6,7 @@ class Paths {
     static String rpm = "$jenkinsHome/rpm"
     static String dnf = "$jenkinsHome/dnf"
     static String apt = "$jenkinsHome/apt"
+    static String ssl = "$jenkinsHome/ssl"
     
     static String githubRepo = "lsfusion/platform"
 
