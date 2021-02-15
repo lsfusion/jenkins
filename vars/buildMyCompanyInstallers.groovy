@@ -33,9 +33,11 @@ def call(String platformVersion) {
 
         sh "wine ${makensis} MyCompany-installer-x32.nsi"
         sh "chmod -x MyCompany-${myCompanyVersion}.exe"
+        sh "sh ${Paths.ssl}/sign.sh ${workspace}/MyCompany-${myCompanyVersion}.exe"
 
         sh "wine ${makensis} MyCompany-installer-x64.nsi"
         sh "chmod -x MyCompany-${myCompanyVersion}-x64.exe"
+        sh "sh ${Paths.ssl}/sign.sh ${workspace}/MyCompany-${myCompanyVersion}-x64.exe"
 
         ftpPublisher failOnError: true, publishers: [
                 [configName: 'Download FTP server', 
