@@ -1,0 +1,282 @@
+{
+  "version.label": {
+    "message": "1.0.0",
+    "description": "The label for version current"
+  },
+  "sidebar.docs.category.Install": {
+    "message": "Установить",
+    "description": "The label for category Install in sidebar docs"
+  },
+  "sidebar.docs.category.Automatic installation": {
+    "message": "Автоматическая установка",
+    "description": "The label for category Automatic installation in sidebar docs"
+  },
+  "sidebar.docs.category.Manual installation": {
+    "message": "Ручная установка",
+    "description": "The label for category Manual installation in sidebar docs"
+  },
+  "sidebar.docs.category.Learn": {
+    "message": "Изучить",
+    "description": "The label for category Learn in sidebar docs"
+  },
+  "sidebar.docs.category.Paradigm": {
+    "message": "Парадигма",
+    "description": "The label for category Paradigm in sidebar docs"
+  },
+  "sidebar.docs.category.Logical model": {
+    "message": "Логическая модель",
+    "description": "The label for category Logical model in sidebar docs"
+  },
+  "sidebar.docs.category.Domain logic": {
+    "message": "Логика предметной области",
+    "description": "The label for category Domain logic in sidebar docs"
+  },
+  "sidebar.docs.category.Properties": {
+    "message": "Свойства",
+    "description": "The label for category Properties in sidebar docs"
+  },
+  "sidebar.docs.category.Operators": {
+    "message": "Операторы",
+    "description": "The label for category Operators in sidebar docs"
+  },
+  "sidebar.docs.category.Primitive operations": {
+    "message": "Операции с примитивами",
+    "description": "The label for category Primitive operations in sidebar docs"
+  },
+  "sidebar.docs.category.Class operations": {
+    "message": "Операции с классами",
+    "description": "The label for category Class operations in sidebar docs"
+  },
+  "sidebar.docs.category.Set operations": {
+    "message": "Операции с множествами",
+    "description": "The label for category Set operations in sidebar docs"
+  },
+  "sidebar.docs.category.Actions": {
+    "message": "Действия",
+    "description": "The label for category Actions in sidebar docs"
+  },
+  "sidebar.docs.category.Оperators": {
+    "message": "Оператоpы",
+    "description": "The label for category Оperators in sidebar docs"
+  },
+  "sidebar.docs.category.Execution order": {
+    "message": "Порядок выполнения",
+    "description": "The label for category Execution order in sidebar docs"
+  },
+  "sidebar.docs.category.State change": {
+    "message": "Изменение состояния",
+    "description": "The label for category State change in sidebar docs"
+  },
+  "sidebar.docs.category.Session management": {
+    "message": "Управление сессиями",
+    "description": "The label for category Session management in sidebar docs"
+  },
+  "sidebar.docs.category.User/IS interaction": {
+    "message": "Взаимодействие с пользователем / ИС",
+    "description": "The label for category User/IS interaction in sidebar docs"
+  },
+  "sidebar.docs.category.File operators": {
+    "message": "Работа с файлами",
+    "description": "The label for category File operators in sidebar docs"
+  },
+  "sidebar.docs.category.Events": {
+    "message": "События",
+    "description": "The label for category Events in sidebar docs"
+  },
+  "sidebar.docs.category.Constraints": {
+    "message": "Ограничения",
+    "description": "The label for category Constraints in sidebar docs"
+  },
+  "sidebar.docs.category.Classes": {
+    "message": "Классы",
+    "description": "The label for category Classes in sidebar docs"
+  },
+  "sidebar.docs.category.View logic": {
+    "message": "Логика представлений",
+    "description": "The label for category View logic in sidebar docs"
+  },
+  "sidebar.docs.category.Forms": {
+    "message": "Формы",
+    "description": "The label for category Forms in sidebar docs"
+  },
+  "sidebar.docs.category.Form structure": {
+    "message": "Структура формы",
+    "description": "The label for category Form structure in sidebar docs"
+  },
+  "sidebar.docs.category.Form views": {
+    "message": "Представления формы",
+    "description": "The label for category Form views in sidebar docs"
+  },
+  "sidebar.docs.category.Interactive view": {
+    "message": "Интерактивное представление",
+    "description": "The label for category Interactive view in sidebar docs"
+  },
+  "sidebar.docs.category.Form operators": {
+    "message": "Операторы формы",
+    "description": "The label for category Form operators in sidebar docs"
+  },
+  "sidebar.docs.category.Value input": {
+    "message": "Ввод значения",
+    "description": "The label for category Value input in sidebar docs"
+  },
+  "sidebar.docs.category.Object group operations": {
+    "message": "Операции с группами объектов",
+    "description": "The label for category Object group operations in sidebar docs"
+  },
+  "sidebar.docs.category.Focus operations": {
+    "message": "Управление фокусом",
+    "description": "The label for category Focus operations in sidebar docs"
+  },
+  "sidebar.docs.category.Static view": {
+    "message": "Статичное представление",
+    "description": "The label for category Static view in sidebar docs"
+  },
+  "sidebar.docs.category.Print view": {
+    "message": "Печатное представление",
+    "description": "The label for category Print view in sidebar docs"
+  },
+  "sidebar.docs.category.Open form": {
+    "message": "Открытие формы",
+    "description": "The label for category Open form in sidebar docs"
+  },
+  "sidebar.docs.category.Navigator": {
+    "message": "Навигатор",
+    "description": "The label for category Navigator in sidebar docs"
+  },
+  "sidebar.docs.category.Physical model": {
+    "message": "Физическая модель",
+    "description": "The label for category Physical model in sidebar docs"
+  },
+  "sidebar.docs.category.Development": {
+    "message": "Разработка",
+    "description": "The label for category Development in sidebar docs"
+  },
+  "sidebar.docs.category.Element identification": {
+    "message": "Идентификация элементов",
+    "description": "The label for category Element identification in sidebar docs"
+  },
+  "sidebar.docs.category.Modularity": {
+    "message": "Модульность",
+    "description": "The label for category Modularity in sidebar docs"
+  },
+  "sidebar.docs.category.Extensions": {
+    "message": "Расширения",
+    "description": "The label for category Extensions in sidebar docs"
+  },
+  "sidebar.docs.category.Integration": {
+    "message": "Интеграция",
+    "description": "The label for category Integration in sidebar docs"
+  },
+  "sidebar.docs.category.Access to an internal system (INTERNAL, FORMULA)": {
+    "message": "Обращение к внутренней системе (INTERNAL, FORMULA)",
+    "description": "The label for category Access to an internal system (INTERNAL, FORMULA) in sidebar docs"
+  },
+  "sidebar.docs.category.Execution": {
+    "message": "Выполнение",
+    "description": "The label for category Execution in sidebar docs"
+  },
+  "sidebar.docs.category.Management": {
+    "message": "Управление",
+    "description": "The label for category Management in sidebar docs"
+  },
+  "sidebar.docs.category.System parameters": {
+    "message": "Системные параметры",
+    "description": "The label for category System parameters in sidebar docs"
+  },
+  "sidebar.docs.category.Launch parameters": {
+    "message": "Параметры запуска",
+    "description": "The label for category Launch parameters in sidebar docs"
+  },
+  "sidebar.docs.category.Language": {
+    "message": "Язык",
+    "description": "The label for category Language in sidebar docs"
+  },
+  "sidebar.docs.category.Instructions": {
+    "message": "Инструкции",
+    "description": "The label for category Instructions in sidebar docs"
+  },
+  "sidebar.docs.category.Instruction =": {
+    "message": "Инструкция =",
+    "description": "The label for category Instruction = in sidebar docs"
+  },
+  "sidebar.docs.category.Expression": {
+    "message": "Выражения",
+    "description": "The label for category Expression in sidebar docs"
+  },
+  "sidebar.docs.category.Property operators": {
+    "message": "Операторы-свойства",
+    "description": "The label for category Property operators in sidebar docs"
+  },
+  "sidebar.docs.category.ACTION instruction": {
+    "message": "Инструкция ACTION",
+    "description": "The label for category ACTION instruction in sidebar docs"
+  },
+  "sidebar.docs.category.Action operator": {
+    "message": "Операторы-действия",
+    "description": "The label for category Action operator in sidebar docs"
+  },
+  "sidebar.docs.category.ON instruction": {
+    "message": "Инструкция ON",
+    "description": "The label for category ON instruction in sidebar docs"
+  },
+  "sidebar.docs.category.FORM instruction": {
+    "message": "Инструкция FORM",
+    "description": "The label for category FORM instruction in sidebar docs"
+  },
+  "sidebar.docs.category.Examples": {
+    "message": "Примеры",
+    "description": "The label for category Examples in sidebar docs"
+  },
+  "sidebar.docs.category.How-to": {
+    "message": "How-to",
+    "description": "The label for category How-to in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Computations": {
+    "message": "How-to: Вычисления",
+    "description": "The label for category How-to: Computations in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: GUI": {
+    "message": "How-to: GUI",
+    "description": "The label for category How-to: GUI in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Interactive forms": {
+    "message": "How-to: Интерактивные формы",
+    "description": "The label for category How-to: Interactive forms in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Imperative logic": {
+    "message": "How-to: Императивная логика",
+    "description": "The label for category How-to: Imperative logic in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Actions": {
+    "message": "How-to: Действия",
+    "description": "The label for category How-to: Actions in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Declarative logic": {
+    "message": "How-to: Декларативная логика",
+    "description": "The label for category How-to: Declarative logic in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Searching for elements": {
+    "message": "How-to: Поиск элементов",
+    "description": "The label for category How-to: Searching for elements in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Extensions": {
+    "message": "How-to: Расширения",
+    "description": "The label for category How-to: Extensions in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Integration": {
+    "message": "How-to: Интеграция",
+    "description": "The label for category How-to: Integration in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Working with external formats": {
+    "message": "How-to: Работа с внешними форматами",
+    "description": "The label for category How-to: Working with external formats in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Access to internal systems": {
+    "message": "How-to: Обращение к внутренним системам",
+    "description": "The label for category How-to: Access to internal systems in sidebar docs"
+  },
+  "sidebar.docs.category.How-to: Use Cases": {
+    "message": "How-to: Use Cases",
+    "description": "The label for category How-to: Use Cases in sidebar docs"
+  }
+}

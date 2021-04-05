@@ -1,0 +1,1779 @@
+{
+  "version-1.0.0/docs": [
+    {
+      "collapsed": true,
+      "type": "category",
+      "label": "Install",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-1.0.0/Install"
+        },
+        {
+          "collapsed": true,
+          "type": "category",
+          "label": "Automatic installation",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Automatic_installation"
+            },
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Development_auto_"
+            },
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Execution_auto_"
+            }
+          ]
+        },
+        {
+          "collapsed": true,
+          "type": "category",
+          "label": "Manual installation",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Manual_installation"
+            },
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Development_manual_"
+            },
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Execution_manual_"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "collapsed": true,
+      "type": "category",
+      "label": "Learn",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-1.0.0/Learn"
+        },
+        {
+          "collapsed": true,
+          "type": "category",
+          "label": "Paradigm",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Paradigm"
+            },
+            {
+              "collapsed": true,
+              "type": "category",
+              "label": "Logical model",
+              "items": [
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/Logical_model"
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "Domain logic",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Domain_logic"
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Properties",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Properties"
+                        },
+                        {
+                          "collapsed": true,
+                          "type": "category",
+                          "label": "Operators",
+                          "items": [
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Operators"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Data_properties_DATA_"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Composition_JOIN_"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Constant"
+                            },
+                            {
+                              "collapsed": true,
+                              "type": "category",
+                              "label": "Primitive operations",
+                              "items": [
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Primitive_operations"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Arithmetic_operators_+_-_..._"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Logical_operators_AND_OR_NOT_XOR_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Comparison_operators_=_..._"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Extremum_MAX_MIN_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/String_operators_+_CONCAT_SUBSTRING_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Structure_operations_STRUCT_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Type_conversion"
+                                }
+                              ]
+                            },
+                            {
+                              "collapsed": true,
+                              "type": "category",
+                              "label": "Class operations",
+                              "items": [
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Class_operations"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Classification_IS_AS_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Property_signature_CLASS_"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Selection_CASE_IF_MULTI_OVERRIDE_EXCLUSIVE_"
+                            },
+                            {
+                              "collapsed": true,
+                              "type": "category",
+                              "label": "Set operations",
+                              "items": [
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Set_operations"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Grouping_GROUP_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Partitioning_sorting_PARTITION_..._ORDER_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Recursion_RECURSION_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Distribution_UNGROUP_"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Actions",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Actions"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Change_sessions"
+                        },
+                        {
+                          "collapsed": true,
+                          "type": "category",
+                          "label": "Оperators",
+                          "items": [
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Оperators"
+                            },
+                            {
+                              "collapsed": true,
+                              "type": "category",
+                              "label": "Execution order",
+                              "items": [
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Execution_order"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Sequence_..._"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Call_EXEC_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Loop_FOR_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Branching_CASE_IF_MULTI_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Recursive_loop_WHILE_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Interruption_BREAK_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Exit_RETURN_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/New_threads_NEWTHREAD_NEWEXECUTOR_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Exception_handling_TRY_"
+                                }
+                              ]
+                            },
+                            {
+                              "collapsed": true,
+                              "type": "category",
+                              "label": "State change",
+                              "items": [
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/State_change"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Property_change_CHANGE_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/New_object_NEW_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Class_change_CHANGECLASS_DELETE_"
+                                }
+                              ]
+                            },
+                            {
+                              "collapsed": true,
+                              "type": "category",
+                              "label": "Session management",
+                              "items": [
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Session_management"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Apply_changes_APPLY_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Cancel_changes_CANCEL_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/New_session_NEWSESSION_NESTEDSESSION_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Previous_value_PREV_"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Change_operators_SET_CHANGED_..._"
+                                }
+                              ]
+                            },
+                            {
+                              "collapsed": true,
+                              "type": "category",
+                              "label": "User/IS interaction",
+                              "items": [
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/User_IS_interaction"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Show_message_MESSAGE_ASK_"
+                                },
+                                {
+                                  "collapsed": true,
+                                  "type": "category",
+                                  "label": "File operators",
+                                  "items": [
+                                    {
+                                      "type": "doc",
+                                      "id": "version-1.0.0/File_operators"
+                                    },
+                                    {
+                                      "type": "doc",
+                                      "id": "version-1.0.0/Read_file_READ_"
+                                    },
+                                    {
+                                      "type": "doc",
+                                      "id": "version-1.0.0/Write_file_WRITE_"
+                                    },
+                                    {
+                                      "type": "doc",
+                                      "id": "version-1.0.0/Data_import_IMPORT_"
+                                    },
+                                    {
+                                      "type": "doc",
+                                      "id": "version-1.0.0/Data_export_EXPORT_"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Send_mail_EMAIL_"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Events",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Events"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Simple_event"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Calculated_events"
+                        }
+                      ]
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Constraints",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Constraints"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Simple_constraints"
+                        },
+                        {
+                          "collapsed": true,
+                          "type": "category",
+                          "label": "Classes",
+                          "items": [
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Classes"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Built-in_classes"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Static_objects"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/User_classes"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Aggregations"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "View logic",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/View_logic"
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Forms",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Forms"
+                        },
+                        {
+                          "collapsed": true,
+                          "type": "category",
+                          "label": "Form structure",
+                          "items": [
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Form_structure"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Groups_of_properties_and_actions"
+                            }
+                          ]
+                        },
+                        {
+                          "collapsed": true,
+                          "type": "category",
+                          "label": "Form views",
+                          "items": [
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Form_views"
+                            },
+                            {
+                              "collapsed": true,
+                              "type": "category",
+                              "label": "Interactive view",
+                              "items": [
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Interactive_view"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Form_design"
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Form_events"
+                                },
+                                {
+                                  "collapsed": true,
+                                  "type": "category",
+                                  "label": "Form operators",
+                                  "items": [
+                                    {
+                                      "type": "doc",
+                                      "id": "version-1.0.0/Form_operators"
+                                    },
+                                    {
+                                      "collapsed": true,
+                                      "type": "category",
+                                      "label": "Value input",
+                                      "items": [
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/Value_input"
+                                        },
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/Primitive_input_INPUT_"
+                                        },
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/Value_request_REQUEST_"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "collapsed": true,
+                                      "type": "category",
+                                      "label": "Object group operations",
+                                      "items": [
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/Object_group_operations"
+                                        },
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/Search_SEEK_"
+                                        },
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/Filter_FILTER_"
+                                        },
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/Order_ORDER_"
+                                        },
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/View_VIEW_"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "collapsed": true,
+                                      "type": "category",
+                                      "label": "Focus operations",
+                                      "items": [
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/Focus_operations"
+                                        },
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/Activation_ACTIVATE_"
+                                        },
+                                        {
+                                          "type": "doc",
+                                          "id": "version-1.0.0/Activity_ACTIVE_"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "collapsed": true,
+                              "type": "category",
+                              "label": "Static view",
+                              "items": [
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Static_view"
+                                },
+                                {
+                                  "collapsed": true,
+                                  "type": "category",
+                                  "label": "Print view",
+                                  "items": [
+                                    {
+                                      "type": "doc",
+                                      "id": "version-1.0.0/Print_view"
+                                    },
+                                    {
+                                      "type": "doc",
+                                      "id": "version-1.0.0/Report_design"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "doc",
+                                  "id": "version-1.0.0/Structured_view"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "collapsed": true,
+                          "type": "category",
+                          "label": "Open form",
+                          "items": [
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Open_form"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/In_an_interactive_view_SHOW_DIALOG_"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/In_a_print_view_PRINT_"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/In_a_structured_view_EXPORT_IMPORT_"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Navigator",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Navigator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Navigator_design"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "collapsed": true,
+              "type": "category",
+              "label": "Physical model",
+              "items": [
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/Physical_model"
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "Development",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Development"
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Element identification",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Element_identification"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Naming"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Search"
+                        }
+                      ]
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Modularity",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Modularity"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Modules"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Projects"
+                        },
+                        {
+                          "collapsed": true,
+                          "type": "category",
+                          "label": "Extensions",
+                          "items": [
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Extensions"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Class_extension"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Property_extension"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Action_extension"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Form_extension"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Metaprogramming"
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Integration",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Integration"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Access_from_an_external_system"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Access_from_an_internal_system"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Access_to_an_external_system_EXTERNAL_"
+                        },
+                        {
+                          "collapsed": true,
+                          "type": "category",
+                          "label": "Access to an internal system (INTERNAL, FORMULA)",
+                          "items": [
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Access_to_an_internal_system_INTERNAL_FORMULA_"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Internal_call_INTERNAL_"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Custom_formula_FORMULA_"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Eval_EVAL_"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Migration"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Internationalization"
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "Execution",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Execution"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Materializations"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Indexes"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Tables"
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "Management",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Management"
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "System parameters",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/System_parameters"
+                        },
+                        {
+                          "collapsed": true,
+                          "type": "category",
+                          "label": "Launch parameters",
+                          "items": [
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Launch_parameters"
+                            },
+                            {
+                              "type": "doc",
+                              "id": "version-1.0.0/Launch_events"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Working_parameters"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/User_interface"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Interpreter"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Security_policy"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Process_monitor"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Scheduler"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Journals_and_logs"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Profiler"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Chat"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "collapsed": true,
+          "type": "category",
+          "label": "Language",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Language"
+            },
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Tokens"
+            },
+            {
+              "type": "doc",
+              "id": "version-1.0.0/IDs"
+            },
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Literals"
+            },
+            {
+              "collapsed": true,
+              "type": "category",
+              "label": "Instructions",
+              "items": [
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/Instructions"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/Module_header"
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "Instruction =",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Instruction_="
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Expression",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Expression"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Operator_priority"
+                        }
+                      ]
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Property operators",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Property_operators"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Arithmetic_operators"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Operator_"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/ABSTRACT_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/ACTIVE_TAB_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/AGGR_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/CASE_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/CLASS_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/CONCAT_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/DATA_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/EXCLUSIVE_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/FORMULA_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/GROUP_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/IF_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/IF_..._THEN_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/JOIN_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/MAX_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/MIN_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/MULTI_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/OVERRIDE_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/PARTITION_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/PREV_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/RECURSION_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/STRUCT_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/UNGROUP_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Object_group_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Type_conversion_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/AND_OR_NOT_XOR_operators"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/IS_AS_operators"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Change_operators"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Comparison_operators"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Property_options"
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "ACTION instruction",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/ACTION_instruction"
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "Action operator",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Action_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/Operator_..._"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/ABSTRACT_operator_action_"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/ACTIVATE_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/ACTIVE_FORM_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/APPLY_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/ASK_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/CHANGE_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/BREAK_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/CANCEL_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/CASE_operator_action_"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/CHANGECLASS_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/INTERNAL_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/DELETE_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/DIALOG_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/EMAIL_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/EVAL_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/EXEC_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/EXPORT_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/EXTERNAL_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/FOR_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/IF_..._THEN_operator_action_"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/IMPORT_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/INPUT_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/MESSAGE_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/MULTI_operator_action_"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/NEW_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/NESTEDSESSION_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/NEWEXECUTOR_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/NEWSESSION_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/NEWTHREAD_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/PRINT_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/READ_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/REQUEST_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/RETURN"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/SEEK_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/SHOW_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/TRY_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/WHILE_operator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/WRITE_operator"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Action_options"
+                    }
+                  ]
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/GROUP_instruction"
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "ON instruction",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/ON_instruction"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Event_description_block"
+                    }
+                  ]
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/WHEN_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/Instruction_-_WHEN"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/CONSTRAINT_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/Instruction=_"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/CLASS_instruction"
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "FORM instruction",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/FORM_instruction"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Object_blocks"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Properties_and_actions_block"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Filters_and_sortings_block"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/Event_block"
+                    }
+                  ]
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/DESIGN_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/NAVIGATOR_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/WINDOW_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/EXTEND_CLASS_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/EXTEND_FORM_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/Instruction_+="
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/ACTION+_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/META_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/Instruction_"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/TABLE_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/INDEX_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/BEFORE_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/AFTER_instruction"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/Empty_instruction"
+                }
+              ]
+            },
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Coding_conventions"
+            }
+          ]
+        },
+        {
+          "type": "doc",
+          "id": "version-1.0.0/IDE"
+        },
+        {
+          "collapsed": true,
+          "type": "category",
+          "label": "Examples",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Examples"
+            },
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Score_table"
+            },
+            {
+              "type": "doc",
+              "id": "version-1.0.0/Materials_management"
+            },
+            {
+              "collapsed": true,
+              "type": "category",
+              "label": "How-to",
+              "items": [
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/How-to"
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "How-to: Computations",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Computations"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_GROUP_SUM"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_GROUP_MAX_MIN_AGGR"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_CASE_IF_OVERRIDE"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_GROUP_LAST"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_GROUP_CONCAT"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_PARTITION"
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "How-to: GUI",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_GUI"
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "How-to: Interactive forms",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Interactive_forms"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_CRUD"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Documents_with_lines"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Filtering_and_ordering"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Design"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Trees"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Data_entry"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Navigator"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Matrix"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Table_status"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Reports"
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "How-to: Imperative logic",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Imperative_logic"
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "How-to: Actions",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Actions"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_CHANGE"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_EXEC"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_NEW"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_DELETE"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_FOR"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_IF_CASE"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_WHILE"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_NEWSESSION"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_SEEK"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Events"
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "How-to: Declarative logic",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Declarative_logic"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Constraints"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Inheritance_and_aggregation"
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "How-to: Searching for elements",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Searching_for_elements"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Namespaces"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Explicit_typing"
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "How-to: Extensions",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Extensions"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Class_extension"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Property_extension"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Action_extension"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Form_extension"
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "How-to: Integration",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Integration"
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "How-to: Working with external formats",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Working_with_external_formats"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Data_export"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Data_import"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Interaction_via_HTTP_protocol"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Frontend"
+                    },
+                    {
+                      "collapsed": true,
+                      "type": "category",
+                      "label": "How-to: Access to internal systems",
+                      "items": [
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_Access_to_internal_systems"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_FORMULA"
+                        },
+                        {
+                          "type": "doc",
+                          "id": "version-1.0.0/How-to_INTERNAL"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "collapsed": true,
+                  "type": "category",
+                  "label": "How-to: Use Cases",
+                  "items": [
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Use_Cases"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Working_with_documents"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Registers"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Numbering"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Using_objects_as_templates"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Overriding_values"
+                    },
+                    {
+                      "type": "doc",
+                      "id": "version-1.0.0/How-to_Binding_properties"
+                    }
+                  ]
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/How-to_Metaprogramming"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/How-to_Physical_model"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-1.0.0/How-to_Internationalization"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "doc",
+          "id": "version-1.0.0/Online_demo"
+        }
+      ]
+    }
+  ]
+}
