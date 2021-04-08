@@ -1,6 +1,6 @@
 import static Paths.docusaurus
 
-node {
+def call() {
     dir(docusaurus) {
         git(
                 url: "git@github.com:$Paths.docusaurusRepo",
