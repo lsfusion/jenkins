@@ -6,6 +6,8 @@ def call() {
                 url: "git@github.com:$Paths.docusaurusRepo",
                 branch: 'master'
         )
+        
+        sh 'yarn install'
 
         def list = readJSON text: new File("$docusaurus/update.config.json").text
         list.each {
