@@ -4,6 +4,8 @@ Var tfServerPort
 Var tfServerPassword1
 Var tfServerPassword2
 Var cbServerCreateService
+Var tfServiceName
+Var tfServiceDisplayName
 
 Function serverConfigPagePre
     ${IfNot} ${SectionIsSelected} ${SecServer}
@@ -33,10 +35,27 @@ Function serverConfigPagePre
         ${ifNot} ${SectionIsSelected} ${SecIdea}
             ${LS_CreateCheckBox} "$(strServerCreateService)" $cbServerCreateService
             ${NSD_SetState} $cbServerCreateService $serverCreateService
+            
+            ${NSD_OnClick} $cbServerCreateService EnDisableServiceTextFields
+            
+            ${LS_CreateText} "$(strServiceName)" $serverServiceName $tfServiceName
+            ${LS_CreateText} "$(strServiceDisplayName)" $serverServiceDisplayName $tfServiceDisplayName
+            Call EnDisableServiceTextFields
         ${endIf}
     ${endIf}
 
     nsDialogs::Show
+FunctionEnd
+
+Function EnDisableServiceTextFields
+    ${NSD_GetState} $cbServerCreateService $serverCreateService
+    ${If} $serverCreateService == 1
+        EnableWindow $tfServiceName 1
+        EnableWindow $tfServiceDisplayName 1
+    ${Else}
+        EnableWindow $tfServiceName 0
+        EnableWindow $tfServiceDisplayName 0
+    ${EndIf}
 FunctionEnd
 
 Function serverConfigPageLeave
@@ -73,6 +92,18 @@ Function serverConfigPageLeave
     
         ${ifNot} ${SectionIsSelected} ${SecIdea}
             ${NSD_GetState} $cbServerCreateService $serverCreateService
+            
+            ${If} $serverCreateService == 1
+                ${NSD_GetText} $tfServiceName $serverServiceName          
+                Push $serverServiceName
+                Call validateServiceName
+                ${if} $0 == "0"
+                    MessageBox MB_ICONEXCLAMATION|MB_OK $(strInvalidServiceName)
+                    Abort
+                ${endIf}
+                          
+                ${NSD_GetText} $tfServiceDisplayName $serverServiceDisplayName 
+            ${endIf}           
         ${endIf}
     ${endIf}
     
