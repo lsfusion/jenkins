@@ -87,7 +87,7 @@ Var serverPort
 Var serverPassword
 Var serverCreateService
 Var serverServiceName
-Var serverDisplayServiceName
+Var serverServiceDisplayName
 
 Var clientShutdownPort
 Var clientHttpPort
@@ -271,7 +271,7 @@ Function .onInit
     StrCpy $serverHost "localhost"
     StrCpy $serverPort "7652"
     StrCpy $serverServiceName "lsfusion${LSFUSION_MAJOR_VERSION}_server"
-    StrCpy $serverDisplayServiceName "${LSFUSION_NAME} Server"
+    StrCpy $serverServiceDisplayName "${LSFUSION_NAME} Server"
     !ifndef DEV
         StrCpy $serverCreateService 1
     !else
@@ -612,7 +612,7 @@ Function createServices
         ClearErrors
         ${LogMessage} "Installing Server service"
 
-        nsExec::ExecToStack '"$serviceFile" //IS//$serverServiceName --DisplayName "$serverDisplayServiceName" --Description "lsFusion Application Server" --LogPath "${INSTSERVERDIR}\logs" --Install "$serviceFile" --Jvm "$jvmDll" --StartPath "${INSTSERVERDIR}" --StopPath "${INSTSERVERDIR}"'
+        nsExec::ExecToStack '"$serviceFile" //IS//$serverServiceName --DisplayName "$serverServiceDisplayName" --Description "lsFusion Application Server" --LogPath "${INSTSERVERDIR}\logs" --Install "$serviceFile" --Jvm "$jvmDll" --StartPath "${INSTSERVERDIR}" --StopPath "${INSTSERVERDIR}"'
         Pop $0
         Pop $1
         ${ifNot} $0 == "0"
