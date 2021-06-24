@@ -29,7 +29,7 @@ def copyDocPages(id, branch) {
 
     dir("/usr/share/jenkins/src_docs") {
         git(
-                url: 'git@github.com:danchanka/platform.git',
+                url: "git@github.com:$Paths.docsRepo",
                 branch: branch
         )
 

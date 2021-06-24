@@ -11,6 +11,7 @@ class Paths {
     
     static String githubRepo = "nomojenkins/platform"
     static String docusaurusRepo = "lsfusion/docusaurus.git"
+    static String docsRepo = "danchanka/platform.git"
 
     // for testing purposes
     static String githubIssuesRepo = null
