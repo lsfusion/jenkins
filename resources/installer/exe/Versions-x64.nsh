@@ -16,3 +16,8 @@
 !define ANT_VERSION 1.10.9
 
 # LSFUSION_MAJOR_VERSION, LSFUSION_VERSION and VI_LSFUSION_VERSION will be added automatically before building installers
+!define LSFUSION_MAJOR_VERSION 4
+!define LSFUSION_VERSION 4.1
+!define VI_LSFUSION_VERSION 4.1.0.0
+!define MYCOMPANY_VERSION 1.0 
+!define DOWNLOAD_MYCOMPANY_JAR "https://download.lsfusion.org/solutions/mycompany-1.0.jar"

@@ -27,7 +27,7 @@ def copyDocPages(id, branch) {
     def enPath = isNext ? "$docusaurus/docs" : "$docusaurus/versioned_docs/version-$id"
     def ruPath = isNext ? "$docusaurus/i18n/ru/docusaurus-plugin-content-docs/current" : "$docusaurus/i18n/ru/docusaurus-plugin-content-docs/version-$id"
 
-    dir("/usr/share/jenkins/src_docs") {
+    dir("$Paths.src") {
         git(
                 url: "git@github.com:$Paths.docsRepo",
                 branch: branch
