@@ -43,7 +43,9 @@ def call() {
 
             stage('Deploy master') { // needed for update parents to work
     //                steps {
-                mergeVersionAndDeploySnapshot 'master', -1, false
+                if (checkAndMergeVersion('master', -1)) {
+                    deploySnapshot('master', false)
+                }
     //                }
             }
     
