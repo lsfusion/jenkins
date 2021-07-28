@@ -9,7 +9,7 @@ class Paths {
     static String ssl = "$jenkinsHome/ssl"
     static String docusaurus = "$jenkinsHome/docusaurus"
     
-    static String githubRepo = "lsfusion/platform"
+    static String githubRepo = "lsfusion/platform.git"
     static String docusaurusRepo = "lsfusion/docusaurus.git"
     static String docsRepo = "lsfusion/platform.git"
 
