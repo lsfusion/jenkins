@@ -30,7 +30,7 @@ def call(String to) {
     String result = "";
     String shortResult = ""
     String from;
-    String url = "https://github.com/" + user + "/" + repo
+    String url = "git@github.com:" + user + "/" + repo
 
     from = getPrevVersion(to)
     while (from != null) {

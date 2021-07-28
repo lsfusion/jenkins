@@ -3,7 +3,7 @@ import groovy.json.JsonSlurper
 def call() {
     try {
         git(
-                url: 'https://github.com/lsfusion/js-client',
+                url: 'git@github.com:lsfusion/js-client.git',
                 branch: 'master',
         )
 

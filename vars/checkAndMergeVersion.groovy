@@ -3,9 +3,8 @@ import groovy.transform.Field
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
-def call(String branch, int branchIndex, boolean message) {
+def call(String branch, int branchIndex) {
 
-    def lastCommitMessage
     def skipBuild = false
     
     try {
@@ -29,28 +28,22 @@ def call(String branch, int branchIndex, boolean message) {
                 echo "Nothing changed in $branch (current and previous commits are :$newBuildCommit). Skipping build..."
                 skipBuild = true
             }
-
-            lastCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
         }
 
         if (!skipBuild) {
             if (branchIndex >= 0)
                 mergeVersion branchIndex
 
-            stage('Deploy') {
-                deploySnapshot(branch)
-            }
-
             prevBuilds[branch] = newBuildCommit
             cvFile.text = prevBuilds.inspect()
+            
+            return true
         }
+        return false
     } catch (e) {
         slack.error "Warning! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> (branch " + branch + ") failed."
         
         throw e
     }
-
-    if(message && !skipBuild) // master
-        slack.message "<${env.BUILD_URL}|${currentBuild.fullDisplayName}> succeeded.\n```" + lastCommitMessage + "```"
 }
 

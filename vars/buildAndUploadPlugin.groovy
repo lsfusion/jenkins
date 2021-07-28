@@ -1,7 +1,7 @@
 def call() {
     try {
         git(
-                url: 'https://github.com/lsfusion/plugin-idea',
+                url: 'git@github.com:lsfusion/plugin-idea.git',
                 branch: 'master',
         )
 
