@@ -12,13 +12,13 @@ def call() {
         }
     }
 
-    if (checkAndMergeVersion('master', -1) && firstToDeploy == 0) {
-        firstToDeploy = -1
-    }
-
     def lsfLogicsPath = lsfLogicsgChanged()
     if (lsfLogicsPath) {
         createACELsfGrammar(lsfLogicsPath)
+    }
+
+    if (checkAndMergeVersion('master', -1) && firstToDeploy == 0) {
+        firstToDeploy = -1
     }
 
     if (platformChanged()) {
