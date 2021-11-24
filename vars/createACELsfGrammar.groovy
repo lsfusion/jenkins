@@ -39,7 +39,7 @@ def call(String lsfLogicsPath) {
             dir(antlrDirPath + '/ace') {
                 sh 'npm install'
                 sh 'node ./Makefile.dryice.js'
-                sh "cp ${antlrDirPath}/ace/build/src/worker-lsf.js ${workspace}/web-client/src/main/webapp/static/js/ace/src"
+                sh "cp -f ${antlrDirPath}/ace/build/src/worker-lsf.js ${workspace}/web-client/src/main/webapp/static/js/ace/src"
             }
             sh "rm -r ${antlrDirPath}/ace"
         }
