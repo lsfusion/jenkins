@@ -25,11 +25,11 @@ def call(String lsfLogicsPath) {
 
         // Download the webpack dependencies and run the build.
         stage('run npm') {
-            // Target file antlrLSFJSLogics.js located in /dist directory
+            // Target file antlrLsfJSLogics.js located in /dist directory
             dir(antlrDirPath + '/webpack') {
                 sh 'npm install'
                 sh 'npx webpack'
-
+                sh "mkdir -p ${antlrDirPath}/ace/lib/ace/mode/antlr/"
                 sh "cp ${antlrDirPath}/webpack/dist/antlrLsfJSLogics.js ${antlrDirPath}/ace/lib/ace/mode/antlr/"
             }
         }
@@ -39,10 +39,9 @@ def call(String lsfLogicsPath) {
             dir(antlrDirPath + '/ace') {
                 sh 'npm install'
                 sh 'node ./Makefile.dryice.js'
-                sh "rm -rf ${workspace}/web-client/src/main/webapp/static/js/ace/src/worker-lsf.js"
                 sh "cp -f ${antlrDirPath}/ace/build/src/worker-lsf.js ${workspace}/web-client/src/main/webapp/static/js/ace/src"
             }
-//            sh "rm -r ${antlrDirPath}/ace"
+            sh "rm -r ${antlrDirPath}/ace"
         }
     }
 
