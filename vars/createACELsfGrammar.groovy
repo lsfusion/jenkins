@@ -42,7 +42,7 @@ def call(String lsfLogicsPath) {
                 sh "rm -rf ${workspace}/web-client/src/main/webapp/static/js/ace/src/worker-lsf.js"
                 sh "cp -f ${antlrDirPath}/ace/build/src/worker-lsf.js ${workspace}/web-client/src/main/webapp/static/js/ace/src"
             }
-            sh "rm -r ${antlrDirPath}/ace"
+//            sh "rm -r ${antlrDirPath}/ace"
         }
     }
 
