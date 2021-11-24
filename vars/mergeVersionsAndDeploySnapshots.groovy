@@ -25,16 +25,19 @@ def call() {
         if (firstToDeploy > 0) {
             def deployBranches = (firstToDeploy..lastVersion).collect{it}
             for (branch in deployBranches) {
-                deploySnapshot("v$branch", false)
+                print "deploySnapshot(vbranch, false)"
+//                deploySnapshot("v$branch", false)
             }
         }
         if (firstToDeploy != 0) {
-            deploySnapshot("master", true)
+            print "deploySnapshot(master, true)"
+//            deploySnapshot("master", true)
         }
     }
-    
+
     if (docsChanged()) {
-        deployDocusaurus()
+        print "deployDocusaurus"
+//        deployDocusaurus()
     }
 }
 
