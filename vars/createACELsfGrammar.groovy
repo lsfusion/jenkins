@@ -1,7 +1,7 @@
 def call(String lsfLogicsPath) {
     def antlrDirPath = getResourcesDir() + Paths.antlr4;
+    def workspace = Paths.src
     dir(antlrDirPath) {
-        def workspace = Paths.src
         // Download ACE sources
         stage('get ace') {
             dir(antlrDirPath + '/ace') {
