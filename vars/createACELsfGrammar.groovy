@@ -1,6 +1,7 @@
 def call(String lsfLogicsPath) {
     def antlrDirPath = getResourcesDir() + Paths.antlr4;
     dir(antlrDirPath) {
+        def workspace = Paths.src
         // Download ACE sources
         stage('get ace') {
             dir(antlrDirPath + '/ace') {
@@ -14,7 +15,7 @@ def call(String lsfLogicsPath) {
         // Convert LsfLogics.g to LsfJSLogics.g4
         stage('create LsfJSLogics.g4') {
             sh 'chmod +x ./createLsfJSLogics_g4.sh'
-            sh "./createLsfJSLogics_g4.sh ${WORKSPACE}/${lsfLogicsPath}"
+            sh "./createLsfJSLogics_g4.sh ${workspace}/${lsfLogicsPath}"
         }
 
         // Run antlr, generate LSFJSLogicsParser and LSFJSLogicsLexer and put all files into /webpack folder
@@ -38,7 +39,7 @@ def call(String lsfLogicsPath) {
             dir(antlrDirPath + '/ace') {
                 sh 'npm install'
                 sh 'node ./Makefile.dryice.js'
-                sh "cp ${antlrDirPath}/ace/build/src/worker-lsf.js ${WORKSPACE}/web-client/src/main/webapp/static/js/ace/src"
+                sh "cp ${antlrDirPath}/ace/build/src/worker-lsf.js ${workspace}/web-client/src/main/webapp/static/js/ace/src"
             }
             sh "rm -r ${antlrDirPath}/ace"
         }
