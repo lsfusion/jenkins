@@ -45,7 +45,7 @@ def call(String lsfLogicsPath) {
         }
     }
 
-    sh "git add -A"
+    sh "git add ${workspace}/web-client/src/main/webapp/static/js/ace/src/worker-lsf.js"
     commit "Update worker-lsf.js"
     push "master"
 }
