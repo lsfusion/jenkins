@@ -44,11 +44,19 @@ def call() {
 def lsfLogicsgChanged() {
     update 'master'
     def changeSet = currentBuild.rawBuild.changeSets
+    print "currentBuild.rawBuild.changeSets"
+    print changeSet.size()
     for (int i = 0; i < changeSet.size(); i++) {
         def items = changeSet[i].items
+        print "changeSet[i].items"
+        print items.size()
         for (int j = 0; j < items.size(); j++) {
             def files = items[j].affectedFiles
+            print items[j].affectedFiles
+            print files.size()
             for (int k = 0; k < files.size(); k++) {
+                print "files[k].path"
+                print files[k].path
                 if (files[k].path.contains("lsfusion/server/language/LsfLogics.g")) {
                     return files[k].path
                 }
