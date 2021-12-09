@@ -12,6 +12,11 @@ def call() {
         }
     }
 
+    def lsfLogicsPath = lsfLogicsgChanged()
+    if (lsfLogicsPath) {
+        createACELsfGrammar(lsfLogicsPath)
+    }
+
     if (checkAndMergeVersion('master', -1) && firstToDeploy == 0) {
         firstToDeploy = -1
     }
@@ -27,9 +32,25 @@ def call() {
             deploySnapshot("master", true)
         }
     }
-    
+
     if (docsChanged()) {
         deployDocusaurus()
+    }
+}
+
+def lsfLogicsgChanged() {
+    update 'master'
+    def changeSet = currentBuild.rawBuild.changeSets
+    for (int i = 0; i < changeSet.size(); i++) {
+        def items = changeSet[i].items
+        for (int j = 0; j < items.size(); j++) {
+            def files = items[j].affectedFiles
+            for (int k = 0; k < files.size(); k++) {
+                if (files[k].path.contains("lsfusion/server/language/LsfLogics.g")) {
+                    return files[k].path
+                }
+            }
+        }
     }
 }
 
