@@ -6,8 +6,8 @@ echo deb http://apt.postgresql.org/pub/repos/apt/ $codename-pgdg main > /etc/apt
 apt update
 
 # Install PostgreSQL
-apt install -y postgresql-12 postgresql-client-12
+apt install -y postgresql-13 postgresql-client-13 postgresql-contrib-13
 
 # Allow trust connection from localhost
-sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
-su - postgres -c "/usr/lib/postgresql/12/bin/pg_ctl reload -D /var/lib/postgresql/12/main"
+sed -i 's/md5/trust/g' /etc/postgresql/13/main/pg_hba.conf
+su - postgres -c "/usr/lib/postgresql/13/bin/pg_ctl reload -D /var/lib/postgresql/13/main"
