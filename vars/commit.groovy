@@ -1,4 +1,4 @@
 def call(String message) {
-    sh 'git diff-index --quiet HEAD || git commit -am ' + '"' + message + '"'
+    sh 'git commit -am ' + '"' + message + '" || true'
 }
 

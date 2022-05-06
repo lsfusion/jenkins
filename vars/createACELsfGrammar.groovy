@@ -6,8 +6,8 @@ def call(String lsfLogicsPath) {
         stage('get ace') {
             dir(antlrDirPath + '/ace') {
                 git(
-                        url: 'https://github.com/alex-byi/ace.git', // todo форкнуть и поменять репозиторий
-                        branch: 'lsfusion',
+                        url: 'https://github.com/lsfusion/ace.git',
+                        branch: 'master',
                 )
             }
         }
@@ -39,13 +39,13 @@ def call(String lsfLogicsPath) {
             dir(antlrDirPath + '/ace') {
                 sh 'npm install'
                 sh 'node ./Makefile.dryice.js'
-                sh "cp -f ${antlrDirPath}/ace/build/src/worker-lsf.js ${workspace}/web-client/src/main/webapp/static/js/ace/src"
+                sh "cp -f -r ${antlrDirPath}/ace/build/* ${workspace}/web-client/src/main/webapp/static/js/ace/"
             }
             sh "rm -r ${antlrDirPath}/ace"
         }
     }
 
-    sh "git add ${workspace}/web-client/src/main/webapp/static/js/ace/src/worker-lsf.js"
-    commit "Update worker-lsf.js"
+    sh "git add ${workspace}/web-client/src/main/webapp/static/js/ace/src/"
+    commit "Update ace"
     push "master"
 }
