@@ -3,25 +3,27 @@ dnf install -y java-11-openjdk
 dnf install -y dnf-utils
 
 # Install the repository RPM:
-dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 
 # Disable the built-in PostgreSQL module:
 dnf -qy module disable postgresql
 
 # Install PostgreSQL:
-dnf install -y postgresql12 postgresql12-server
+dnf install -y postgresql14-server
 
-# Optionally initialize the database and enable automatic start:
-/usr/pgsql-12/bin/postgresql-12-setup initdb
+/usr/pgsql-14/bin/postgresql-14-setup initdb
 
 # Allow trust connection from localhost
-sed -i 's/ident/trust/g' /var/lib/pgsql/12/data/pg_hba.conf
+sed -i 's/scram-sha-256/trust/g' /var/lib/pgsql/14/data/pg_hba.conf
+
+systemctl enable postgresql-14
+systemctl start postgresql-14
 
 # Autostart PostgreSQL
-systemctl enable postgresql-12
+systemctl enable postgresql-14
 
 # Run PostgreSQL
-systemctl start postgresql-12
+systemctl start postgresql-14
 
 # Install lsFusion repo
 dnf config-manager --add-repo https://download.lsfusion.org/yum

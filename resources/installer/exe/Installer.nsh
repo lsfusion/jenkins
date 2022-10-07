@@ -594,6 +594,7 @@ Function createServices
         ${else}
             ${LogMessage} "Configuring $clientServiceName service"
     
+            nsExec::ExecToLog "sc config $clientServiceName obj=LocalSystem"  ; switch to LocalSystem instead of LocalService (tomcat 9.0.23+)
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Startup auto'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Classpath "${INSTCLIENTDIR}\bin\bootstrap.jar;${INSTCLIENTDIR}\bin\tomcat-juli.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop --StartMode jvm --StopMode jvm'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions "-Dcatalina.home=${INSTCLIENTDIR}#-Dcatalina.base=${INSTCLIENTDIR}#-Djava.io.tmpdir=${INSTCLIENTDIR}\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=${INSTCLIENTDIR}\conf\logging.properties"'

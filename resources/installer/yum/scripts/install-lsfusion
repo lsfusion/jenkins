@@ -6,19 +6,19 @@ yum install -y yum-utils
 yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 
 # Install PostgreSQL
-yum install -y postgresql13 postgresql13-server postgresql13-contrib
+yum install -y postgresql14 postgresql14-server postgresql14-contrib
 
 # Initialize PostgreSQL database
-/usr/pgsql-13/bin/postgresql-13-setup initdb
+/usr/pgsql-14/bin/postgresql-14-setup initdb
 
 # Allow trust connection from localhost
-sed -i 's/scram-sha-256/trust/g' /var/lib/pgsql/13/data/pg_hba.conf
+sed -i 's/scram-sha-256/trust/g' /var/lib/pgsql/14/data/pg_hba.conf
 
 # Autostart PostgreSQL
-systemctl enable postgresql-13
+systemctl enable postgresql-14
 
 # Run PostgreSQL
-systemctl start postgresql-13
+systemctl start postgresql-14
 
 # Install lsFusion repo
 yum-config-manager --add-repo https://download.lsfusion.org/yum
