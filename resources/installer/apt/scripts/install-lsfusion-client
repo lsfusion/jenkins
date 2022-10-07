@@ -1,11 +1,14 @@
-apt install default-jdk
+add-apt-repository -y ppa:openjdk-r/ppa
+apt-get update
+apt install -y default-jdk
+
 
 # Import lsFusion GPG Key
 wget --quiet -O - https://download.lsfusion.org/apt/GPG-KEY-lsfusion | sudo apt-key add -
 
 # Install lsFusion repo
 echo deb https://download.lsfusion.org/apt all main > /etc/apt/sources.list.d/lsfusion.list
-apt update
+apt-get update
 
 # Install lsFusion client
-apt install -y <lsfusion-client>
+apt-get install -y <lsfusion-client>
