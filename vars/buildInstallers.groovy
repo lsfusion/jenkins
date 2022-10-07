@@ -26,34 +26,16 @@ def call(int majorVersion, String platformVersion) {
         def makensis = "${installerSrc}/nsis-unicode-win/makensis.exe"
         def downloadDir = "${Paths.download}/exe/${platformVersion}"
 
-        sh "echo '\n!define LSFUSION_MAJOR_VERSION ${majorVersion}' >> Versions-x32.nsh"
         sh "echo '\n!define LSFUSION_MAJOR_VERSION ${majorVersion}' >> Versions-x64.nsh"
-        sh "echo '\n!define LSFUSION_VERSION ${platformVersion.replace('-SNAPSHOT', '')}' >> Versions-x32.nsh"
         sh "echo '\n!define LSFUSION_VERSION ${platformVersion.replace('-SNAPSHOT', '')}' >> Versions-x64.nsh"
         String viVersion = platformVersion.replace('-beta', '.999.').replace('-SNAPSHOT', '')
         if (!platformVersion.contains('beta')) {
             viVersion += '.0.0'
         }
-        sh "echo '\n!define VI_LSFUSION_VERSION ${viVersion}' >> Versions-x32.nsh"
         sh "echo '\n!define VI_LSFUSION_VERSION ${viVersion}' >> Versions-x64.nsh"
         
         sh "mkdir -p ${downloadDir}"
         
-        sh "wine ${makensis} Installer-x32.nsi"
-        sh "chmod -x x32.exe"
-        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x32.exe"
-        sh "cp -f x32.exe ${downloadDir}/lsfusion-${platformVersion}.exe"
-        
-        sh "wine ${makensis} Installer-x32-dev.nsi"
-        sh "chmod -x x32-dev.exe"
-        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x32-dev.exe"
-        sh "cp -f x32-dev.exe ${downloadDir}/lsfusion-dev-${platformVersion}.exe"
-
-        sh "wine ${makensis} Installer-x32-desktop.nsi"
-        sh "chmod -x x32-desktop.exe"
-        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x32-desktop.exe"
-        sh "cp -f x32-desktop.exe ${downloadDir}/lsfusion-desktop-${platformVersion}.exe"
-
         sh "wine ${makensis} Installer-x64.nsi"
         sh "chmod -x x64.exe"
         sh "sh ${Paths.ssl}/sign.sh ${workspace}/x64.exe"

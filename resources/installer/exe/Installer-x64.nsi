@@ -1,6 +1,6 @@
 !define ARCH 64
 
-!include Versions-x64.nsh
+!include Versions.nsh
 
 !define IDEA_EXE "idea64.exe"
 !define JAVA_INSTALLER_PARAMS '/quiet INSTALLDIR="$javaDir" ADDLOCAL=FeatureMain,FeatureEnvironment,FeatureJarFileRunWith,FeatureJavaHome,FeatureOracleJavaSoft'

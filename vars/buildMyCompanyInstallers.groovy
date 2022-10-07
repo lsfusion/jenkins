@@ -31,10 +31,6 @@ def call(String platformVersion) {
         sh "echo '\n!define MYCOMPANY_VERSION ${myCompanyVersion}' >> MyCompanyInstaller.nsh"
         sh "echo '\n!define DOWNLOAD_MYCOMPANY_JAR \"https://download.lsfusion.org/solutions/mycompany-${myCompanyVersion}.jar\"' >> MyCompanyInstaller.nsh"
 
-        sh "wine ${makensis} MyCompany-installer-x32.nsi"
-        sh "chmod -x MyCompany-${myCompanyVersion}.exe"
-        sh "sh ${Paths.ssl}/sign.sh ${workspace}/MyCompany-${myCompanyVersion}.exe"
-
         sh "wine ${makensis} MyCompany-installer-x64.nsi"
         sh "chmod -x MyCompany-${myCompanyVersion}-x64.exe"
         sh "sh ${Paths.ssl}/sign.sh ${workspace}/MyCompany-${myCompanyVersion}-x64.exe"
@@ -42,7 +38,6 @@ def call(String platformVersion) {
         ftpPublisher failOnError: true, publishers: [
                 [configName: 'Download FTP server', 
                 transfers: [
-                        [sourceFiles: "MyCompany-${myCompanyVersion}.exe", remoteDirectory: "solutions"],
                         [sourceFiles: "MyCompany-${myCompanyVersion}-x64.exe", remoteDirectory: "solutions"]
                 ], 
                 verbose: true]
