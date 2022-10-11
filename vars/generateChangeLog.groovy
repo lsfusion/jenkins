@@ -24,7 +24,7 @@ def call(String to) {
     
     def pathToRepo = pwd()
 
-    List<IssueEvent> closedEvents = getClosedEvents(user, repo)
+    List<IssueEvent> closedEvents = getClosedEvents(user, repo.replace(".git", ""))
 
     boolean head = true;
     String result = "";
