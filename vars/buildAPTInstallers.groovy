@@ -73,7 +73,7 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
             sh "mvn -f /usr/share/jenkins/src/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.apt}/client/debbuild/"
             sh "mv -f web-client-${platformVersion}.war client.war"
 
-            sh "ssh root@116.203.185.52 'cd /root/apt/client; rm -rf *; mkdir debbuild; cp -fa ../apache-tomcat-9.0.21.tar.gz debbuild/'"
+            sh "ssh root@116.203.185.52 'cd /root/apt/client; rm -rf *; mkdir debbuild; cp -fa ../apache-tomcat-9.0.67.tar.gz debbuild/'"
 
             sh 'scp -r * root@116.203.185.52:/root/apt/client/debbuild/'
 
