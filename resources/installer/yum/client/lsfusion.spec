@@ -44,8 +44,8 @@ rm -rf %{buildroot}/%{lsfusion_home}/webapps
 
 # Put lsFusion
 cd ../client
-install -d -m 775 %{buildroot}/%{lsfusion_home}/client
-cp -R * %{buildroot}/%{lsfusion_home}/client
+install -d -m 775 %{buildroot}/%{lsfusion_home}/lsfusion
+cp -R * %{buildroot}/%{lsfusion_home}/lsfusion
 cd -
 
 # Remove *.bat
