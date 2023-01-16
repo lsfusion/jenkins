@@ -9,21 +9,21 @@ dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_6
 dnf -qy module disable postgresql
 
 # Install PostgreSQL:
-dnf install -y postgresql14-server
+dnf install -y postgresql15-server
 
-/usr/pgsql-14/bin/postgresql-14-setup initdb
+/usr/pgsql-15/bin/postgresql-15-setup initdb
 
 # Allow trust connection from localhost
-sed -i 's/scram-sha-256/trust/g' /var/lib/pgsql/14/data/pg_hba.conf
+sed -i 's/scram-sha-256/trust/g' /var/lib/pgsql/15/data/pg_hba.conf
 
-systemctl enable postgresql-14
-systemctl start postgresql-14
+systemctl enable postgresql-15
+systemctl start postgresql-15
 
 # Autostart PostgreSQL
-systemctl enable postgresql-14
+systemctl enable postgresql-15
 
 # Run PostgreSQL
-systemctl start postgresql-14
+systemctl start postgresql-15
 
 # Install lsFusion repo
 dnf config-manager --add-repo https://download.lsfusion.org/yum
