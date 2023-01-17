@@ -147,12 +147,6 @@ Page custom javaConfigPagePre javaConfigPageLeave
 Page custom serverConfigPagePre serverConfigPageLeave
 ; directory - main
 
-!ifdef MYCOMPANY
-    # MyCompany pages
-    !include MyCompanyFunctions.nsh
-    Page custom myCompanyConfigPagePre myCompanyConfigPageLeave
-!endif
-
 # Client pages
 !include ClientFunctions.nsh
 Page custom clientConfigPagePre clientConfigPageLeave
@@ -186,10 +180,6 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 !insertmacro MUI_LANGUAGE Russian
 !include I18nEn.nsh
 !include I18nRu.nsh
-!ifdef MYCOMPANY
-    !include MycompanyEn.nsh
-    !include MycompanyRu.nsh
-!endif
 
 LicenseLangString lsLicense ${LANG_ENGLISH} "resources\license-english.txt"
 LicenseLangString lsLicense ${LANG_RUSSIAN} "resources\license-russian.txt"
@@ -598,6 +588,7 @@ Function createServices
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Startup auto'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --Classpath "${INSTCLIENTDIR}\bin\bootstrap.jar;${INSTCLIENTDIR}\bin\tomcat-juli.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop --StartMode jvm --StopMode jvm'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions "-Dcatalina.home=${INSTCLIENTDIR}#-Dcatalina.base=${INSTCLIENTDIR}#-Djava.io.tmpdir=${INSTCLIENTDIR}\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=${INSTCLIENTDIR}\conf\logging.properties"'
+            nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions9 "--add-opens=java.base/java.util=ALL-UNNAMED"'
             ;nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --JvmOptions9 "-Dcatalina.home=${INSTCLIENTDIR}#-Dcatalina.base=${INSTCLIENTDIR}#-Djava.io.tmpdir=${INSTCLIENTDIR}\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager#-Djava.util.logging.config.file=${INSTCLIENTDIR}\conf\logging.properties"'
             nsExec::ExecToLog '"$serviceFile" //US//$clientServiceName --StdOutput auto --StdError auto'
 
