@@ -29,6 +29,7 @@ systemctl start postgresql-15
 dnf config-manager --add-repo https://download.lsfusion.org/yum
 
 # Import lsFusion GPG Key
+update-crypto-policies --set DEFAULT:SHA1
 rpm --import https://download.lsfusion.org/yum/GPG-KEY-lsfusion
 
 # Install lsFusion server and client
