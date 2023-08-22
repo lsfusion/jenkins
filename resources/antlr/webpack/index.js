@@ -1,8 +1,8 @@
-import antlr4 from "antlr4";
+import antlr4, {ErrorListener} from "antlr4";
 import LsfJSLogicsLexer from './LsfJSLogicsLexer';
 import LsfJSLogicsParser from './LsfJSLogicsParser';
 
-class AnnotatingErrorListener extends antlr4.error.ErrorListener {
+class AnnotatingErrorListener extends ErrorListener {
     constructor(annotations) {
         super();
         this.annotations = annotations;
