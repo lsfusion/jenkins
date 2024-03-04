@@ -4,7 +4,9 @@ def call(String branch, boolean message) {
     def lastCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
     
     try {
-        sh "mvn -ntp clean deploy"
+        withMaven {
+            sh "mvn -ntp clean deploy"
+        }
     } catch (e) {
         slack.error "Warning! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> (branch " + branch + ") failed."
         throw e

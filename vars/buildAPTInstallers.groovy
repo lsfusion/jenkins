@@ -35,7 +35,9 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
             sh "sed 's/<lsfusion-server>/$serverName/g' $templatesDir/rules > debian/rules"
             sh "cp -fa $templatesDir/settings.properties ."
 
-            sh "mvn -f /usr/share/jenkins/src/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=${Paths.apt}/server/debbuild/"
+            withMaven {
+                sh "mvn -f /usr/share/jenkins/src/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=${Paths.apt}/server/debbuild/"
+            }
             sh "mv -f server-$platformVersion-assembly.jar server.jar"
 
             sh "ssh root@116.203.185.52 'cd /root/apt/server; rm -rf *; mkdir debbuild'"
@@ -70,7 +72,9 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
             sh "cp -fa $templatesDir/ROOT.xml ./"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/rules > debian/rules"
 
-            sh "mvn -f /usr/share/jenkins/src/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.apt}/client/debbuild/"
+            withMaven {
+                sh "mvn -f /usr/share/jenkins/src/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.apt}/client/debbuild/"
+            }
             sh "mv -f web-client-${platformVersion}.war client.war"
 
             sh "ssh root@116.203.185.52 'cd /root/apt/client; rm -rf *; mkdir debbuild; cp -fa ../apache-tomcat-9.0.67.tar.gz debbuild/'"

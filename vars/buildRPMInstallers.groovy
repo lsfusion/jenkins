@@ -42,8 +42,10 @@ def buildServerInstaller(int majorVersion, String platformVersion, String rpmVer
             sh "sed 's/<lsfusion-major-version>/$majorVersion/g; s/<lsfusion-version>/$rpmVersion/g; s/<lsfusion-release>/$rpmRelease/g; s/<lsfusion-title>/$title/g' $templatesDir/lsfusion.spec > SPECS/lsfusion.spec"
             
             sh "cp -fa $templatesDir/settings.properties SOURCES/"
-            
-            sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
+
+            withMaven {
+                sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
+            }
             sh "mv -f SOURCES/server-$platformVersion-assembly.jar SOURCES/server.jar"
 
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
@@ -84,7 +86,9 @@ def buildClientInstaller(int majorVersion, String platformVersion, String rpmVer
             sh 'cp -fa ../apache-tomcat-9.0.67.tar.gz SOURCES/'
             sh "cp -fa $templatesDir/ROOT.xml SOURCES/"
 
-            sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
+            withMaven {
+                sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
+            }
             sh "mv -f SOURCES/web-client-${platformVersion}.war SOURCES/client.war"
 
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {

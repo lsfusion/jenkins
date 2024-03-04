@@ -33,7 +33,9 @@ def call(int branch, boolean releaseFinal) {
 //                steps {
 //                    dir(Paths.src) {
             changeLog = generateChangeLog(tagVersion)
-            sh "mvn scm:checkin -Dmessage=\"Generated change log\""
+            withMaven {
+                sh "mvn scm:checkin -Dmessage=\"Generated change log\""
+            }
 //                    }
 //                }
         }
@@ -46,15 +48,17 @@ def call(int branch, boolean releaseFinal) {
 
         stage('Release branch') {
 //        steps {
-            String releaseCommand = "mvn -B release:clean release:prepare release:perform"
-            if (releaseBeta) {
-                releaseCommand += " -DdevelopmentVersion=$majorVersion.0-SNAPSHOT -DreleaseVersion=$tagVersion"
-            }
-            
-            sh releaseCommand
-            
-            if (releaseBeta) {
-                nextBetaVersion.set(minorVersion + 1)
+            withMaven {
+                String releaseCommand = "mvn -B release:clean release:prepare release:perform"
+                if (releaseBeta) {
+                    releaseCommand += " -DdevelopmentVersion=$majorVersion.0-SNAPSHOT -DreleaseVersion=$tagVersion"
+                }
+
+                sh releaseCommand
+
+                if (releaseBeta) {
+                    nextBetaVersion.set(minorVersion + 1)
+                }
             }
 //        }
         }
@@ -105,11 +109,13 @@ def call(int branch, boolean releaseFinal) {
             def downloadDir = "${Paths.download}/${tagVersion}"
             sh "mkdir -p ${downloadDir}"
             sh "mkdir -p ${Paths.download}/changelog"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly-sources -DoutputDirectory=${downloadDir}"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:pack.gz:assembly -DoutputDirectory=${downloadDir}"
-            sh "mvn dependency:copy -Dartifact=lsfusion.platform:web-client:${tagVersion}:war -DoutputDirectory=${downloadDir}"
+            withMaven {
+                sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
+                sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${tagVersion}:jar:assembly-sources -DoutputDirectory=${downloadDir}"
+                sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:jar:assembly -DoutputDirectory=${downloadDir}"
+                sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${tagVersion}:pack.gz:assembly -DoutputDirectory=${downloadDir}"
+                sh "mvn dependency:copy -Dartifact=lsfusion.platform:web-client:${tagVersion}:war -DoutputDirectory=${downloadDir}"
+            }
             sh "cp -f CHANGELOG.md ${Paths.download}/changelog/CHANGELOG-${tagVersion}.txt"
     
             dir(downloadDir) {

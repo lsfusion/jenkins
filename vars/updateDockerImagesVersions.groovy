@@ -36,6 +36,8 @@ def call(String tagVersion) {
 
                 ])
 
-        sh "mvn scm:checkin -Dmessage=\"Update docker images versions\""
+        withMaven {
+            sh "mvn scm:checkin -Dmessage=\"Update docker images versions\""
+        }
     }
 }
