@@ -33,9 +33,9 @@ def call() {
         }
     }
 
-//    if (docsChanged()) {
-//        deployDocusaurus()
-//    }
+    if (docsChanged()) {
+        deployDocusaurus()
+    }
 }
 
 def lsfLogicsgChanged() {
