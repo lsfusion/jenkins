@@ -7,7 +7,7 @@ def call() {
                 branch: 'master'
         )
         
-//        sh 'yarn install'
+        sh 'yarn install'
 
         def list = readJSON text: new File("$docusaurus/update.config.json").text
         list.each {
@@ -18,7 +18,7 @@ def call() {
         sh "git diff-index --quiet HEAD || git commit -m 'Updated doc pages'"
         sh "git push origin master"
 
-//        sh "GIT_USER=nomojenkins USE_SSH=true DEPLOYMENT_BRANCH=master yarn deploy"
+        sh "GIT_USER=nomojenkins USE_SSH=true DEPLOYMENT_BRANCH=master yarn deploy"
     }
 }
 
