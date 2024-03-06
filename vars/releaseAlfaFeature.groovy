@@ -20,9 +20,7 @@ def call() {
         stage('Release branch') {
             masterVersion = lastVersion + 1
             Integer nextMasterVersion = masterVersion + 1
-            withMaven {
-                sh "mvn release:clean release:branch -DbranchName=v$masterVersion -DdevelopmentVersion=$nextMasterVersion" + ".0-SNAPSHOT"
-            }
+            sh "mvn release:clean release:branch -DbranchName=v$masterVersion -DdevelopmentVersion=$nextMasterVersion" + ".0-SNAPSHOT"
         }
 
         stage('Deploy master') { // needed for update parents to work
