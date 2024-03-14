@@ -32,9 +32,9 @@ def call() {
 
         if (!Paths.noCustomUpdates) {
             stage('Change custom parent versions') {
-                withCredentials([usernameColonPassword(credentialsId: 'jenkins_lsfusion_org', variable: 'USERPASS')]) {
-                    sh "curl -X POST 'http://jenkins.lsfusion.luxsoft.by/job/${Paths.updateParentVersionsJob}/build' --user ${USERPASS} -H 'Jenkins-Crumb:440561953171ba4497e4740562d172bb'"
-                }
+//                withCredentials([usernameColonPassword(credentialsId: 'jenkins_lsfusion_org', variable: 'USERPASS')]) {
+//                    sh "curl -X POST 'http://jenkins.lsfusion.luxsoft.by/job/${Paths.updateParentVersionsJob}/build' --user ${USERPASS} -H 'Jenkins-Crumb:440561953171ba4497e4740562d172bb'"
+//                }
             }
         }
     } catch (e) {
