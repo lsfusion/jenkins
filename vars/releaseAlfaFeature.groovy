@@ -38,7 +38,7 @@ def call() {
             }
         }
     } catch (e) {
-        slack.error "Warning! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> (v. " + masterVersion + ") failed."
+//        slack.error "Warning! <${env.BUILD_URL}|${currentBuild.fullDisplayName}> (v. " + masterVersion + ") failed."
 
         throw e
     }
