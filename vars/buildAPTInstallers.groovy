@@ -2,7 +2,9 @@ def call(int majorVersion, String platformVersion) {
     buildServerInstaller(majorVersion, platformVersion)
     buildClientInstaller(majorVersion, platformVersion)
     // reprepro stores only one latest version of the package. For some reason it refuses to remove previous version if it was in beta (e.g. when adding 3.0 after 3.beta.0). Therefore we delete packages manually.
-    sh "ssh root@116.203.185.52 'cd /root/apt; reprepro -b repo remove all lsfusion$majorVersion-server; reprepro -b repo remove all lsfusion$majorVersion-client; reprepro -b repo/ includedeb all server/lsfusion$majorVersion-server_$platformVersion-1_all.deb; reprepro -b repo/ includedeb all client/lsfusion$majorVersion-client_$platformVersion-1_all.deb'"
+    dir(Paths.apt) {
+        sh "sudo sh -c 'reprepro -b repo remove all lsfusion$majorVersion-server; reprepro -b repo remove all lsfusion$majorVersion-client; reprepro -b repo/ includedeb all server/lsfusion$majorVersion-server_$platformVersion-1_all.deb; reprepro -b repo/ includedeb all client/lsfusion$majorVersion-client_$platformVersion-1_all.deb'"
+    }
 
     sh "mkdir -p ${Paths.download}/apt"
     sh "rm -rf ${Paths.download}/apt/conf"
@@ -11,8 +13,8 @@ def call(int majorVersion, String platformVersion) {
     sh "rm -rf ${Paths.download}/apt/pool"
     
     generateScripts(majorVersion)
-    
-    sh "scp -r root@116.203.185.52:/root/apt/repo/* ${Paths.download}/apt/"
+
+    sh "cp -r ${Paths.apt}/repo/* ${Paths.download}/apt/"
 }
 
 def buildServerInstaller(int majorVersion, String platformVersion) {
@@ -37,13 +39,10 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
 
             sh "mvn -f /usr/share/jenkins/src/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=${Paths.apt}/server/debbuild/"
             sh "mv -f server-$platformVersion-assembly.jar server.jar"
-
-            sh "ssh root@116.203.185.52 'cd /root/apt/server; rm -rf *; mkdir debbuild'"
-
-            sh 'scp -r * root@116.203.185.52:/root/apt/server/debbuild'
             
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh "ssh root@116.203.185.52 'export GPG_TTY=\$(tty); cd /root/apt/server/debbuild; dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
+                sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
+                sh "sudo sh -c 'chown -R jenkins .'"
             }
         }
     }
@@ -73,12 +72,11 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
             sh "mvn -f /usr/share/jenkins/src/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.apt}/client/debbuild/"
             sh "mv -f web-client-${platformVersion}.war client.war"
 
-            sh "ssh root@116.203.185.52 'cd /root/apt/client; rm -rf *; mkdir debbuild; cp -fa ../apache-tomcat-9.0.89.tar.gz debbuild/'"
-
-            sh 'scp -r * root@116.203.185.52:/root/apt/client/debbuild/'
+            sh "cp -fa ../../apache-tomcat-9.0.89.tar.gz ."
 
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh "ssh root@116.203.185.52 'export GPG_TTY=\$(tty); cd /root/apt/client/debbuild; dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
+                sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
+                sh "sudo sh -c 'chown -R jenkins .'"
             }
         }
     }
