@@ -1,5 +1,7 @@
 def call(int majorVersion, String platformVersion) {
     def downloadDir = "${Paths.download}/yum"
+    def remoteRedHat = "root@116.203.112.3"
+    def remoteRpm = "/usr/share/rpm"
     
     def rpmVersion = platformVersion
     def rpmRelease = '1' // though Release is optional, without it we get "error: Release field must be present in package"
@@ -13,12 +15,10 @@ def call(int majorVersion, String platformVersion) {
     buildClientInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease)
     generateScripts(majorVersion)
 
-    dir(Paths.rpm) {
-        sh 'createrepo --update yum'
-
-        sh "mkdir -p ${downloadDir}"
-//        sh "cp -fa yum/* ${downloadDir}/"
-    }
+    sh "ssh ${remoteRedHat} 'cd ${remoteRpm}; createrepo --update yum'"
+    sh "scp -r ${remoteRedHat}:${remoteRpm}/yum/* ${Paths.rpm}/yum/"
+    sh "mkdir -p ${downloadDir}"
+//    sh "cp -fa ${Paths.rpm}/yum/* ${downloadDir}/"
 }
 
 def buildServerInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease) {
@@ -46,16 +46,13 @@ def buildServerInstaller(int majorVersion, String platformVersion, String rpmVer
             sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
             sh "mv -f SOURCES/server-$platformVersion-assembly.jar SOURCES/server.jar"
 
-            withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh """#!/usr/bin/expect
-set timeout -1
-spawn bash -c {rpmbuild --buildroot `pwd`/BUILDROOT --sign SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"}
-expect -exact "Enter pass phrase: "
-send -- "${PASSWORD}\r"
-expect eof"""
-            }
-            
-            sh "cp -fa RPMS/noarch/* ${Paths.rpm}/yum/"
+            sh "ssh ${remoteRedHat} 'cd ${remoteRpm}/rpmbuild; rm -rf *'"
+            sh "scp -r * ${remoteRedHat}:${remoteRpm}/rpmbuild"
+
+            sh "ssh ${remoteRedHat} 'cd ${remoteRpm}/rpmbuild; rpmbuild --buildroot `pwd`/BUILDROOT SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"'"
+            sh "ssh ${remoteRedHat} 'expect ${remoteRpm}/sign.exp' 2> /dev/null"
+
+            sh "ssh ${remoteRedHat} 'cp -r ${remoteRpm}/rpmbuild/RPMS/noarch/* ${remoteRpm}/yum/'"
         }
     }
 }
@@ -87,16 +84,13 @@ def buildClientInstaller(int majorVersion, String platformVersion, String rpmVer
             sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
             sh "mv -f SOURCES/web-client-${platformVersion}.war SOURCES/client.war"
 
-            withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh """#!/usr/bin/expect
-set timeout -1
-spawn bash -c {rpmbuild --buildroot `pwd`/BUILDROOT --sign SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"}
-expect -exact "Enter pass phrase: "
-send -- "${PASSWORD}\r"
-expect eof"""
-            }
+            sh "ssh ${remoteRedHat} 'cd ${remoteRpm}/rpmbuild; rm -rf *'"
+            sh "scp -r * ${remoteRedHat}:${remoteRpm}/rpmbuild"
             
-            sh "cp -fa RPMS/noarch/* ${Paths.rpm}/yum/"
+            sh "ssh ${remoteRedHat} 'cd ${remoteRpm}/rpmbuild; rpmbuild --buildroot `pwd`/BUILDROOT SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"'"
+            sh "ssh ${remoteRedHat} 'expect ${remoteRpm}/sign.exp' 2> /dev/null"
+
+            sh "ssh ${remoteRedHat} 'cp -r ${remoteRpm}/rpmbuild/RPMS/noarch/* ${remoteRpm}/yum/'"
         }
     }
 }
