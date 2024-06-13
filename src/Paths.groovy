@@ -4,7 +4,6 @@ class Paths {
     static String tmp = "/tmp"
     static String download = "/var/www/download"
     static String rpm = "$jenkinsHome/rpm"
-    static String dnf = "$jenkinsHome/dnf"
     static String apt = "$jenkinsHome/apt"
     static String ssl = "$jenkinsHome/ssl"
     static String docusaurus = "$jenkinsHome/docusaurus"

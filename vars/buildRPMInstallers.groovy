@@ -1,7 +1,7 @@
 def call(int majorVersion, String platformVersion) {
-    def downloadDir = "${Paths.download}/yum"
+    def downloadDir = "${Paths.download}/dnf"
     def remoteRedHat = "root@116.203.112.3"
-    def remoteRpm = "/usr/share/rpm"
+    def remoteRpmFolder = "/usr/share/rpm"
     
     def rpmVersion = platformVersion
     def rpmRelease = '1' // though Release is optional, without it we get "error: Release field must be present in package"
@@ -10,21 +10,22 @@ def call(int majorVersion, String platformVersion) {
         rpmVersion = platformVersion.substring(0, betaIndex)
         rpmRelease = platformVersion.substring(betaIndex + 1)
     }
-    
-    buildServerInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease)
-    buildClientInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease)
+
+
+    buildServerInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder)
+    buildClientInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder)
     generateScripts(majorVersion)
 
-    sh "ssh ${remoteRedHat} 'cd ${remoteRpm}; createrepo --update yum'"
-    sh "scp -r ${remoteRedHat}:${remoteRpm}/yum/* ${Paths.rpm}/yum/"
+    sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; createrepo --update dnf'"
+    sh "scp -r ${remoteRedHat}:${remoteRpmFolder}/dnf/* ${Paths.rpm}/dnf/"
     sh "mkdir -p ${downloadDir}"
-    sh "cp -fa ${Paths.rpm}/yum/* ${downloadDir}/"
+    sh "cp -fa ${Paths.rpm}/dnf/* ${downloadDir}/"
 }
 
-def buildServerInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease) {
+def buildServerInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease, String remoteRedHat, String remoteRpmFolder) {
     def title = "lsFusion $majorVersion Server"
     def serverName = "lsfusion$majorVersion-server"
-    def templatesDir = getResourcesDir() + '/installer/yum/server'
+    def templatesDir = getResourcesDir() + '/installer/dnf/server'
 
     dir(Paths.rpm) {
         sh 'rm -rf rpmbuild'
@@ -46,21 +47,21 @@ def buildServerInstaller(int majorVersion, String platformVersion, String rpmVer
             sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:server:$platformVersion:jar:assembly -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
             sh "mv -f SOURCES/server-$platformVersion-assembly.jar SOURCES/server.jar"
 
-            sh "ssh ${remoteRedHat} 'cd ${remoteRpm}/rpmbuild; rm -rf *'"
-            sh "scp -r * ${remoteRedHat}:${remoteRpm}/rpmbuild"
+            sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/rpmbuild; rm -rf *'"
+            sh "scp -r * ${remoteRedHat}:${remoteRpmFolder}/rpmbuild"
 
-            sh "ssh ${remoteRedHat} 'cd ${remoteRpm}/rpmbuild; rpmbuild --buildroot `pwd`/BUILDROOT SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"'"
-            sh "ssh ${remoteRedHat} 'expect ${remoteRpm}/sign.exp' 2> /dev/null"
+            sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/rpmbuild; rpmbuild --buildroot `pwd`/BUILDROOT SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"'"
+            sh "ssh ${remoteRedHat} 'expect ${remoteRpmFolder}/sign.exp' 2> /dev/null"
 
-            sh "ssh ${remoteRedHat} 'cp -r ${remoteRpm}/rpmbuild/RPMS/noarch/* ${remoteRpm}/yum/'"
+            sh "ssh ${remoteRedHat} 'cp -r ${remoteRpmFolder}/rpmbuild/RPMS/noarch/* ${remoteRpmFolder}/dnf/'"
         }
     }
 }
 
-def buildClientInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease) {
+def buildClientInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease, String remoteRedHat, String remoteRpmFolder) {
     def title = "lsFusion $majorVersion Client"
     def clientName = "lsfusion$majorVersion-client"
-    def templatesDir = getResourcesDir() + '/installer/yum/client'
+    def templatesDir = getResourcesDir() + '/installer/dnf/client'
 
     dir(Paths.rpm) {
         sh 'rm -rf rpmbuild'
@@ -84,26 +85,23 @@ def buildClientInstaller(int majorVersion, String platformVersion, String rpmVer
             sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"
             sh "mv -f SOURCES/web-client-${platformVersion}.war SOURCES/client.war"
 
-            sh "ssh ${remoteRedHat} 'cd ${remoteRpm}/rpmbuild; rm -rf *'"
-            sh "scp -r * ${remoteRedHat}:${remoteRpm}/rpmbuild"
+            sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/rpmbuild; rm -rf *'"
+            sh "scp -r * ${remoteRedHat}:${remoteRpmFolder}/rpmbuild"
             
-            sh "ssh ${remoteRedHat} 'cd ${remoteRpm}/rpmbuild; rpmbuild --buildroot `pwd`/BUILDROOT SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"'"
-            sh "ssh ${remoteRedHat} 'expect ${remoteRpm}/sign.exp' 2> /dev/null"
+            sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/rpmbuild; rpmbuild --buildroot `pwd`/BUILDROOT SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"'"
+            sh "ssh ${remoteRedHat} 'expect ${remoteRpmFolder}/sign.exp' 2> /dev/null"
 
-            sh "ssh ${remoteRedHat} 'cp -r ${remoteRpm}/rpmbuild/RPMS/noarch/* ${remoteRpm}/yum/'"
+            sh "ssh ${remoteRedHat} 'cp -r ${remoteRpmFolder}/rpmbuild/RPMS/noarch/* ${remoteRpmFolder}/dnf/'"
         }
     }
 }
 
 def generateScripts(int majorVersion) {
-    def templatesDir = getResourcesDir() + '/installer/yum/scripts'
+    def templatesDir = getResourcesDir() + '/installer/dnf/scripts'
     def serverName = "lsfusion$majorVersion-server"
     def clientName = "lsfusion$majorVersion-client"
-    
+
     dir(Paths.rpm) {
-        sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion > yum/install-lsfusion$majorVersion"
-        sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion-client > yum/install-$clientName"
-        sh "cp -fa $templatesDir/install-lsfusion-db yum/install-lsfusion$majorVersion-db"
-        sh "sed 's/<lsfusion-server>/$serverName/g' $templatesDir/install-lsfusion-server > yum/install-$serverName"
+        sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion > dnf/install-lsfusion$majorVersion"
     }
 }
