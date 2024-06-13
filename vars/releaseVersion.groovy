@@ -105,10 +105,9 @@ def call(int branch, boolean releaseFinal) {
                 ftpPublisher failOnError: true, publishers: [
                         [configName: 'Download FTP server',
                          transfers : [
-                                 [sourceFiles: "${tagVersion}/", remoteDirectory: "java", flatten: true]//,
+                                 [sourceFiles: "${tagVersion}/", remoteDirectory: "java", flatten: true],
 //                                 [sourceFiles: "changelog/CHANGELOG-${tagVersion}.txt", remoteDirectory: "changelog", flatten: true],
 //                                 [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true],
-//                                 [sourceFiles: "yum/", remoteDirectory: "yum", removePrefix: "yum"],
 //                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"],
 //                                 [sourceFiles: "dnf/", remoteDirectory: "dnf", removePrefix: "dnf"],
 //                                 [sourceFiles: "docker/${tagVersion}/", remoteDirectory: "docker", removePrefix: "docker"]
