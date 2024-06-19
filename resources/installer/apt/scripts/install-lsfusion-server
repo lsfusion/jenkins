@@ -1,7 +1,6 @@
 apt install -y software-properties-common
 apt install -y sudo
 
-add-apt-repository -y ppa:openjdk-r/ppa
 apt-get update
 apt install -y default-jdk
 
