@@ -1,5 +1,5 @@
 !define IDEA_MAJORVERSION 2024.1
-!define IDEA_VERSION ${IDEA_MAJORVERSION}.2
+!define IDEA_VERSION ${IDEA_MAJORVERSION}.3
 
 !define JDK_MAJORVERSION 21 ; used in version compare and idea SDK
 !define JDK_VERSION ${JDK_MAJORVERSION}.0.3 ; log, idea SDK
