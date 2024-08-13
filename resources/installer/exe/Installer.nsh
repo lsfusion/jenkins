@@ -637,11 +637,11 @@ Function createShortcuts
         SetOutPath $INSTDIR
         CreateShortCut "$SMPROGRAMS\${LSFUSION_NAME}\Open Desktop Client.lnk" \
                         "$javaHome\bin\javaw.exe" \
-                        "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$serverHost -Dlsfusion.client.hostport=$serverPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
+                        "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$serverHost -Dlsfusion.client.hostport=$serverPort -Dlsfusion.client.exportname=default --add-opens=java.desktop/sun.swing=ALL-UNNAMED --add-opens=java.desktop/sun.font=ALL-UNNAMED --add-opens=java.desktop/javax.swing=ALL-UNNAMED --add-opens=java.desktop/javax.swing.text=ALL-UNNAMED --add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED --add-exports=java.desktop/sun.swing=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED lsfusion.client.controller.MainController" \
                         "$INSTDIR\lsfusion.ico"
         CreateShortCut "$DESKTOP\lsFusion Desktop Client.lnk" \
                         "$javaHome\bin\javaw.exe" \
-                        "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$serverHost -Dlsfusion.client.hostport=$serverPort -Dlsfusion.client.exportname=default lsfusion.client.controller.MainController" \
+                        "-Xmx300m -cp ${CLIENT_JAR} -Dlsfusion.client.hostname=$serverHost -Dlsfusion.client.hostport=$serverPort -Dlsfusion.client.exportname=default --add-opens=java.desktop/sun.swing=ALL-UNNAMED --add-opens=java.desktop/sun.font=ALL-UNNAMED --add-opens=java.desktop/javax.swing=ALL-UNNAMED --add-opens=java.desktop/javax.swing.text=ALL-UNNAMED --add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED --add-exports=java.desktop/sun.swing=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED lsfusion.client.controller.MainController" \
                         "$INSTDIR\lsfusion.ico"
     ${endIf}
 
