@@ -37,10 +37,10 @@ Function pgConfigPagePre
         ${LS_CreateText} $(strUser) $pgUser  $tfPgUser
     ${endIf}
 
-    ${LS_CreatePassword} $(strPassword) $pgPassword $tfPgPassword1
+    ${LS_CreateText} $(strPassword) $pgPassword $tfPgPassword1
 
     ${If} ${SectionIsSelected} ${SecPG}
-        ${LS_CreatePassword} $(strPasswordRetype) $pgPassword $tfPgPassword2
+        ${LS_CreateText} $(strPasswordRetype) $pgPassword $tfPgPassword2
     ${endIf}
 
     ${LS_CreateText} $(strDbName) $pgDbName $tfPgDbName
