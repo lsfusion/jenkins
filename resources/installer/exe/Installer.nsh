@@ -248,6 +248,7 @@ Function .onInit
     StrCpy $pgHost "localhost"
     StrCpy $pgPort "5432"
     StrCpy $pgUser "postgres"
+    StrCpy $pgPassword "psw"
     StrCpy $pgDbName "lsfusion"
     StrCpy $pgServiceName "postgresql-${PG_MAJORVERSION}"
     
