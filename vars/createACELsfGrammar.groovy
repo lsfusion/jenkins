@@ -20,7 +20,7 @@ def call(String lsfLogicsPath) {
 
         // Run antlr, generate LSFJSLogicsParser and LSFJSLogicsLexer and put all files into /webpack folder
         stage('run antlr') {
-            sh 'java -cp antlr-4.12.0-complete.jar org.antlr.v4.Tool -Dlanguage=JavaScript LsfJSLogics.g4 -o webpack'
+            sh 'java -cp antlr4-4.13.2-complete.jar org.antlr.v4.Tool -Dlanguage=JavaScript LsfJSLogics.g4 -o webpack'
         }
 
         // Download the webpack dependencies and run the build.
