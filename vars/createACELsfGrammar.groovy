@@ -1,4 +1,6 @@
-def call(String lsfLogicsPath) {
+def call(String branch, String lsfLogicsPath) {
+    update branch
+    
     def antlrDirPath = getResourcesDir() + Paths.antlr4;
     def workspace = Paths.src
     dir(antlrDirPath) {
@@ -47,5 +49,5 @@ def call(String lsfLogicsPath) {
 
     sh "git add ${workspace}/web-client/src/main/webapp/static/js/ace/src/"
     commit "Update ace"
-    push "master"
+    push branch
 }

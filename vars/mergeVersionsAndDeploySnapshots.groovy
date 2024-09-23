@@ -11,14 +11,22 @@ def call() {
             firstToDeploy = branch
         }
     }
-
-    def lsfLogicsPath = lsfLogicsgChanged()
-    if (lsfLogicsPath) {
-        createACELsfGrammar(lsfLogicsPath)
-    }
-
     if (checkAndMergeVersion('master', -1) && firstToDeploy == 0) {
         firstToDeploy = -1
+    }
+
+    def lsfLogicsPath = lsfLogicsgChanged(firstToDeploy)
+    if (lsfLogicsPath) {
+        if (firstToDeploy > 0) {
+            def deployBranches = (firstToDeploy..lastVersion).collect{it}
+            for (branch in deployBranches) {
+                createACELsfGrammar("v$branch", lsfLogicsPath)
+                mergeVersion(branch, true)
+            }
+        }
+        if (firstToDeploy != 0) {
+            createACELsfGrammar("master", lsfLogicsPath)
+        }
     }
 
     if (platformChanged()) {
@@ -41,8 +49,8 @@ def call() {
     }
 }
 
-def lsfLogicsgChanged() {
-    update 'master'
+def lsfLogicsgChanged(int branch) {
+    update branch == -1 ? "master" : "v$branch"
     def changeSet = currentBuild.rawBuild.changeSets
     for (int i = 0; i < changeSet.size(); i++) {
         def items = changeSet[i].items
