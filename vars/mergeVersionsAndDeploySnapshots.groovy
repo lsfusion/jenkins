@@ -15,18 +15,20 @@ def call() {
         firstToDeploy = -1
     }
 
-    def lsfLogicsPath = lsfLogicsgChanged(firstToDeploy)
-    if (lsfLogicsPath) {
-        print "updating ace"
-        if (firstToDeploy > 0) {
-            def deployBranches = (firstToDeploy..lastVersion).collect{it}
-            for (branch in deployBranches) {
-                createACELsfGrammar("v$branch", lsfLogicsPath)
-                mergeVersion(branch, true)
+    if (firstToDeploy != 0) {
+        def lsfLogicsPath = lsfLogicsgChanged(firstToDeploy)
+        if (lsfLogicsPath) {
+            print "updating ace"
+            if (firstToDeploy > 0) {
+                def deployBranches = (firstToDeploy..lastVersion).collect { it }
+                for (branch in deployBranches) {
+                    createACELsfGrammar("v$branch", lsfLogicsPath)
+                    mergeVersion(branch, true)
+                }
             }
-        }
-        if (firstToDeploy != 0) {
-            createACELsfGrammar("master", lsfLogicsPath)
+            if (firstToDeploy == -1) {
+                createACELsfGrammar("master", lsfLogicsPath)
+            }
         }
     }
 
