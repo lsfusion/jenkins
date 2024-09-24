@@ -38,8 +38,12 @@ sed "s/returns.*//g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4               
 sed "s/\/\/.*//g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                                    # remove comments
 sed "s/\W\?\w\+ *=/ /g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                              # remove all function calls
 
-sed "s/( NEWLINE | SPACE)/( NEWLINE | SPACE) -> channel(HIDDEN)/g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                      # turn off the space matcher
-sed "s/( 'TMP_COMMENT' .* '\\\n')/( 'TMP_COMMENT' .*? '\\\n') -\> channel(HIDDEN)/g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4    # turn off the comment matcher
+sed "/^fragment RAW_STR_SPECIAL_CHAR[[:space:]]*:[[:space:]]*/s/NEXT_ID_LETTER/'a'..'z'|'A'..'Z'|'_'|'0'..'9'/" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4          # because links to rules(~(NEXT_ID_LETTER|SPACE)) don't work in antlr4. we have to inline them.
+sed "/^fragment RAW_STR_SPECIAL_CHAR[[:space:]]*:[[:space:]]*/s/SPACE/' '|'\\\t'/" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                                       # because links to rules(~(NEXT_ID_LETTER|SPACE)) don't work in antlr4. we have to inline them.
+
+sed "/^WS[[:space:]]*:[[:space:]]*/s/;/ -> channel(HIDDEN) ;/" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                      # turn off the space matcher
+sed "/^COMMENTS[[:space:]]*:[[:space:]]*/s/;/ -> channel(HIDDEN) ;/" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                # turn off the comment matcher
+sed "/^MULTILINE_COMMENTS[[:space:]]*:[[:space:]]*/s/;/ -> channel(HIDDEN) ;/" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4      # turn off the multiline_comment matcher
 
 #Return back the required characters
 sed "s/'TMP_OPEN_BRACKET'/'{'/g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                     # return back {
