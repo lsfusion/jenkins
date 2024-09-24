@@ -18,7 +18,6 @@ def call() {
     if (firstToDeploy != 0) {
         def lsfLogicsPath = lsfLogicsgChanged(firstToDeploy)
         if (lsfLogicsPath) {
-            print "updating ace"
             if (firstToDeploy > 0) {
                 def deployBranches = (firstToDeploy..lastVersion).collect { it }
                 for (branch in deployBranches) {
@@ -51,7 +50,6 @@ def call() {
 }
 
 def lsfLogicsgChanged(int branch) {
-    print "check logics commit, $branch"
     update branch == -1 ? "master" : "v$branch"
     def changeSet = currentBuild.rawBuild.changeSets
     for (int i = 0; i < changeSet.size(); i++) {
