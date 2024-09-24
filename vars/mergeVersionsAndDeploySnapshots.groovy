@@ -26,9 +26,7 @@ def call() {
                     mergeVersion(branch, true)
                 }
             }
-            if (firstToDeploy == -1) {
-                createACELsfGrammar("master", lsfLogicsPath)
-            }
+            createACELsfGrammar("master", lsfLogicsPath)
         }
     }
 
