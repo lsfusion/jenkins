@@ -4,6 +4,7 @@ def call() {
     (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
     
     int firstToDeploy = 0
+    String latestCommitMessage = null
 
     def branches = (lastSupportedVersion..lastVersion).collect{it}
     for (branch in branches) {
@@ -16,13 +17,16 @@ def call() {
     }
 
     if (firstToDeploy != 0) {
+        update firstToDeploy == -1 ? "master" : "v$firstToDeploy"
+        latestCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
+        
         def lsfLogicsPath = lsfLogicsgChanged(firstToDeploy)
         if (lsfLogicsPath) {
             if (firstToDeploy > 0) {
                 def deployBranches = (firstToDeploy..lastVersion).collect { it }
                 for (branch in deployBranches) {
                     createACELsfGrammar("v$branch", lsfLogicsPath)
-                    mergeVersion(branch, true)
+                    mergeVersion(branch, true) // fake merge as regular merge is impossible
                 }
             }
             createACELsfGrammar("master", lsfLogicsPath)
@@ -33,13 +37,13 @@ def call() {
         if (firstToDeploy > 0) {
             def deployBranches = (firstToDeploy..lastVersion).collect{it}
             for (branch in deployBranches) {
-                print "deploySnapshot(v$branch, false)"
-//                deploySnapshot("v$branch", false)
+                print "deploySnapshot(v$branch, null)"
+//                deploySnapshot("v$branch", null)
             }
         }
         if (firstToDeploy != 0) {
-            print "deploySnapshot(master, true)"
-//            deploySnapshot("master", true)
+            print "deploySnapshot(master, $latestCommitMessage)"
+//            deploySnapshot("master", $latestCommitMessage)
         }
     }
 
