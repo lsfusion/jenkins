@@ -4,6 +4,7 @@ def call() {
     (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
     
     int firstToDeploy = 0
+    String latestCommitMessage = null
 
     def branches = (lastSupportedVersion..lastVersion).collect{it}
     for (branch in branches) {
@@ -16,6 +17,9 @@ def call() {
     }
 
     if (firstToDeploy != 0) {
+        update firstToDeploy == -1 ? "master" : "v$firstToDeploy"
+        latestCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
+        
         def lsfLogicsPath = lsfLogicsgChanged(firstToDeploy)
         if (lsfLogicsPath) {
             if (firstToDeploy > 0) {
@@ -33,11 +37,11 @@ def call() {
         if (firstToDeploy > 0) {
             def deployBranches = (firstToDeploy..lastVersion).collect{it}
             for (branch in deployBranches) {
-                deploySnapshot("v$branch", false)
+                deploySnapshot("v$branch", null)
             }
         }
         if (firstToDeploy != 0) {
-            deploySnapshot("master", true)
+            deploySnapshot("master", latestCommitMessage)
         }
     }
 

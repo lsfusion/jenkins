@@ -1,7 +1,5 @@
-def call(String branch, boolean message) {
+def call(String branch, String commitMessage) {
     update branch
-    
-    def lastCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
     
     try {
         sh "mvn -ntp clean deploy"
@@ -10,6 +8,6 @@ def call(String branch, boolean message) {
         throw e
     }
 
-    if (message) // master
-        slack.message "<${env.BUILD_URL}|${currentBuild.fullDisplayName}> succeeded.\n```" + lastCommitMessage + "```"
+    if (commitMessage != null) // master
+        slack.message "<${env.BUILD_URL}|${currentBuild.fullDisplayName}> succeeded.\n```" + commitMessage + "```"
 }
