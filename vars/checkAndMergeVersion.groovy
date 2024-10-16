@@ -8,7 +8,7 @@ def call(String branch, int branchIndex) {
     def skipBuild = false
     
     try {
-        def cvFilePath = Paths.jenkinsHome + '/prevMergeAndDeploy'
+        def cvFilePath = Paths.jenkinsHome + '/prevMergeAndDeployTest'
         File cvFile = new File(cvFilePath);
         def prevBuilds
         if (!cvFile.exists())
