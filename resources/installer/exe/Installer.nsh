@@ -26,10 +26,10 @@ SetCompressor lzma
 
 !define DOWNLOADURL "https://download.lsfusion.org/exe/links"
 !define DOWNLOADURL_JAVA "https://download.lsfusion.org/java"
-!define DOWNLOAD_SERVER_JAR "${DOWNLOADURL_JAVA}/lsfusion-server-${LSFUSION_VERSION}.jar"
-!define DOWNLOAD_SERVER_SOURCES_JAR "${DOWNLOADURL_JAVA}/lsfusion-server-${LSFUSION_VERSION}-sources.jar"
-!define DOWNLOAD_CLIENT_JAR "${DOWNLOADURL_JAVA}/lsfusion-client-${LSFUSION_VERSION}.jar"
-!define DOWNLOAD_CLIENT_WAR "${DOWNLOADURL_JAVA}/lsfusion-client-${LSFUSION_VERSION}.war"
+!define DOWNLOAD_SERVER_JAR "${DOWNLOADURL_JAVA}/lsfusion-server-${LSFUSION_LIBRARIES_VERSION}.jar"
+!define DOWNLOAD_SERVER_SOURCES_JAR "${DOWNLOADURL_JAVA}/lsfusion-server-${LSFUSION_LIBRARIES_VERSION}-sources.jar"
+!define DOWNLOAD_CLIENT_JAR "${DOWNLOADURL_JAVA}/lsfusion-client-${LSFUSION_LIBRARIES_VERSION}.jar"
+!define DOWNLOAD_CLIENT_WAR "${DOWNLOADURL_JAVA}/lsfusion-client-${LSFUSION_LIBRARIES_VERSION}.war"
 
 !define PG_SECTION_NAME "Database" ; "PostgreSQL ${PG_MAJORVERSION}"
 !define JAVA_SECTION_NAME "Java" ; "JDK ${JDK_VERSION}"
