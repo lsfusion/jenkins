@@ -65,7 +65,7 @@ def call(int branch, boolean releaseFinal) {
         
     //    // Next 3 tasks to local folder
         stage('Build installers') {
-            buildInstallers majorVersion, tagVersion
+            buildWindowsInstallers majorVersion, tagVersion
             buildRPMInstallers majorVersion, tagVersion
             buildAPTInstallers majorVersion, tagVersion
         }
