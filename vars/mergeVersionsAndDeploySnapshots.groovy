@@ -26,10 +26,11 @@ def call() {
                 def deployBranches = (firstToDeploy..lastVersion).collect { it }
                 for (branch in deployBranches) {
                     createACELsfGrammar("v$branch", lsfLogicsPath)
-                    mergeVersion(branch, true) // fake merge as regular merge is impossible
+                    checkAndMergeVersion("v$branch", branch, true) // fake merge as regular merge is impossible
                 }
             }
             createACELsfGrammar("master", lsfLogicsPath)
+            checkAndMergeVersion("master", -1, true)
         }
     }
 

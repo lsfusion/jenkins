@@ -3,7 +3,7 @@ import groovy.transform.Field
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
-def call(String branch, int branchIndex) {
+def call(String branch, int branchIndex, boolean fakeMerge = false) {
 
     def skipBuild = false
     
@@ -32,7 +32,7 @@ def call(String branch, int branchIndex) {
 
         if (!skipBuild) {
             if (branchIndex >= 0)
-                mergeVersion branchIndex
+                mergeVersion(branchIndex, fakeMerge)
 
             prevBuilds[branch] = newBuildCommit
             cvFile.text = prevBuilds.inspect()
