@@ -1,4 +1,4 @@
-call(String branch) {
+def call(String branch) {
     update branch
 
     String platformVersion = readVersion()
