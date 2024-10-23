@@ -21,7 +21,7 @@ def call(int majorVersion, String platformVersion) {
 
     def backupFolderName = 'dnf-' + new Date().format("yyyyMMddHHmm")
     sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; cp -fra dnf backups/$backupFolderName'"
-    sh "cp -fra ${Paths.rpm}/dnf $jenkinsHome/rpm_backups/$backupFolderName"
+    sh "cp -fra ${Paths.rpm}/dnf ${Paths.jenkinsHome}/rpm_backups/$backupFolderName"
 
     sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; createrepo --update dnf'"
     sh "scp -r ${remoteRedHat}:${remoteRpmFolder}/dnf/* ${Paths.rpm}/dnf/"
