@@ -9,12 +9,19 @@ def call(int majorVersion, String platformVersion) {
         def betaIndex = platformVersion.indexOf('-beta')
         rpmVersion = platformVersion.substring(0, betaIndex)
         rpmRelease = platformVersion.substring(betaIndex + 1)
+    } else if (platformVersion.contains('-SNAPSHOT')) {
+        rpmVersion = platformVersion.substring(0, platformVersion.indexOf('-SNAPSHOT'))
+        rpmRelease = 'SNAPSHOT'
     }
 
 
     buildServerInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder)
     buildClientInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder)
     generateScripts(majorVersion)
+
+    def backupFolderName = new Date().format("dnf-yyyyMMddHHmm")
+    sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; cp dnf backups/$backupFolderName'"
+    sh "cp ${Paths.rpm}/dnf $jenkinsHome/rpm_backups/$backupFolderName"
 
     sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; createrepo --update dnf'"
     sh "scp -r ${remoteRedHat}:${remoteRpmFolder}/dnf/* ${Paths.rpm}/dnf/"
