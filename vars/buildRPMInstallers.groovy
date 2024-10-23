@@ -20,8 +20,8 @@ def call(int majorVersion, String platformVersion) {
     generateScripts(majorVersion)
 
     def backupFolderName = 'dnf-' + new Date().format("yyyyMMddHHmm")
-    sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; cp dnf backups/$backupFolderName'"
-    sh "cp ${Paths.rpm}/dnf $jenkinsHome/rpm_backups/$backupFolderName"
+    sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; cp -fra dnf backups/$backupFolderName'"
+    sh "cp -fra ${Paths.rpm}/dnf $jenkinsHome/rpm_backups/$backupFolderName"
 
     sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; createrepo --update dnf'"
     sh "scp -r ${remoteRedHat}:${remoteRpmFolder}/dnf/* ${Paths.rpm}/dnf/"
