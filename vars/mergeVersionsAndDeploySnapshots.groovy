@@ -4,7 +4,6 @@ def call() {
     (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
     
     int firstToDeploy = 0
-    String latestCommitMessage = null
 
     def branches = (lastSupportedVersion..lastVersion).collect{it}
     for (branch in branches) {
@@ -16,25 +15,28 @@ def call() {
         firstToDeploy = -1
     }
 
-    if (firstToDeploy != 0) {
-        update firstToDeploy == -1 ? "master" : "v$firstToDeploy"
-        latestCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
-        
-        def lsfLogicsPath = lsfLogicsgChanged(firstToDeploy)
-        if (lsfLogicsPath) {
-            if (firstToDeploy > 0) {
-                def deployBranches = (firstToDeploy..lastVersion).collect { it }
-                for (branch in deployBranches) {
-                    createACELsfGrammar("v$branch", lsfLogicsPath)
-                    checkAndMergeVersion("v$branch", branch, true) // fake merge as regular merge is impossible
-                }
+    update firstToDeploy == -1 ? "master" : "v$firstToDeploy"
+    def currentCommit = sh(returnStdout: true, script: "git log -n 1 --no-merges --pretty=format:\"%h\"")
+    String currentCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
+    boolean platformChanged = platformChanged(currentCommit)
+    boolean lsfLogicsgChanged = lsfLogicsgChanged(currentCommit)
+    boolean docsChanged = docsChanged(currentCommit)
+
+    if (lsfLogicsgChanged) {
+        if (firstToDeploy > 0) {
+            def deployBranches = (firstToDeploy..lastVersion).collect { it }
+            for (branch in deployBranches) {
+                createACELsfGrammar("v$branch")
+                checkAndMergeVersion("v$branch", branch, true) // fake merge as regular merge is impossible
             }
-            createACELsfGrammar("master", lsfLogicsPath)
+        }
+        if (firstToDeploy != 0) {
+            createACELsfGrammar("master")
             checkAndMergeVersion("master", -1, true)
         }
     }
 
-    if (platformChanged()) {
+    if (platformChanged) {
         if (firstToDeploy > 0) {
             def deployBranches = (firstToDeploy..lastVersion).collect{it}
             for (branch in deployBranches) {
@@ -42,45 +44,29 @@ def call() {
             }
         }
         if (firstToDeploy != 0) {
-            deploySnapshot("master", latestCommitMessage, true)
+            deploySnapshot("master", currentCommitMessage, true)
         }
     }
 
-    if (docsChanged()) {
+    if (docsChanged) {
         deployDocusaurus()
     }
 }
 
-def lsfLogicsgChanged(int branch) {
-    update branch == -1 ? "master" : "v$branch"
-    def changeSet = currentBuild.rawBuild.changeSets
-    for (int i = 0; i < changeSet.size(); i++) {
-        def items = changeSet[i].items
-        for (int j = 0; j < items.size(); j++) {
-            def files = items[j].affectedFiles
-            for (int k = 0; k < files.size(); k++) {
-                if (files[k].path.contains("lsfusion/server/language/LsfLogics.g")) {
-                    return files[k].path
-                }
-            }
-        }
-    }
+def lsfLogicsgChanged(def currentCommit) {
+    return currentCommit == readLatestCommit(Paths.lsfLogics)
 }
 
-def docsChanged() {
-    update 'master'
-    def rootCommit = sh returnStdout: true, script: "git log -n 1 --no-merges --pretty=format:\"%h\""
-    return rootCommit == readLatestCommit("docs")
+def docsChanged(def currentCommit) {
+    return currentCommit == readLatestCommit("docs")
 }
 
-def platformChanged() {
-    update 'master'
-    def rootCommit = sh returnStdout: true, script: "git log -n 1 --no-merges --pretty=format:\"%h\""
-    return rootCommit == readLatestCommit("api") || 
-            rootCommit == readLatestCommit("build") || 
-            rootCommit == readLatestCommit("desktop-client") || 
-            rootCommit == readLatestCommit("server") || 
-            rootCommit == readLatestCommit("web-client")
+def platformChanged(def currentCommit) {
+    return currentCommit == readLatestCommit("api") ||
+            currentCommit == readLatestCommit("build") ||
+            currentCommit == readLatestCommit("desktop-client") ||
+            currentCommit == readLatestCommit("server") ||
+            currentCommit == readLatestCommit("web-client")
 }
 
 def readLatestCommit(dir) {

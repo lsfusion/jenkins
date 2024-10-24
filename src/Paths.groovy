@@ -8,7 +8,8 @@ class Paths {
     static String ssl = "$jenkinsHome/ssl"
     static String docusaurus = "$jenkinsHome/docusaurus"
     static String antlr4 = "/antlr"
-    
+    static String lsfLogics = "server/src/main/antlr3/lsfusion/server/language/LsfLogics.g"
+
     static String githubRepo = "lsfusion/platform.git"
     static String docusaurusRepo = "lsfusion/docusaurus.git"
     static String docsRepo = "lsfusion/platform.git"

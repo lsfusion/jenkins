@@ -1,4 +1,4 @@
-def call(String branch, String lsfLogicsPath) {
+def call(String branch) {
     update branch
     
     def antlrDirPath = getResourcesDir() + Paths.antlr4;
@@ -17,7 +17,7 @@ def call(String branch, String lsfLogicsPath) {
         // Convert LsfLogics.g to LsfJSLogics.g4
         stage('create LsfJSLogics.g4') {
             sh 'chmod +x ./createLsfJSLogics_g4.sh'
-            sh "./createLsfJSLogics_g4.sh ${workspace}/${lsfLogicsPath}"
+            sh "./createLsfJSLogics_g4.sh ${workspace}/${Paths.lsfLogics}"
         }
 
         // Run antlr, generate LSFJSLogicsParser and LSFJSLogicsLexer and put all files into /webpack folder
