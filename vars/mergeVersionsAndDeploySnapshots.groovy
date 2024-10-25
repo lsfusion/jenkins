@@ -15,41 +15,41 @@ def call() {
         firstToDeploy = -1
     }
 
-    update firstToDeploy == -1 ? "master" : "v$firstToDeploy"
-    def currentCommit = sh(returnStdout: true, script: "git log -n 1 --no-merges --pretty=format:\"%h\"")
-    String currentCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
-    boolean platformChanged = platformChanged(currentCommit)
-    boolean lsfLogicsgChanged = lsfLogicsgChanged(currentCommit)
-    boolean docsChanged = docsChanged(currentCommit)
+    if (firstToDeploy != 0) {
+        update firstToDeploy == -1 ? "master" : "v$firstToDeploy"
+        def currentCommit = sh(returnStdout: true, script: "git log -n 1 --no-merges --pretty=format:\"%h\"")
+        String currentCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
+        boolean platformChanged = platformChanged(currentCommit)
+        boolean lsfLogicsgChanged = lsfLogicsgChanged(currentCommit)
+        boolean docsChanged = docsChanged(currentCommit)
 
-    if (lsfLogicsgChanged) {
-        if (firstToDeploy > 0) {
-            def deployBranches = (firstToDeploy..lastVersion).collect { it }
-            for (branch in deployBranches) {
-                createACELsfGrammar("v$branch")
-                checkAndMergeVersion("v$branch", branch, true) // fake merge as regular merge is impossible
+        if (lsfLogicsgChanged) {
+            if (firstToDeploy > 0) {
+                def deployBranches = (firstToDeploy..lastVersion).collect { it }
+                for (branch in deployBranches) {
+                    createACELsfGrammar("v$branch")
+                    checkAndMergeVersion("v$branch", branch, true) // fake merge as regular merge is impossible
+                }
             }
-        }
-        if (firstToDeploy != 0) {
+            
             createACELsfGrammar("master")
             checkAndMergeVersion("master", -1, true)
         }
-    }
 
-    if (platformChanged) {
-        if (firstToDeploy > 0) {
-            def deployBranches = (firstToDeploy..lastVersion).collect{it}
-            for (branch in deployBranches) {
-                deploySnapshot("v$branch", null, true)
+        if (platformChanged) {
+            if (firstToDeploy > 0) {
+                def deployBranches = (firstToDeploy..lastVersion).collect { it }
+                for (branch in deployBranches) {
+                    deploySnapshot("v$branch", null, true)
+                }
             }
-        }
-        if (firstToDeploy != 0) {
+            
             deploySnapshot("master", currentCommitMessage, true)
         }
-    }
 
-    if (docsChanged) {
-        deployDocusaurus()
+        if (docsChanged) {
+            deployDocusaurus()
+        }
     }
 }
 
