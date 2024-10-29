@@ -19,9 +19,9 @@ def call(int majorVersion, String platformVersion) {
     buildClientInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder)
     generateScripts(majorVersion)
 
-    def backupFolderName = 'dnf-' + new Date().format("yyyyMMddHHmm")
-    sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; cp -fra dnf backups/$backupFolderName'"
-    sh "cp -fra ${Paths.rpm}/dnf ${Paths.jenkinsHome}/rpm_backups/$backupFolderName"
+//    def backupFolderName = 'dnf-' + new Date().format("yyyyMMddHHmm")
+//    sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; cp -fra dnf backups/$backupFolderName'"
+//    sh "cp -fra ${Paths.rpm}/dnf ${Paths.jenkinsHome}/rpm_backups/$backupFolderName"
 
     sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; createrepo --update dnf'"
     sh "scp -r ${remoteRedHat}:${remoteRpmFolder}/dnf/* ${Paths.rpm}/dnf/"
