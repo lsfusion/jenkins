@@ -87,7 +87,7 @@ def generateScripts(int majorVersion) {
     def serverName = "lsfusion$majorVersion-server"
     def clientName = "lsfusion$majorVersion-client"
 
-    dir(Paths.rpm) {
+    dir(Paths.apt) {
         sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion > ${Paths.download}/apt/install-lsfusion$majorVersion"
         sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion-client > ${Paths.download}/apt/install-$clientName"
         sh "cp -fa $templatesDir/install-lsfusion-db ${Paths.download}/apt/install-lsfusion$majorVersion-db"

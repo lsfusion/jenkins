@@ -2,6 +2,7 @@ def call(int majorVersion, String platformVersion) {
     def downloadDir = "${Paths.download}/dnf"
     def remoteRedHat = "root@116.203.112.3"
     def remoteRpmFolder = "/usr/share/rpm"
+    def isSnapshot = false
     
     def rpmVersion = platformVersion
     def rpmRelease = '1' // though Release is optional, without it we get "error: Release field must be present in package"
@@ -10,14 +11,19 @@ def call(int majorVersion, String platformVersion) {
         rpmVersion = platformVersion.substring(0, betaIndex)
         rpmRelease = platformVersion.substring(betaIndex + 1)
     } else if (platformVersion.contains('-SNAPSHOT')) {
-        rpmVersion = platformVersion.substring(0, platformVersion.indexOf('-SNAPSHOT'))
-        rpmRelease = 'SNAPSHOT'
+        isSnapshot = true
+        rpmRelease = readLatestSnapshotRelease(platformVersion)
+//        rpmVersion = platformVersion.substring(0, platformVersion.indexOf('-SNAPSHOT'))
     }
 
 
     buildServerInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder)
     buildClientInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder)
     generateScripts(majorVersion)
+    
+    if (isSnapshot) {
+        writeLatestSnapshotRelease(platformVersion, rpmRelease)
+    }
 
 //    def backupFolderName = 'dnf-' + new Date().format("yyyyMMddHHmm")
 //    sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; cp -fra dnf backups/$backupFolderName'"
@@ -111,4 +117,28 @@ def generateScripts(int majorVersion) {
     dir(Paths.rpm) {
         sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion > dnf/install-lsfusion$majorVersion"
     }
+}
+
+def readLatestSnapshotRelease(String version) {
+    File releasesFile = new File(Paths.rpm + '/latestSnapshotReleases');
+    def prevReleases
+    if (!releasesFile.exists())
+        prevReleases = [:]
+    else
+        prevReleases = Eval.me(releasesFile.text)
+
+    def prevRelease = prevReleases[version]
+    return prevRelease == null ? 1 : Integer.toString(prevRelease as int + 1)
+}
+
+def writeLatestSnapshotRelease(String version, String release) {
+    File releasesFile = new File(Paths.rpm + '/latestSnapshotReleases');
+    def prevReleases
+    if (!releasesFile.exists())
+        prevReleases = [:]
+    else
+        prevReleases = Eval.me(releasesFile.text)
+
+    prevReleases[version] = release
+    releasesFile.text = prevReleases.inspect()
 }
