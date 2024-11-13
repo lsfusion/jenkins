@@ -1,9 +1,10 @@
-@Grab("org.eclipse.jgit:org.eclipse.jgit:5.0.2.201807311906-r")
+@Grab("org.eclipse.jgit:org.eclipse.jgit:7.0.0.202409031743-r")
 @Grab("org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5")
 
 import org.eclipse.egit.github.core.Issue
 import org.eclipse.egit.github.core.IssueEvent
 import org.eclipse.egit.github.core.Label
+import org.eclipse.egit.github.core.client.GitHubClient
 import org.eclipse.egit.github.core.service.IssueService
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.ObjectId
@@ -125,15 +126,22 @@ static IssueType getMainLabel(List<Label> labels) {
     return IssueType.ENHANCEMENT
 }
 
+class MyGitHubClient extends GitHubClient {
+    public MyGitHubClient(String token) {
+        setOAuth2Token(token);
+    }
+}
+
 List<IssueEvent> getClosedEvents(String user, String repo) {
     List<IssueEvent> closedEvents = new ArrayList<>();
-    def service = new IssueService()
-    for(Collection<IssueEvent> issueEvents : service.pageEvents(user,repo, Integer.MAX_VALUE))
-        for(IssueEvent issueEvent : issueEvents) {
-            // if commit closes issue
-            if(issueEvent.commitId != null && !issueEvent.commitId.isEmpty() && issueEvent.event.equals("closed"))
-                closedEvents.add(issueEvent);
-        }
+    withCredentials([string(credentialsId: 'api.github.com.token', variable: 'token')]) {
+        for (Collection<IssueEvent> issueEvents : new IssueService(new MyGitHubClient(token)).pageEvents(user, repo, Integer.MAX_VALUE))
+            for (IssueEvent issueEvent : issueEvents) {
+                // if commit closes issue
+                if (issueEvent.commitId != null && !issueEvent.commitId.isEmpty() && issueEvent.event.equals("closed"))
+                    closedEvents.add(issueEvent);
+            }
+    }
     return closedEvents
 }
 
