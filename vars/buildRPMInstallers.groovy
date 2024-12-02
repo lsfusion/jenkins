@@ -128,7 +128,7 @@ def readLatestSnapshotRelease(String version) {
         prevReleases = Eval.me(releasesFile.text)
 
     def prevRelease = prevReleases[version]
-    return prevRelease == null ? 1 : Integer.toString(prevRelease as int + 1)
+    return prevRelease == null ? 1 : Integer.toString((prevRelease as int) + 1)
 }
 
 def writeLatestSnapshotRelease(String version, String release) {
