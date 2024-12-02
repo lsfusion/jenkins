@@ -12,7 +12,7 @@ def call(int majorVersion, String platformVersion) {
         rpmRelease = platformVersion.substring(betaIndex + 1)
     } else if (platformVersion.contains('-SNAPSHOT')) {
         isSnapshot = true
-        rpmRelease = 'SNAPSHOT' + readLatestSnapshotRelease(platformVersion)
+        rpmRelease = 'SNAPSHOT.' + readLatestSnapshotRelease(platformVersion)
 //        rpmVersion = platformVersion.replaceFirst('-SNAPSHOT', '.SNAPSHOT')
         rpmVersion = platformVersion.substring(0, platformVersion.indexOf('-SNAPSHOT'))
     }
