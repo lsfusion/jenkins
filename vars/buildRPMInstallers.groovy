@@ -13,6 +13,7 @@ def call(int majorVersion, String platformVersion) {
     } else if (platformVersion.contains('-SNAPSHOT')) {
         isSnapshot = true
         rpmRelease = readLatestSnapshotRelease(platformVersion)
+        rpmVersion = platformVersion.replaceFirst('-SNAPSHOT', '.SNAPSHOT')
 //        rpmVersion = platformVersion.substring(0, platformVersion.indexOf('-SNAPSHOT'))
     }
 
