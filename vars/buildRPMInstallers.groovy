@@ -140,6 +140,6 @@ static def writeLatestSnapshotRelease(String version, String release) {
     else
         prevReleases = Eval.me(releasesFile.text)
 
-    prevReleases[version] = release
+    prevReleases[version] = release.substring(release.indexOf('.') + 1)
     releasesFile.text = prevReleases.inspect()
 }
