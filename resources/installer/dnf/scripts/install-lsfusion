@@ -28,11 +28,11 @@ systemctl enable postgresql-16
 systemctl start postgresql-16
 
 # Install lsFusion repo
-dnf config-manager --add-repo https://download.lsfusion.org/dnf
+dnf config-manager --add-repo https://download.lsfusion.org/<repo_subdir>
 
 # Import lsFusion GPG Key
 update-crypto-policies --set DEFAULT:SHA1
-rpm --import https://download.lsfusion.org/dnf/GPG-KEY-lsfusion
+rpm --import https://download.lsfusion.org/<repo_subdir>/GPG-KEY-lsfusion
 
 # Install lsFusion server and client
 dnf install -y <lsfusion-server> <lsfusion-client>

@@ -114,7 +114,7 @@ def generateScripts(int majorVersion, String dnfSubdir) {
     def clientName = "lsfusion$majorVersion-client"
 
     dir(Paths.rpm) {
-        sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion > ${dnfSubdir}/install-lsfusion$majorVersion"
+        sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g'; 's/<repo_subdir>/$dnfSubdir/g $templatesDir/install-lsfusion > ${dnfSubdir}/install-lsfusion$majorVersion"
     }
 }
 
