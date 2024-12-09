@@ -20,9 +20,9 @@ def call(int majorVersion, String platformVersion) {
     }
 
 
-    buildServerInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder)
-    buildClientInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder)
-    generateScripts(majorVersion)
+    buildServerInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder, dnfSubdir)
+    buildClientInstaller(majorVersion, platformVersion, rpmVersion, rpmRelease, remoteRedHat, remoteRpmFolder, dnfSubdir)
+    generateScripts(majorVersion, dnfSubdir)
     
     if (isSnapshot) {
         writeLatestSnapshotRelease(platformVersion, rpmRelease)
@@ -34,7 +34,7 @@ def call(int majorVersion, String platformVersion) {
 //    sh "cp -fa ${Paths.rpm}/${dnfSubdir}/* ${downloadDir}/"
 }
 
-def buildServerInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease, String remoteRedHat, String remoteRpmFolder) {
+def buildServerInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease, String remoteRedHat, String remoteRpmFolder, String dnfSubdir) {
     def title = "lsFusion $majorVersion Server"
     def serverName = "lsfusion$majorVersion-server"
     def templatesDir = getResourcesDir() + '/installer/dnf/server'
@@ -70,7 +70,7 @@ def buildServerInstaller(int majorVersion, String platformVersion, String rpmVer
     }
 }
 
-def buildClientInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease, String remoteRedHat, String remoteRpmFolder) {
+def buildClientInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease, String remoteRedHat, String remoteRpmFolder, String dnfSubdir) {
     def title = "lsFusion $majorVersion Client"
     def clientName = "lsfusion$majorVersion-client"
     def templatesDir = getResourcesDir() + '/installer/dnf/client'
@@ -108,7 +108,7 @@ def buildClientInstaller(int majorVersion, String platformVersion, String rpmVer
     }
 }
 
-def generateScripts(int majorVersion) {
+def generateScripts(int majorVersion, String dnfSubdir) {
     def templatesDir = getResourcesDir() + '/installer/dnf/scripts'
     def serverName = "lsfusion$majorVersion-server"
     def clientName = "lsfusion$majorVersion-client"
