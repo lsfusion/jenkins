@@ -1,8 +1,10 @@
 def call(int majorVersion, String platformVersion) {
-    def downloadDir = "${Paths.download}/dnf"
+    def isSnapshot = platformVersion.contains('-SNAPSHOT')
+    def dnfSubdir = isSnapshot ? "dnf-snap" : "dnf"
+
+    def downloadDir = "${Paths.download}/${dnfSubdir}"
     def remoteRedHat = "root@116.203.112.3"
     def remoteRpmFolder = "/usr/share/rpm"
-    def isSnapshot = false
     
     def rpmVersion = platformVersion
     def rpmRelease = '1' // though Release is optional, without it we get "error: Release field must be present in package"
@@ -10,7 +12,7 @@ def call(int majorVersion, String platformVersion) {
         def betaIndex = platformVersion.indexOf('-beta')
         rpmVersion = platformVersion.substring(0, betaIndex)
         rpmRelease = platformVersion.substring(betaIndex + 1)
-    } else if (platformVersion.contains('-SNAPSHOT')) {
+    } else if (isSnapshot) {
         isSnapshot = true
         rpmRelease = 'SNAPSHOT.' + readLatestSnapshotRelease(platformVersion)
 //        rpmVersion = platformVersion.replaceFirst('-SNAPSHOT', '.SNAPSHOT')
@@ -26,14 +28,10 @@ def call(int majorVersion, String platformVersion) {
         writeLatestSnapshotRelease(platformVersion, rpmRelease)
     }
 
-//    def backupFolderName = 'dnf-' + new Date().format("yyyyMMddHHmm")
-//    sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; cp -fra dnf backups/$backupFolderName'"
-//    sh "cp -fra ${Paths.rpm}/dnf ${Paths.jenkinsHome}/rpm_backups/$backupFolderName"
-
-    sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; createrepo --update dnf'"
-    sh "scp -r ${remoteRedHat}:${remoteRpmFolder}/dnf/* ${Paths.rpm}/dnf/"
+    sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; createrepo --update ${dnfSubdir}'"
+    sh "scp -r ${remoteRedHat}:${remoteRpmFolder}/${dnfSubdir}/* ${Paths.rpm}/${dnfSubdir}/"
     sh "mkdir -p ${downloadDir}"
-//    sh "cp -fa ${Paths.rpm}/dnf/* ${downloadDir}/"
+//    sh "cp -fa ${Paths.rpm}/${dnfSubdir}/* ${downloadDir}/"
 }
 
 def buildServerInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease, String remoteRedHat, String remoteRpmFolder) {
@@ -67,7 +65,7 @@ def buildServerInstaller(int majorVersion, String platformVersion, String rpmVer
             sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/rpmbuild; rpmbuild --buildroot `pwd`/BUILDROOT SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"'"
             sh "ssh ${remoteRedHat} 'expect ${remoteRpmFolder}/sign.exp' 2> /dev/null"
 
-            sh "ssh ${remoteRedHat} 'cp -r ${remoteRpmFolder}/rpmbuild/RPMS/noarch/* ${remoteRpmFolder}/dnf/'"
+            sh "ssh ${remoteRedHat} 'cp -r ${remoteRpmFolder}/rpmbuild/RPMS/noarch/* ${remoteRpmFolder}/${dnfSubdir}/'"
         }
     }
 }
@@ -105,7 +103,7 @@ def buildClientInstaller(int majorVersion, String platformVersion, String rpmVer
             sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/rpmbuild; rpmbuild --buildroot `pwd`/BUILDROOT SPECS/lsfusion.spec -bb --define \"_topdir `pwd`\"'"
             sh "ssh ${remoteRedHat} 'expect ${remoteRpmFolder}/sign.exp' 2> /dev/null"
 
-            sh "ssh ${remoteRedHat} 'cp -r ${remoteRpmFolder}/rpmbuild/RPMS/noarch/* ${remoteRpmFolder}/dnf/'"
+            sh "ssh ${remoteRedHat} 'cp -r ${remoteRpmFolder}/rpmbuild/RPMS/noarch/* ${remoteRpmFolder}/${dnfSubdir}/'"
         }
     }
 }
@@ -116,7 +114,7 @@ def generateScripts(int majorVersion) {
     def clientName = "lsfusion$majorVersion-client"
 
     dir(Paths.rpm) {
-        sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion > dnf/install-lsfusion$majorVersion"
+        sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion > ${dnfSubdir}/install-lsfusion$majorVersion"
     }
 }
 
