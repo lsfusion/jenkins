@@ -25,10 +25,13 @@ def call(int majorVersion, String platformVersion) {
     generateScripts(majorVersion, dnfSubdir)
     
     if (isSnapshot) {
-        def obsoleteRelease = currentRpmRelease - 5
-        sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/${dnfSubdir}; rm -f lsfusion${majorVersion}-server-${platformVersion}.${obsoleteRelease}.noarch.rpm'"
-        sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/${dnfSubdir}; rm -f lsfusion${majorVersion}-client-${platformVersion}.${obsoleteRelease}.noarch.rpm'"
-        // metadata will be updated with 'createrepo' command
+        def keepSnapshotsNumber = 5
+        def obsoleteRelease = currentRpmRelease - keepSnapshotsNumber
+        if (obsoleteRelease > 0) {
+            sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/${dnfSubdir}; rm -f lsfusion${majorVersion}-server-${platformVersion}.${obsoleteRelease}.noarch.rpm'"
+            sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/${dnfSubdir}; rm -f lsfusion${majorVersion}-client-${platformVersion}.${obsoleteRelease}.noarch.rpm'"
+            // metadata will be updated with 'createrepo' command
+        }
         writeLatestSnapshotRelease(platformVersion, currentRpmRelease)
     }
 
