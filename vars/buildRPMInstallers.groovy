@@ -8,14 +8,14 @@ def call(int majorVersion, String platformVersion) {
     
     def rpmVersion = platformVersion
     def rpmRelease = '1' // though Release is optional, without it we get "error: Release field must be present in package"
+    int currentRpmRelease = readLatestSnapshotRelease(platformVersion)
     if (platformVersion.contains('-beta')) {
         def betaIndex = platformVersion.indexOf('-beta')
         rpmVersion = platformVersion.substring(0, betaIndex)
         rpmRelease = platformVersion.substring(betaIndex + 1)
     } else if (isSnapshot) {
         isSnapshot = true
-        rpmRelease = 'SNAPSHOT.' + readLatestSnapshotRelease(platformVersion)
-//        rpmVersion = platformVersion.replaceFirst('-SNAPSHOT', '.SNAPSHOT')
+        rpmRelease = 'SNAPSHOT.' + currentRpmRelease
         rpmVersion = platformVersion.substring(0, platformVersion.indexOf('-SNAPSHOT'))
     }
 
@@ -25,13 +25,19 @@ def call(int majorVersion, String platformVersion) {
     generateScripts(majorVersion, dnfSubdir)
     
     if (isSnapshot) {
-        writeLatestSnapshotRelease(platformVersion, rpmRelease)
+        def obsoleteRelease = currentRpmRelease - 5
+        sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/${dnfSubdir}; rm -f lsfusion${majorVersion}-server-${platformVersion}.${obsoleteRelease}.noarch.rpm'"
+        sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/${dnfSubdir}; rm -f lsfusion${majorVersion}-client-${platformVersion}.${obsoleteRelease}.noarch.rpm'"
+        // metadata will be updated with 'createrepo' command
+        writeLatestSnapshotRelease(platformVersion, currentRpmRelease)
     }
 
     sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}; createrepo --update ${dnfSubdir}'"
+    sh "rm -rf ${Paths.rpm}/${dnfSubdir}"
     sh "scp -r ${remoteRedHat}:${remoteRpmFolder}/${dnfSubdir}/* ${Paths.rpm}/${dnfSubdir}/"
+    sh "rm -rf ${downloadDir}"
     sh "mkdir -p ${downloadDir}"
-//    sh "cp -fa ${Paths.rpm}/${dnfSubdir}/* ${downloadDir}/"
+    sh "cp -fa ${Paths.rpm}/${dnfSubdir}/* ${downloadDir}/"
 }
 
 def buildServerInstaller(int majorVersion, String platformVersion, String rpmVersion, String rpmRelease, String remoteRedHat, String remoteRpmFolder, String dnfSubdir) {
@@ -127,10 +133,10 @@ static def readLatestSnapshotRelease(String version) {
         prevReleases = Eval.me(releasesFile.text)
 
     def prevRelease = prevReleases[version]
-    return prevRelease == null ? '1' : Integer.toString((prevRelease as int) + 1)
+    return prevRelease == null ? 1 : (prevRelease as int) + 1
 }
 
-static def writeLatestSnapshotRelease(String version, String release) {
+static def writeLatestSnapshotRelease(String version, int release) {
     File releasesFile = new File(Paths.rpm + '/latestSnapshotReleases');
     def prevReleases
     if (!releasesFile.exists())
@@ -138,6 +144,6 @@ static def writeLatestSnapshotRelease(String version, String release) {
     else
         prevReleases = Eval.me(releasesFile.text)
 
-    prevReleases[version] = release.substring(release.indexOf('.') + 1)
+    prevReleases[version] = release
     releasesFile.text = prevReleases.inspect()
 }

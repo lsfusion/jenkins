@@ -8,16 +8,16 @@ def call(String branch) {
     buildRPMInstallers(majorVersion, platformVersion)
 
     dir(Paths.download) {
-//        ftpPublisher failOnError: true, publishers: [
-//                [configName: 'Download FTP server',
-//                 transfers : [
+        ftpPublisher failOnError: true, publishers: [
+                [configName: 'Download FTP server',
+                 transfers : [
 //                         [sourceFiles: "exe/${platformVersion}/", remoteDirectory: "exe", flatten: true],
-////                                 [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"],
-////                                 [sourceFiles: "dnf/", remoteDirectory: "dnf", removePrefix: "dnf"],
-////                                 [sourceFiles: "docker/${tagVersion}/", remoteDirectory: "docker", removePrefix: "docker"]
-//                 ],
-//                 verbose   : true]
-//        ]
+//                                 [sourceFiles: "apt-snap/", remoteDirectory: "apt-snap", removePrefix: "apt-snap", cleanRemote: true],
+                                 [sourceFiles: "dnf-snap/", remoteDirectory: "dnf-snap", removePrefix: "dnf-snap", cleanRemote: true],
+//                                 [sourceFiles: "docker/${tagVersion}/", remoteDirectory: "docker", removePrefix: "docker"]
+                 ],
+                 verbose   : true]
+        ]
     }
 }
 
