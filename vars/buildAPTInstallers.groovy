@@ -55,7 +55,7 @@ def buildServerInstaller(int majorVersion, String platformVersion, String aptVer
         sh 'mkdir -p server/debbuild/debian'
 
         dir('server/debbuild') {
-            sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-version>/$platformVersion/g' $templatesDir/changelog > debian/changelog"
+            sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/changelog > debian/changelog"
 //            new File("${Paths.apt}/server/debbuild/debian/changelog").append(new File("${Paths.src}/CHANGELOG.md").text)
             sh "cp -fa $templatesDir/compat debian/"
             sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/control > debian/control"
@@ -86,7 +86,7 @@ def buildClientInstaller(int majorVersion, String platformVersion, String aptVer
         sh 'mkdir -p client/debbuild/debian'
 
         dir('client/debbuild') {
-            sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-version>/$platformVersion/g' $templatesDir/changelog > debian/changelog"
+            sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/changelog > debian/changelog"
 //            new File("${Paths.apt}/client/debbuild/debian/changelog").append(new File("${Paths.src}/CHANGELOG.md").text)
             sh "cp -fa $templatesDir/compat debian/"
             sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/control > debian/control"
