@@ -115,9 +115,9 @@ def generateScripts(int majorVersion, def downloadDir, def aptSubdir) {
 
     dir(Paths.apt) {
         sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g; s/<repo_subdir>/$aptSubdir/g' $templatesDir/install-lsfusion > ${downloadDir}/install-lsfusion$majorVersion"
-        sh "sed 's/<lsfusion-client>/$clientName/g; s/<repo_subdir>/$aptSubdir/g'' $templatesDir/install-lsfusion-client > ${downloadDir}/install-$clientName"
+        sh "sed 's/<lsfusion-client>/$clientName/g; s/<repo_subdir>/$aptSubdir/g' $templatesDir/install-lsfusion-client > ${downloadDir}/install-$clientName"
         sh "cp -fa $templatesDir/install-lsfusion-db ${downloadDir}/install-lsfusion$majorVersion-db"
-        sh "sed 's/<lsfusion-server>/$serverName/g; s/<repo_subdir>/$aptSubdir/g'' $templatesDir/install-lsfusion-server > ${downloadDir}/install-$serverName"
+        sh "sed 's/<lsfusion-server>/$serverName/g; s/<repo_subdir>/$aptSubdir/g' $templatesDir/install-lsfusion-server > ${downloadDir}/install-$serverName"
     }
 }
 
