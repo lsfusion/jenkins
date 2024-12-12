@@ -4,14 +4,16 @@ def call(int majorVersion, String platformVersion) {
     def downloadDir = "${Paths.download}/${aptSubdir}"
     def repoSubdir = isSnapshot ? "repo-snap" : "repo"
     int currentAptRelease = 1
+    def aptVersion
 
     if (isSnapshot) {
         currentAptRelease = readLatestSnapshotRelease(platformVersion)
-        aptRelease = 'SNAPSHOT.' + currentAptRelease
     }
     
-    buildServerInstaller(majorVersion, platformVersion)
-    buildClientInstaller(majorVersion, platformVersion)
+    aptVersion = platformVersion + '-' + currentAptRelease
+    
+    buildServerInstaller(majorVersion, platformVersion, aptVersion)
+    buildClientInstaller(majorVersion, platformVersion, aptVersion)
 
 //    if (isSnapshot) {
 //        def keepSnapshotsNumber = 5
@@ -25,7 +27,7 @@ def call(int majorVersion, String platformVersion) {
     
     // reprepro stores only one latest version of the package. For some reason it refuses to remove previous version if it was in beta (e.g. when adding 3.0 after 3.beta.0). Therefore we delete packages manually.
     dir(Paths.apt) {
-        sh "sudo sh -c 'reprepro -b $repoSubdir remove all lsfusion$majorVersion-server; reprepro -b $repoSubdir remove all lsfusion$majorVersion-client; reprepro -b $repoSubdir/ includedeb all server/lsfusion$majorVersion-server_$platformVersion-${currentAptRelease}_all.deb; reprepro -b $repoSubdir/ includedeb all client/lsfusion$majorVersion-client_$platformVersion-${currentAptRelease}_all.deb'"
+        sh "sudo sh -c 'reprepro -b $repoSubdir remove all lsfusion$majorVersion-server; reprepro -b $repoSubdir remove all lsfusion$majorVersion-client; reprepro -b $repoSubdir/ includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -b $repoSubdir/ includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
     }
 
     if (isSnapshot) {
@@ -43,7 +45,7 @@ def call(int majorVersion, String platformVersion) {
 //    sh "cp -r ${Paths.apt}/${repoSubdir}/* ${downloadDir}/"
 }
 
-def buildServerInstaller(int majorVersion, String platformVersion) {
+def buildServerInstaller(int majorVersion, String platformVersion, String aptVersion) {
     def title = "lsFusion $majorVersion Server"
     def serverName = "lsfusion$majorVersion-server"
     def templatesDir = getResourcesDir() + '/installer/apt/server'
@@ -56,7 +58,7 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
             sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-version>/$platformVersion/g' $templatesDir/changelog > debian/changelog"
 //            new File("${Paths.apt}/server/debbuild/debian/changelog").append(new File("${Paths.src}/CHANGELOG.md").text)
             sh "cp -fa $templatesDir/compat debian/"
-            sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g' $templatesDir/control > debian/control"
+            sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/control > debian/control"
             sh "cp -fa $templatesDir/lsfusion.conf ."
             sh "sed 's/<lsfusion-server>/$serverName/g' $templatesDir/lsfusion-server.postinst > debian/${serverName}.postinst"
             sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g' $templatesDir/lsfusion-server.service > debian/${serverName}.service"
@@ -74,7 +76,7 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
     }
 }
 
-def buildClientInstaller(int majorVersion, String platformVersion) {
+def buildClientInstaller(int majorVersion, String platformVersion, String aptVersion) {
     def title = "lsFusion $majorVersion Client"
     def clientName = "lsfusion$majorVersion-client"
     def templatesDir = getResourcesDir() + '/installer/apt/client'
@@ -87,7 +89,7 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
             sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-version>/$platformVersion/g' $templatesDir/changelog > debian/changelog"
 //            new File("${Paths.apt}/client/debbuild/debian/changelog").append(new File("${Paths.src}/CHANGELOG.md").text)
             sh "cp -fa $templatesDir/compat debian/"
-            sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g' $templatesDir/control > debian/control"
+            sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/control > debian/control"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion.conf > lsfusion.conf"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion.logrotate > lsfusion.logrotate"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion-client.postinst > debian/${clientName}.postinst"

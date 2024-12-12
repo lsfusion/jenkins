@@ -6,4 +6,5 @@ Build-Depends: build-essential, debhelper (>= 9)
 
 Package: <lsfusion-client>
 Architecture: all
+Version: <lsfusion-version>
 Description: <lsfusion-description>
