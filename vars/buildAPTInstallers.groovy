@@ -3,12 +3,10 @@ def call(int majorVersion, String platformVersion) {
     def aptSubdir = isSnapshot ? "apt-snap" : "apt"
     def downloadDir = "${Paths.download}/${aptSubdir}"
     def repoSubdir = isSnapshot ? "repo-snap" : "repo"
-    def aptRelease = '1'
-    
-    int currentAptRelease = readLatestSnapshotRelease(platformVersion)
+    int currentAptRelease = 1
 
     if (isSnapshot) {
-        isSnapshot = true
+        currentAptRelease = readLatestSnapshotRelease(platformVersion)
         aptRelease = 'SNAPSHOT.' + currentAptRelease
     }
     
@@ -27,7 +25,7 @@ def call(int majorVersion, String platformVersion) {
     
     // reprepro stores only one latest version of the package. For some reason it refuses to remove previous version if it was in beta (e.g. when adding 3.0 after 3.beta.0). Therefore we delete packages manually.
     dir(Paths.apt) {
-        sh "sudo sh -c 'reprepro -b $repoSubdir remove all lsfusion$majorVersion-server; reprepro -b $repoSubdir remove all lsfusion$majorVersion-client; reprepro -b $repoSubdir/ includedeb all server/lsfusion$majorVersion-server_$platformVersion-${aptRelease}_all.deb; reprepro -b $repoSubdir/ includedeb all client/lsfusion$majorVersion-client_$platformVersion-${aptRelease}_all.deb'"
+        sh "sudo sh -c 'reprepro -b $repoSubdir remove all lsfusion$majorVersion-server; reprepro -b $repoSubdir remove all lsfusion$majorVersion-client; reprepro -b $repoSubdir/ includedeb all server/lsfusion$majorVersion-server_$platformVersion-${currentAptRelease}_all.deb; reprepro -b $repoSubdir/ includedeb all client/lsfusion$majorVersion-client_$platformVersion-${currentAptRelease}_all.deb'"
     }
 
     if (isSnapshot) {
