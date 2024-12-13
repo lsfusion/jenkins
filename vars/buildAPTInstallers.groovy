@@ -43,7 +43,7 @@ def call(int majorVersion, String platformVersion) {
     
     generateScripts(majorVersion, downloadDir, aptSubdir)
 
-//    sh "cp -r ${Paths.apt}/${repoSubdir}/* ${downloadDir}/"
+    sh "cp -r ${Paths.apt}/${repoSubdir}/* ${downloadDir}/"
 }
 
 def buildServerInstaller(int majorVersion, String platformVersion, String aptVersion) {
