@@ -8,4 +8,3 @@ Package: <lsfusion-server>
 Architecture: all
 Version: <lsfusion-version>
 Description: <lsfusion-description>
-Limit: 5
