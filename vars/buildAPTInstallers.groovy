@@ -10,7 +10,7 @@ def call(int majorVersion, String platformVersion) {
         currentAptRelease = readLatestSnapshotRelease(platformVersion)
     }
     
-    aptVersion = platformVersion + '-' + currentAptRelease
+    aptVersion = platformVersion + '.' + currentAptRelease + '-1'
     
     buildServerInstaller(majorVersion, platformVersion, aptVersion)
     buildClientInstaller(majorVersion, platformVersion, aptVersion)
