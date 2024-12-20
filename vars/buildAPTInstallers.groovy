@@ -59,7 +59,8 @@ def buildServerInstaller(int majorVersion, String platformVersion, String aptVer
             sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/changelog > debian/changelog"
 //            new File("${Paths.apt}/server/debbuild/debian/changelog").append(new File("${Paths.src}/CHANGELOG.md").text)
             sh "cp -fa $templatesDir/compat debian/"
-            sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/control > debian/control"
+            sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g' $templatesDir/control > debian/control"
+//            sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/control > debian/control"
             sh "cp -fa $templatesDir/lsfusion.conf ."
             sh "sed 's/<lsfusion-server>/$serverName/g' $templatesDir/lsfusion-server.postinst > debian/${serverName}.postinst"
             sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g' $templatesDir/lsfusion-server.service > debian/${serverName}.service"
@@ -90,7 +91,8 @@ def buildClientInstaller(int majorVersion, String platformVersion, String aptVer
             sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/changelog > debian/changelog"
 //            new File("${Paths.apt}/client/debbuild/debian/changelog").append(new File("${Paths.src}/CHANGELOG.md").text)
             sh "cp -fa $templatesDir/compat debian/"
-            sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/control > debian/control"
+            sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g' $templatesDir/control > debian/control"
+//            sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/control > debian/control"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion.conf > lsfusion.conf"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion.logrotate > lsfusion.logrotate"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion-client.postinst > debian/${clientName}.postinst"
