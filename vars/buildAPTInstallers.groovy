@@ -27,8 +27,12 @@ def call(int majorVersion, String platformVersion) {
     
     // reprepro stores only one latest version of the package. For some reason it refuses to remove previous version if it was in beta (e.g. when adding 3.0 after 3.beta.0). Therefore we delete packages manually.
     dir(Paths.apt) {
-        sh "sudo sh -c 'reprepro -vv -b $repoSubdir includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -vv -b $repoSubdir includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
+        if (isSnapshot) {
+            sh "sudo reprepro -b $repoSubdir process_incoming default"
+        } else {
+            sh "sudo sh -c 'reprepro -vv -b $repoSubdir includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -vv -b $repoSubdir includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
 //        sh "sudo sh -c 'reprepro -b $repoSubdir remove all lsfusion$majorVersion-server; reprepro -b $repoSubdir remove all lsfusion$majorVersion-client; reprepro -b $repoSubdir/ includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -b $repoSubdir/ includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
+        }
     }
 
     if (isSnapshot) {
@@ -75,6 +79,8 @@ def buildServerInstaller(int majorVersion, String platformVersion, String aptVer
                 sh "sudo sh -c 'chown -R jenkins .'"
             }
         }
+        
+        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_all.deb incoming/"
     }
 }
 
@@ -110,6 +116,8 @@ def buildClientInstaller(int majorVersion, String platformVersion, String aptVer
                 sh "sudo sh -c 'chown -R jenkins .'"
             }
         }
+
+        sh "cp -fa server/lsfusion$majorVersion-client_${aptVersion}_all.deb incoming/"
     }
 }
 
