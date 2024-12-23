@@ -80,7 +80,7 @@ def buildServerInstaller(int majorVersion, String platformVersion, String aptVer
             }
         }
         
-        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_all.deb incoming/"
+        sh "cp -fa client/lsfusion$majorVersion-server_${aptVersion}_all.deb incoming/"
     }
 }
 
