@@ -75,13 +75,14 @@ def buildServerInstaller(int majorVersion, String platformVersion, String aptVer
             sh "mv -f server-$platformVersion-assembly.jar server.jar"
             
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
+                sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc -us; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
                 sh "sudo sh -c 'chown -R jenkins .'"
             }
         }
         
         sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_all.deb incoming/"
         sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_*.changes incoming/"
+        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_*.buildinfo incoming/"
     }
 }
 
@@ -120,6 +121,7 @@ def buildClientInstaller(int majorVersion, String platformVersion, String aptVer
 
         sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_all.deb incoming/"
         sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_*.changes incoming/"
+        sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_*.buildinfo incoming/"
     }
 }
 
