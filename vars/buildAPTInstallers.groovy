@@ -75,7 +75,7 @@ def buildServerInstaller(int majorVersion, String platformVersion, String aptVer
             sh "mv -f server-$platformVersion-assembly.jar server.jar"
             
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc -sa; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
+                sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
                 sh "sudo sh -c 'chown -R jenkins .'"
             }
         }
@@ -112,7 +112,7 @@ def buildClientInstaller(int majorVersion, String platformVersion, String aptVer
             sh "cp -fa ../../apache-tomcat-9.0.89.tar.gz ."
 
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc -sa; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
+                sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
                 sh "sudo sh -c 'chown -R jenkins .'"
             }
         }
