@@ -10,7 +10,8 @@ def call(int majorVersion, String platformVersion) {
         currentAptRelease = readLatestSnapshotRelease(platformVersion)
     }
     
-    aptVersion = platformVersion + '-' + currentAptRelease
+    aptVersion = platformVersion + '.' + currentAptRelease + '-' + 1
+//    aptVersion = platformVersion + '-' + currentAptRelease
     
     buildServerInstaller(majorVersion, platformVersion, aptVersion)
     buildClientInstaller(majorVersion, platformVersion, aptVersion)
@@ -80,9 +81,9 @@ def buildServerInstaller(int majorVersion, String platformVersion, String aptVer
             }
         }
         
-        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_all.deb incoming/"
-        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_*.changes incoming/"
-        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_*.buildinfo incoming/"
+//        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_all.deb incoming/"
+//        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_*.changes incoming/"
+//        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_*.buildinfo incoming/"
     }
 }
 
@@ -119,9 +120,9 @@ def buildClientInstaller(int majorVersion, String platformVersion, String aptVer
             }
         }
 
-        sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_all.deb incoming/"
-        sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_*.changes incoming/"
-        sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_*.buildinfo incoming/"
+//        sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_all.deb incoming/"
+//        sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_*.changes incoming/"
+//        sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_*.buildinfo incoming/"
     }
 }
 
