@@ -10,9 +10,9 @@ def call(int majorVersion, String platformVersion) {
         currentAptRelease = readLatestSnapshotRelease(platformVersion)
     }
     
-    aptVersion = platformVersion.replaceFirst("-SNAPSHOT", "." + currentAptRelease) + '-' + 1
+//    aptVersion = platformVersion.replaceFirst("-SNAPSHOT", "." + currentAptRelease) + '-' + 1
 //    aptVersion = platformVersion.replaceFirst("-", ".") + '.' + currentAptRelease + '-' + 1
-//    aptVersion = platformVersion + '-' + currentAptRelease
+    aptVersion = platformVersion + '-' + currentAptRelease
     
     buildServerInstaller(majorVersion, platformVersion, aptVersion)
     buildClientInstaller(majorVersion, platformVersion, aptVersion)
