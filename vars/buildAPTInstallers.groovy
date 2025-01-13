@@ -10,8 +10,6 @@ def call(int majorVersion, String platformVersion) {
         currentAptRelease = readLatestSnapshotRelease(platformVersion)
     }
     
-//    aptVersion = platformVersion.replaceFirst("-SNAPSHOT", "." + currentAptRelease) + '-' + 1
-//    aptVersion = platformVersion.replaceFirst("-", ".") + '.' + currentAptRelease + '-' + 1
     aptVersion = platformVersion + '-' + currentAptRelease
     
     buildServerInstaller(majorVersion, platformVersion, aptVersion)
@@ -21,20 +19,16 @@ def call(int majorVersion, String platformVersion) {
 //        def keepSnapshotsNumber = 5
 //        def obsoleteRelease = currentAptRelease - keepSnapshotsNumber
 //        if (obsoleteRelease > 0) {
-//            sh "sudo sh -c 'reprepro -b $repoSubdir remove all lsfusion$majorVersion-server; reprepro -b $repoSubdir remove all lsfusion$majorVersion-client'"
-////            lsfusion${majorVersion}-server-${platformVersion}.${obsoleteRelease}.noarch.rpm
-////            lsfusion${majorVersion}-client-${platformVersion}.${obsoleteRelease}.noarch.rpm
+//              remove obsolete releases          
 //        }
 //    }
     
-    // reprepro stores only one latest version of the package. For some reason it refuses to remove previous version if it was in beta (e.g. when adding 3.0 after 3.beta.0). Therefore we delete packages manually.
     dir(Paths.apt) {
         if (isSnapshot) {
             sh "sudo sh -c 'reprepro -vv -b $repoSubdir includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -vv -b $repoSubdir includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
-//            sh "sudo reprepro -b $repoSubdir --keepunreferencedfiles processincoming default" 
         } else {
-            sh "sudo sh -c 'reprepro -vv -b $repoSubdir includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -vv -b $repoSubdir includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
-//        sh "sudo sh -c 'reprepro -b $repoSubdir remove all lsfusion$majorVersion-server; reprepro -b $repoSubdir remove all lsfusion$majorVersion-client; reprepro -b $repoSubdir/ includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -b $repoSubdir/ includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
+            // reprepro stores only one latest version of the package. For some reason it refuses to remove previous version if it was in beta (e.g. when adding 3.0 after 3.beta.0). Therefore we delete packages manually.
+            sh "sudo sh -c 'reprepro -b $repoSubdir remove all lsfusion$majorVersion-server; reprepro -b $repoSubdir remove all lsfusion$majorVersion-client; reprepro -b $repoSubdir/ includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -b $repoSubdir/ includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
         }
     }
 
@@ -67,7 +61,6 @@ def buildServerInstaller(int majorVersion, String platformVersion, String aptVer
 //            new File("${Paths.apt}/server/debbuild/debian/changelog").append(new File("${Paths.src}/CHANGELOG.md").text)
             sh "cp -fa $templatesDir/compat debian/"
             sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g' $templatesDir/control > debian/control"
-//            sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/control > debian/control"
             sh "cp -fa $templatesDir/lsfusion.conf ."
             sh "sed 's/<lsfusion-server>/$serverName/g' $templatesDir/lsfusion-server.postinst > debian/${serverName}.postinst"
             sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g' $templatesDir/lsfusion-server.service > debian/${serverName}.service"
@@ -82,10 +75,6 @@ def buildServerInstaller(int majorVersion, String platformVersion, String aptVer
                 sh "sudo sh -c 'chown -R jenkins .'"
             }
         }
-        
-//        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_all.deb incoming/"
-//        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_*.changes incoming/"
-//        sh "cp -fa server/lsfusion$majorVersion-server_${aptVersion}_*.buildinfo incoming/"
     }
 }
 
@@ -103,7 +92,6 @@ def buildClientInstaller(int majorVersion, String platformVersion, String aptVer
 //            new File("${Paths.apt}/client/debbuild/debian/changelog").append(new File("${Paths.src}/CHANGELOG.md").text)
             sh "cp -fa $templatesDir/compat debian/"
             sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g' $templatesDir/control > debian/control"
-//            sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/control > debian/control"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion.conf > lsfusion.conf"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion.logrotate > lsfusion.logrotate"
             sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/lsfusion-client.postinst > debian/${clientName}.postinst"
@@ -121,10 +109,6 @@ def buildClientInstaller(int majorVersion, String platformVersion, String aptVer
                 sh "sudo sh -c 'chown -R jenkins .'"
             }
         }
-
-//        sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_all.deb incoming/"
-//        sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_*.changes incoming/"
-//        sh "cp -fa client/lsfusion$majorVersion-client_${aptVersion}_*.buildinfo incoming/"
     }
 }
 

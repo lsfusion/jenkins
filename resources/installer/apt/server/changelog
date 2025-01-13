@@ -1,4 +1,4 @@
-<lsfusion-server> (<lsfusion-version>) all; urgency=medium
+<lsfusion-server> (<lsfusion-version>) stretch; urgency=medium
 
   * Initial release.
 
