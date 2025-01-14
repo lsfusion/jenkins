@@ -25,7 +25,7 @@ def call(int majorVersion, String platformVersion) {
     
     dir(Paths.apt) {
         if (isSnapshot) {
-            sh "sudo sh -c 'reprepro -vv -b $repoSubdir includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -vv -b $repoSubdir includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
+            sh "sudo sh -c 'reprepro -b $repoSubdir includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -b $repoSubdir includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
         } else {
             // reprepro stores only one latest version of the package. For some reason it refuses to remove previous version if it was in beta (e.g. when adding 3.0 after 3.beta.0). Therefore we delete packages manually.
             sh "sudo sh -c 'reprepro -b $repoSubdir remove all lsfusion$majorVersion-server; reprepro -b $repoSubdir remove all lsfusion$majorVersion-client; reprepro -b $repoSubdir/ includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -b $repoSubdir/ includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
@@ -71,7 +71,7 @@ def buildServerInstaller(int majorVersion, String platformVersion, String aptVer
             sh "mv -f server-$platformVersion-assembly.jar server.jar"
             
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc -us; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
+                sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
                 sh "sudo sh -c 'chown -R jenkins .'"
             }
         }
