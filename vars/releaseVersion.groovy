@@ -50,7 +50,7 @@ def call(int branch, boolean releaseFinal) {
         }
 
         stage('Update dockerfiles') {
-            String version = majorVersion + '.' + (releaseBeta ? 0 : minorVersion + 1)
+            String version = majorVersion + '.' + (releaseBeta ? 0 : minorVersion + 1) + '-SNAPSHOT'
             updateDockerImagesVersions version
         }
 

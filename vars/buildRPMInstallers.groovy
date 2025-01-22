@@ -24,7 +24,7 @@ def call(int majorVersion, String platformVersion) {
     generateScripts(majorVersion, dnfSubdir)
     
     if (isSnapshot) {
-        def keepSnapshotsNumber = 5
+        def keepSnapshotsNumber = 1
         def obsoleteRelease = currentRpmRelease - keepSnapshotsNumber
         if (obsoleteRelease > 0) {
             sh "ssh ${remoteRedHat} 'cd ${remoteRpmFolder}/${dnfSubdir}; rm -f lsfusion${majorVersion}-server-${platformVersion}.${obsoleteRelease}.noarch.rpm'"

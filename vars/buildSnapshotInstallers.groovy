@@ -6,7 +6,11 @@ def call(String branch) {
 
 //    buildWindowsInstallers(majorVersion, platformVersion)
 //    buildRPMInstallers(majorVersion, platformVersion)
-    buildAPTInstallers(majorVersion, platformVersion)
+//    buildAPTInstallers(majorVersion, platformVersion)
+
+    buildAndDeployDockerImages(platformVersion)
+    sh "mkdir -p ${Paths.download}/docker/${platformVersion}"
+    sh "cp -f docker-compose.yml ${Paths.download}/docker/${platformVersion}/"
 
     dir(Paths.download) {
         ftpPublisher failOnError: true, publishers: [
