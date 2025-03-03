@@ -70,9 +70,9 @@ def call(int branch, boolean releaseFinal) {
             buildAPTInstallers majorVersion, tagVersion
         }
 
-        stage('Copy docker-compose.yml') {
+        stage('Copy compose.yaml') {
             sh "mkdir -p ${Paths.download}/docker/${tagVersion}"
-            sh "cp -f docker-compose.yml ${Paths.download}/docker/${tagVersion}/"
+            sh "cp -f compose.yaml ${Paths.download}/docker/${tagVersion}/"
         }
 
         stage('Generate JNLP') {

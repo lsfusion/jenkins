@@ -14,7 +14,29 @@ def call(String tagVersion) {
                                                 matchCount: 0)
                                 ],
                                 fileEncoding: 'UTF-8',
-                                filePath: 'docker-compose.yml'),
+                                filePath: 'compose.yaml'),
+                        fileContentReplaceConfig(
+                                configs: [
+                                        fileContentReplaceItemConfig(
+                                                search: "(lsfusion\\/client:).*",
+                                                replace: "lsfusion/client:${tagVersion}",
+                                                matchCount: 0)
+                                ],
+                                fileEncoding: 'UTF-8',
+                                filePath: 'build/logics/docker-embed-server/compose.yaml'),
+                        fileContentReplaceConfig(
+                                configs: [
+                                        fileContentReplaceItemConfig(
+                                                search: "(lsfusion\\/server:).*",
+                                                replace: "lsfusion/server:${tagVersion}",
+                                                matchCount: 0),
+                                        fileContentReplaceItemConfig(
+                                                search: "(lsfusion\\/client:).*",
+                                                replace: "lsfusion/client:${tagVersion}",
+                                                matchCount: 0)
+                                ],
+                                fileEncoding: 'UTF-8',
+                                filePath: 'build/logics/docker/compose.yaml'),
                         fileContentReplaceConfig(
                                 configs: [
                                         fileContentReplaceItemConfig(

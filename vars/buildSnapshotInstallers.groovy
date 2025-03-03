@@ -10,7 +10,7 @@ def call(String branch) {
 
     buildAndDeployDockerImages(platformVersion)
     sh "mkdir -p ${Paths.download}/docker/${platformVersion}"
-    sh "cp -f docker-compose.yml ${Paths.download}/docker/${platformVersion}/"
+    sh "cp -f compose.yaml ${Paths.download}/docker/${platformVersion}/"
 
     dir(Paths.download) {
         ftpPublisher failOnError: true, publishers: [
