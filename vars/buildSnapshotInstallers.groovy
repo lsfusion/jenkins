@@ -19,7 +19,7 @@ def call(String branch) {
                          [sourceFiles: "exe/${platformVersion}/", remoteDirectory: "exe", flatten: true],
                          [sourceFiles: "apt-snap/", remoteDirectory: "apt-snap", removePrefix: "apt-snap", cleanRemote: true],
                          [sourceFiles: "dnf-snap/", remoteDirectory: "dnf-snap", removePrefix: "dnf-snap", cleanRemote: true],
-                         [sourceFiles: "docker/${tagVersion}/", remoteDirectory: "docker", removePrefix: "docker"]
+                         [sourceFiles: "docker/${platformVersion}/", remoteDirectory: "docker", removePrefix: "docker"]
                  ],
                  verbose   : true]
         ]
