@@ -1,23 +1,45 @@
 def call(int majorVersion, String platformVersion) {
-    buildServerInstaller(majorVersion, platformVersion)
-    buildClientInstaller(majorVersion, platformVersion)
-    // reprepro stores only one latest version of the package. For some reason it refuses to remove previous version if it was in beta (e.g. when adding 3.0 after 3.beta.0). Therefore we delete packages manually.
+    def isSnapshot = platformVersion.contains('-SNAPSHOT')
+    def aptSubdir = isSnapshot ? "apt-snap" : "apt"
+    def downloadDir = "${Paths.download}/${aptSubdir}"
+    def repoSubdir = isSnapshot ? "repo-snap" : "repo"
+    int currentAptRelease = 1
+    def aptVersion
+
+    if (isSnapshot) {
+        currentAptRelease = readLatestSnapshotRelease(platformVersion)
+    }
+    
+    aptVersion = platformVersion + '-' + currentAptRelease
+    
+    buildServerInstaller(majorVersion, platformVersion, aptVersion)
+    buildClientInstaller(majorVersion, platformVersion, aptVersion)
+    
     dir(Paths.apt) {
-        sh "sudo sh -c 'reprepro -b repo remove all lsfusion$majorVersion-server; reprepro -b repo remove all lsfusion$majorVersion-client; reprepro -b repo/ includedeb all server/lsfusion$majorVersion-server_$platformVersion-1_all.deb; reprepro -b repo/ includedeb all client/lsfusion$majorVersion-client_$platformVersion-1_all.deb'"
+        if (isSnapshot) {
+            sh "sudo sh -c 'reprepro -b $repoSubdir includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -b $repoSubdir includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
+        } else {
+            // reprepro stores only one latest version of the package. For some reason it refuses to remove previous version if it was in beta (e.g. when adding 3.0 after 3.beta.0). Therefore we delete packages manually.
+            sh "sudo sh -c 'reprepro -b $repoSubdir remove all lsfusion$majorVersion-server; reprepro -b $repoSubdir remove all lsfusion$majorVersion-client; reprepro -b $repoSubdir/ includedeb all server/lsfusion$majorVersion-server_${aptVersion}_all.deb; reprepro -b $repoSubdir/ includedeb all client/lsfusion$majorVersion-client_${aptVersion}_all.deb'"
+        }
     }
 
-    sh "mkdir -p ${Paths.download}/apt"
-    sh "rm -rf ${Paths.download}/apt/conf"
-    sh "rm -rf ${Paths.download}/apt/db"
-    sh "rm -rf ${Paths.download}/apt/dists"
-    sh "rm -rf ${Paths.download}/apt/pool"
-    
-    generateScripts(majorVersion)
+    if (isSnapshot) {
+        writeLatestSnapshotRelease(platformVersion, currentAptRelease)
+    }
 
-    sh "cp -r ${Paths.apt}/repo/* ${Paths.download}/apt/"
+    sh "mkdir -p ${downloadDir}"
+    sh "rm -rf ${downloadDir}/conf"
+    sh "rm -rf ${downloadDir}/db"
+    sh "rm -rf ${downloadDir}/dists"
+    sh "rm -rf ${downloadDir}/pool"
+    
+    generateScripts(majorVersion, downloadDir, aptSubdir)
+
+    sh "cp -r ${Paths.apt}/${repoSubdir}/* ${downloadDir}/"
 }
 
-def buildServerInstaller(int majorVersion, String platformVersion) {
+def buildServerInstaller(int majorVersion, String platformVersion, String aptVersion) {
     def title = "lsFusion $majorVersion Server"
     def serverName = "lsfusion$majorVersion-server"
     def templatesDir = getResourcesDir() + '/installer/apt/server'
@@ -27,7 +49,7 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
         sh 'mkdir -p server/debbuild/debian'
 
         dir('server/debbuild') {
-            sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-version>/$platformVersion/g' $templatesDir/changelog > debian/changelog"
+            sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/changelog > debian/changelog"
 //            new File("${Paths.apt}/server/debbuild/debian/changelog").append(new File("${Paths.src}/CHANGELOG.md").text)
             sh "cp -fa $templatesDir/compat debian/"
             sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-description>/$title/g' $templatesDir/control > debian/control"
@@ -48,7 +70,7 @@ def buildServerInstaller(int majorVersion, String platformVersion) {
     }
 }
 
-def buildClientInstaller(int majorVersion, String platformVersion) {
+def buildClientInstaller(int majorVersion, String platformVersion, String aptVersion) {
     def title = "lsFusion $majorVersion Client"
     def clientName = "lsfusion$majorVersion-client"
     def templatesDir = getResourcesDir() + '/installer/apt/client'
@@ -58,7 +80,7 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
         sh 'mkdir -p client/debbuild/debian'
 
         dir('client/debbuild') {
-            sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-version>/$platformVersion/g' $templatesDir/changelog > debian/changelog"
+            sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-version>/$aptVersion/g' $templatesDir/changelog > debian/changelog"
 //            new File("${Paths.apt}/client/debbuild/debian/changelog").append(new File("${Paths.src}/CHANGELOG.md").text)
             sh "cp -fa $templatesDir/compat debian/"
             sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g' $templatesDir/control > debian/control"
@@ -82,15 +104,39 @@ def buildClientInstaller(int majorVersion, String platformVersion) {
     }
 }
 
-def generateScripts(int majorVersion) {
+def generateScripts(int majorVersion, def downloadDir, def aptSubdir) {
     def templatesDir = getResourcesDir() + '/installer/apt/scripts'
     def serverName = "lsfusion$majorVersion-server"
     def clientName = "lsfusion$majorVersion-client"
 
-    dir(Paths.rpm) {
-        sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion > ${Paths.download}/apt/install-lsfusion$majorVersion"
-        sh "sed 's/<lsfusion-client>/$clientName/g' $templatesDir/install-lsfusion-client > ${Paths.download}/apt/install-$clientName"
-        sh "cp -fa $templatesDir/install-lsfusion-db ${Paths.download}/apt/install-lsfusion$majorVersion-db"
-        sh "sed 's/<lsfusion-server>/$serverName/g' $templatesDir/install-lsfusion-server > ${Paths.download}/apt/install-$serverName"
+    dir(Paths.apt) {
+        sh "sed 's/<lsfusion-server>/$serverName/g; s/<lsfusion-client>/$clientName/g; s/<repo_subdir>/$aptSubdir/g' $templatesDir/install-lsfusion > ${downloadDir}/install-lsfusion$majorVersion"
+        sh "sed 's/<lsfusion-client>/$clientName/g; s/<repo_subdir>/$aptSubdir/g' $templatesDir/install-lsfusion-client > ${downloadDir}/install-$clientName"
+        sh "cp -fa $templatesDir/install-lsfusion-db ${downloadDir}/install-lsfusion$majorVersion-db"
+        sh "sed 's/<lsfusion-server>/$serverName/g; s/<repo_subdir>/$aptSubdir/g' $templatesDir/install-lsfusion-server > ${downloadDir}/install-$serverName"
     }
+}
+
+static def readLatestSnapshotRelease(String version) {
+    File releasesFile = new File(Paths.apt + '/latestSnapshotReleases');
+    def prevReleases
+    if (!releasesFile.exists())
+        prevReleases = [:]
+    else
+        prevReleases = Eval.me(releasesFile.text)
+
+    def prevRelease = prevReleases[version]
+    return prevRelease == null ? 1 : (prevRelease as int) + 1
+}
+
+static def writeLatestSnapshotRelease(String version, int release) {
+    File releasesFile = new File(Paths.apt + '/latestSnapshotReleases');
+    def prevReleases
+    if (!releasesFile.exists())
+        prevReleases = [:]
+    else
+        prevReleases = Eval.me(releasesFile.text)
+
+    prevReleases[version] = release
+    releasesFile.text = prevReleases.inspect()
 }

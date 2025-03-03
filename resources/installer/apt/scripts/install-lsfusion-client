@@ -7,10 +7,10 @@ apt install -y default-jdk
 
 # Import lsFusion GPG Key
 sudo mkdir -m 0755 -p /etc/apt/keyrings/
-sudo curl -o /etc/apt/keyrings/lsfusion.asc --fail https://download.lsfusion.org/apt/GPG-KEY-lsfusion
+sudo curl -o /etc/apt/keyrings/lsfusion.asc --fail https://download.lsfusion.org/<repo_subdir>/GPG-KEY-lsfusion
 
 # Install lsFusion repo
-sudo sh -c 'echo "deb [signed-by=/etc/apt/keyrings/lsfusion.asc] https://download.lsfusion.org/apt all main" > /etc/apt/sources.list.d/lsfusion.list'
+sudo sh -c 'echo "deb [signed-by=/etc/apt/keyrings/lsfusion.asc] https://download.lsfusion.org/<repo_subdir> all main" > /etc/apt/sources.list.d/lsfusion.list'
 apt-get update
 
 # Install lsFusion client

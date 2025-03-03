@@ -50,7 +50,7 @@ def call(int branch, boolean releaseFinal) {
         }
 
         stage('Update dockerfiles') {
-            String version = majorVersion + '.' + (releaseBeta ? 0 : minorVersion + 1)
+            String version = majorVersion + '.' + (releaseBeta ? 0 : minorVersion + 1) + '-SNAPSHOT'
             updateDockerImagesVersions version
         }
 
@@ -65,14 +65,14 @@ def call(int branch, boolean releaseFinal) {
         
     //    // Next 3 tasks to local folder
         stage('Build installers') {
-            buildInstallers majorVersion, tagVersion
+            buildWindowsInstallers majorVersion, tagVersion
             buildRPMInstallers majorVersion, tagVersion
             buildAPTInstallers majorVersion, tagVersion
         }
 
-        stage('Copy docker-compose.yml') {
+        stage('Copy compose.yaml') {
             sh "mkdir -p ${Paths.download}/docker/${tagVersion}"
-            sh "cp -f docker-compose.yml ${Paths.download}/docker/${tagVersion}/"
+            sh "cp -f compose.yaml ${Paths.download}/docker/${tagVersion}/"
         }
 
         stage('Generate JNLP') {
