@@ -28,8 +28,9 @@ def call(int majorVersion, String platformVersion) {
 
         sh "echo '\n!define LSFUSION_MAJOR_VERSION ${majorVersion}' >> Versions.nsh"
         sh "echo '\n!define LSFUSION_VERSION ${platformVersion.replace('-SNAPSHOT', '')}' >> Versions.nsh"
-        String viVersion = platformVersion.replace('-beta', '.999.').replace('-SNAPSHOT', '')
-        if (!platformVersion.contains('beta')) {
+        sh "echo '\n!define LSFUSION_LIBRARIES_VERSION ${platformVersion.replaceFirst(/\.[0-9]+-SNAPSHOT/, '-SNAPSHOT')}' >> Versions.nsh"
+        String viVersion = platformVersion.replace('-beta', '.999.').replace('-SNAPSHOT', '.111.0')
+        if (!platformVersion.contains('beta') && !platformVersion.concat('-SNAPSHOT')) {
             viVersion += '.0.0'
         }
         sh "echo '\n!define VI_LSFUSION_VERSION ${viVersion}' >> Versions.nsh"

@@ -31,7 +31,7 @@ override_dh_install:
 
 	# Put Tomcat
 	install -d -m 755 $(BUILDDIR)$(SHAREDIR)
-	tar -zxvf apache-tomcat-$(TOMCATVERSION).tar.gz -C $(BUILDDIR)$(SHAREDIR)
+	tar -zxf apache-tomcat-$(TOMCATVERSION).tar.gz -C $(BUILDDIR)$(SHAREDIR)
 
 	mv $(BUILDDIR)$(SHAREDIR)/apache-tomcat-$(TOMCATVERSION) $(SHAREBUILD)
 
@@ -41,7 +41,7 @@ override_dh_install:
 
 	# Put lsFusion
 	install -d -m 755 $(SHAREBUILD)/lsfusion
-	unzip client.war -d $(SHAREBUILD)/lsfusion
+	unzip -q client.war -d $(SHAREBUILD)/lsfusion
 
 	# Remove *.bat
 	rm -f $(SHAREBUILD)/bin/*.bat

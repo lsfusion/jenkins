@@ -7,20 +7,14 @@ def call(String branch, String commitMessage, boolean uploadToCdn) {
         
 //        if (uploadToCdn) {
 //            String platformVersion = readVersion()
-//            String shortVersion = platformVersion.replaceFirst(/\.[0-9]+-SNAPSHOT/, "-SNAPSHOT")
-//            
-//            sh "cp server/target/lsfusion-server-${platformVersion}.jar server/target/lsfusion-server-${shortVersion}.jar"
-//            sh "cp server/target/lsfusion-server-${platformVersion}-sources.jar server/target/lsfusion-server-${shortVersion}-sources.jar"
-//            sh "cp desktop-client/target/lsfusion-client-${platformVersion}.jar desktop-client/target/lsfusion-client-${shortVersion}.jar"
-//            sh "cp web-client/target/lsfusion-client-${platformVersion}.war web-client/target/lsfusion-client-${shortVersion}.war"
 //            
 //            ftpPublisher failOnError: true, publishers: [
 //                    [configName: 'Download FTP server',
 //                     transfers : [
-//                             [sourceFiles: "server/target/lsfusion-server-${shortVersion}.jar," +
-//                                     "server/target/lsfusion-server-${shortVersion}-sources.jar," +
-//                                     "desktop-client/target/lsfusion-client-${shortVersion}.jar," + 
-//                                     "web-client/target/lsfusion-client-${shortVersion}.war", 
+//                             [sourceFiles: "server/target/lsfusion-server-${platformVersion}.jar," +
+//                                     "server/target/lsfusion-server-${platformVersion}-sources.jar," +
+//                                     "desktop-client/target/lsfusion-client-${platformVersion}.jar," + 
+//                                     "web-client/target/lsfusion-client-${platformVersion}.war", 
 //                              remoteDirectory: "java", 
 //                              flatten: true],
 //                     ],
