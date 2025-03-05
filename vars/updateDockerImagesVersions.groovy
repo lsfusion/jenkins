@@ -23,7 +23,7 @@ def call(String tagVersion) {
                                                 matchCount: 0)
                                 ],
                                 fileEncoding: 'UTF-8',
-                                filePath: 'build/logics/docker-embed-server/compose.yaml'),
+                                filePath: 'server/src/main/resources/logics/docker-embed-server/compose.yaml'),
                         fileContentReplaceConfig(
                                 configs: [
                                         fileContentReplaceItemConfig(
@@ -36,7 +36,7 @@ def call(String tagVersion) {
                                                 matchCount: 0)
                                 ],
                                 fileEncoding: 'UTF-8',
-                                filePath: 'build/logics/docker/compose.yaml'),
+                                filePath: 'server/src/main/resources/logics/docker/compose.yaml'),
                         fileContentReplaceConfig(
                                 configs: [
                                         fileContentReplaceItemConfig(
