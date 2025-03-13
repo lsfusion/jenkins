@@ -41,10 +41,12 @@ def call() {
                 def deployBranches = (firstToDeploy..lastVersion).collect { it }
                 for (branch in deployBranches) {
                     deploySnapshot("v$branch", null, true)
+                    writeLatestDeployBranch("v$branch")
                 }
             }
             
             deploySnapshot("master", currentCommitMessage, true)
+            writeLatestDeployBranch("master")
         }
 
         if (docsChanged) {
@@ -71,4 +73,17 @@ def platformChanged(def currentCommit) {
 
 def readLatestCommit(dir) {
     return sh(returnStdout: true, script: "git log -n 1 --no-merges --pretty=format:\"%h\" --full-history -- $dir")
+}
+
+def writeLatestDeployBranch(String branch) {
+    File branchesFile = new File("${Paths.jenkinsHome}/latestDeployBranches")
+    Set<String> latestBranches
+    if (!branchesFile.exists()) {
+        latestBranches = []
+    } else {
+        latestBranches = Eval.me(branchesFile.text)
+    }
+
+    latestBranches.add(branch)
+    branchesFile.text = latestBranches.inspect()
 }
