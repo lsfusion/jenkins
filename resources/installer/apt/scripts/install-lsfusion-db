@@ -12,8 +12,8 @@ sudo sh -c 'echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresq
 apt-get update
 
 # Install PostgreSQL
-apt-get install -y postgresql-16 postgresql-client-16 postgresql-contrib-16
+apt-get install -y postgresql-17 postgresql-client-17 postgresql-contrib-17
 
 # Allow trust connection from localhost
-sed -i 's/scram-sha-256/trust/g' /etc/postgresql/16/main/pg_hba.conf
-su - postgres -c "/usr/lib/postgresql/16/bin/pg_ctl reload -D /var/lib/postgresql/16/main"
+sed -i 's/scram-sha-256/trust/g' /etc/postgresql/17/main/pg_hba.conf
+su - postgres -c "/usr/lib/postgresql/17/bin/pg_ctl reload -D /var/lib/postgresql/17/main"

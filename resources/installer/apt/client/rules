@@ -18,7 +18,7 @@ CACHEDIR := /var/cache
 CACHEPATH := $(CACHEDIR)/<lsfusion-client>
 CACHEBUILD := $(BUILDDIR)$(CACHEPATH)
 
-TOMCATVERSION := 9.0.89
+TOMCATVERSION := 9.0.104
 
 %:
 	dh $@

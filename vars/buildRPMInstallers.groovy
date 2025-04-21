@@ -99,7 +99,7 @@ def buildClientInstaller(int majorVersion, String platformVersion, String rpmVer
             sh "sed 's/<lsfusion-client>/$clientName/g; s/<lsfusion-description>/$title/g' $templatesDir/lsfusion-client.service > SOURCES/${clientName}.service"
             sh "sed 's/<lsfusion-major-version>/$majorVersion/g; s/<lsfusion-version>/$rpmVersion/g; s/<lsfusion-release>/$rpmRelease/g; s/<lsfusion-title>/$title/g' $templatesDir/lsfusion.spec > SPECS/lsfusion.spec"
 
-            sh 'cp -fa ../apache-tomcat-9.0.89.tar.gz SOURCES/'
+            sh 'cp -fa ../apache-tomcat-9.0.104.tar.gz SOURCES/'
             sh "cp -fa $templatesDir/ROOT.xml SOURCES/"
 
             sh "mvn -f ${Paths.src}/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.rpm}/rpmbuild/SOURCES/"

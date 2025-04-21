@@ -94,7 +94,7 @@ def buildClientInstaller(int majorVersion, String platformVersion, String aptVer
             sh "mvn -f /usr/share/jenkins/src/pom.xml dependency:copy -Dartifact=lsfusion.platform:web-client:$platformVersion:war -DoutputDirectory=${Paths.apt}/client/debbuild/"
             sh "mv -f web-client-${platformVersion}.war client.war"
 
-            sh "cp -fa ../../apache-tomcat-9.0.89.tar.gz ."
+            sh "cp -fa ../../apache-tomcat-9.0.104.tar.gz ."
 
             withCredentials([usernamePassword(credentialsId: 'gpg_sign_key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh "sudo sh -c 'export GPG_TTY=\$(tty); dpkg-buildpackage -kinfo@lsfusion.org -b -uc; debsign -p\"gpg --pinentry-mode loopback --passphrase ${PASSWORD}\"'"
