@@ -11,21 +11,21 @@ dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_6
 dnf -qy module disable postgresql
 
 # Install PostgreSQL:
-dnf install -y postgresql16-server
+dnf install -y postgresql17-server
 
-/usr/pgsql-16/bin/postgresql-16-setup initdb
+/usr/pgsql-17/bin/postgresql-17-setup initdb
 
 # Allow trust connection from localhost
-sed -i 's/scram-sha-256/trust/g' /var/lib/pgsql/16/data/pg_hba.conf
+sed -i 's/scram-sha-256/trust/g' /var/lib/pgsql/17/data/pg_hba.conf
 
-systemctl enable postgresql-16
-systemctl start postgresql-16
+systemctl enable postgresql-17
+systemctl start postgresql-17
 
 # Autostart PostgreSQL
-systemctl enable postgresql-16
+systemctl enable postgresql-17
 
 # Run PostgreSQL
-systemctl start postgresql-16
+systemctl start postgresql-17
 
 # Install lsFusion repo
 dnf config-manager --add-repo https://download.lsfusion.org/<repo_subdir>
