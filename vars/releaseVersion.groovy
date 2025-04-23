@@ -59,9 +59,9 @@ def call(int branch, boolean releaseFinal) {
 //            mergeVersion(branch, true)
 //        }
 //
-//        stage('Update tag') {
-//            update.tag tagVersion
-//        }
+        stage('Update tag') {
+            update.tag tagVersion
+        }
         
     //    // Next 3 tasks to local folder
         stage('Build installers') {
