@@ -2,71 +2,71 @@ def call(int branch, boolean releaseFinal) {
     boolean isBeta
     boolean releaseBeta
 
-    int majorVersion, minorVersion
-    String tagVersion = "unknown"
+    int majorVersion = 6
+    String tagVersion = "6.0"
 
-    String changeLog = null
+    String changeLog = ''
 
     try {
-        stage('Get branch version info') {
-            (isBeta, minorVersion) = getBranchVersion(branch)
-            majorVersion = branch
-            releaseBeta = isBeta && !releaseFinal
-            if (isBeta && releaseFinal) {
-                minorVersion = 0
-            }
-            tagVersion = majorVersion + '.' + (releaseBeta ? '0-beta' : '') + minorVersion
-
-            (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
-            isLastVersion = lastVersion == branch
-        }
-
-        stage('Update') {
-            update "v$branch"
-        }
-
-        stage('Generate changelog') {
-            changeLog = generateChangeLog(tagVersion)
-            sh "mvn scm:checkin -Dmessage=\"Generated change log\""
-        }
-
-        stage('Update dockerfiles') {
-            if (releaseBeta || releaseFinal) {
-                updateDockerImagesVersions tagVersion
-            }
-        }
-
-        stage('Release branch') {
-            String releaseCommand = "mvn -B release:clean release:prepare release:perform"
-            if (releaseBeta) {
-                releaseCommand += " -DdevelopmentVersion=$majorVersion.0-SNAPSHOT -DreleaseVersion=$tagVersion"
-            }
-
-            sh releaseCommand
-
-            if (releaseBeta) {
-                nextBetaVersion.set(minorVersion + 1)
-            }
-        }
-
-        stage('Update dockerfiles') {
-            String version = majorVersion + '.' + (releaseBeta ? 0 : minorVersion + 1) + '-SNAPSHOT'
-            updateDockerImagesVersions version
-        }
-
-        // merging version changes
-        stage('Fake merge version') {
-            mergeVersion(branch, true)
-        }
-
-        stage('Update tag') {
-            update.tag tagVersion
-        }
+//        stage('Get branch version info') {
+//            (isBeta, minorVersion) = getBranchVersion(branch)
+//            majorVersion = branch
+//            releaseBeta = isBeta && !releaseFinal
+//            if (isBeta && releaseFinal) {
+//                minorVersion = 0
+//            }
+//            tagVersion = majorVersion + '.' + (releaseBeta ? '0-beta' : '') + minorVersion
+//
+//            (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
+//            isLastVersion = lastVersion == branch
+//        }
+//
+//        stage('Update') {
+//            update "v$branch"
+//        }
+//
+//        stage('Generate changelog') {
+//            changeLog = generateChangeLog(tagVersion)
+//            sh "mvn scm:checkin -Dmessage=\"Generated change log\""
+//        }
+//
+//        stage('Update dockerfiles') {
+//            if (releaseBeta || releaseFinal) {
+//                updateDockerImagesVersions tagVersion
+//            }
+//        }
+//
+//        stage('Release branch') {
+//            String releaseCommand = "mvn -B release:clean release:prepare release:perform"
+//            if (releaseBeta) {
+//                releaseCommand += " -DdevelopmentVersion=$majorVersion.0-SNAPSHOT -DreleaseVersion=$tagVersion"
+//            }
+//
+//            sh releaseCommand
+//
+//            if (releaseBeta) {
+//                nextBetaVersion.set(minorVersion + 1)
+//            }
+//        }
+//
+//        stage('Update dockerfiles') {
+//            String version = majorVersion + '.' + (releaseBeta ? 0 : minorVersion + 1) + '-SNAPSHOT'
+//            updateDockerImagesVersions version
+//        }
+//
+//        // merging version changes
+//        stage('Fake merge version') {
+//            mergeVersion(branch, true)
+//        }
+//
+//        stage('Update tag') {
+//            update.tag tagVersion
+//        }
         
     //    // Next 3 tasks to local folder
         stage('Build installers') {
-            buildWindowsInstallers majorVersion, tagVersion
-            buildRPMInstallers majorVersion, tagVersion
+//            buildWindowsInstallers majorVersion, tagVersion
+//            buildRPMInstallers majorVersion, tagVersion
             buildAPTInstallers majorVersion, tagVersion
         }
 
@@ -119,9 +119,9 @@ def call(int branch, boolean releaseFinal) {
 
         stage('Build docker images') {
             buildAndDeployDockerImages tagVersion
-            if (isLastVersion && !releaseBeta) {
+//            if (isLastVersion && !releaseBeta) {
                 buildAndDeployDockerImages 'latest'
-            }
+//            }
         }
 
         if (!Paths.noCustomUpdates) {
