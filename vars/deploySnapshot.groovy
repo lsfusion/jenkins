@@ -1,8 +1,12 @@
-def call(String branch, String commitMessage, boolean uploadToCdn) {
+def call(String branch, String commitMessage, boolean uploadToCdn, boolean signDesktopJar) {
     update branch
     
     try {
-//        sh "mvn -ntp clean deploy"
+//        if (signDesktopJar) {
+//            sh "mvn -ntp clean deploy"
+//        } else {
+//            sh "mvn -ntp clean deploy -P-sign-desktop-jar"
+//        }
         print "deploySnapshot(branch, $commitMessage)"
         
 //        if (uploadToCdn) {

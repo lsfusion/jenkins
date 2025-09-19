@@ -40,12 +40,12 @@ def call() {
             if (firstToDeploy > 0) {
                 def deployBranches = (firstToDeploy..lastVersion).collect { it }
                 for (branch in deployBranches) {
-                    deploySnapshot("v$branch", null, true)
+                    deploySnapshot("v$branch", null, true, true)
                     writeLatestDeployBranch("v$branch")
                 }
             }
             
-            deploySnapshot("master", currentCommitMessage, true)
+            deploySnapshot("master", currentCommitMessage, true, false)
             writeLatestDeployBranch("master")
         }
 
