@@ -39,17 +39,17 @@ def call(int majorVersion, String platformVersion) {
         
         sh "wine ${makensis} Installer-x64.nsi"
         sh "chmod -x x64.exe"
-        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x64.exe"
+//        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x64.exe"
         sh "cp -f x64.exe ${downloadDir}/lsfusion-${platformVersion}-x64.exe"
 
         sh "wine ${makensis} Installer-x64-dev.nsi"
         sh "chmod -x x64-dev.exe"
-        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x64-dev.exe"
+//        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x64-dev.exe"
         sh "cp -f x64-dev.exe ${downloadDir}/lsfusion-dev-${platformVersion}-x64.exe"
 
         sh "wine ${makensis} Installer-x64-desktop.nsi"
         sh "chmod -x x64-desktop.exe"
-        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x64-desktop.exe"
+//        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x64-desktop.exe"
         sh "cp -f x64-desktop.exe ${downloadDir}/lsfusion-desktop-${platformVersion}-x64.exe"
     }
 }

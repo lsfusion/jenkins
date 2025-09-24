@@ -4,7 +4,7 @@ def call(String branch) {
     String platformVersion = readVersion()
     int majorVersion = platformVersion.replaceFirst(/\.[0-9]+-SNAPSHOT/, '') as Integer
 
-    buildWindowsInstallers(majorVersion, platformVersion)
+//    buildWindowsInstallers(majorVersion, platformVersion)
     buildRPMInstallers(majorVersion, platformVersion)
     buildAPTInstallers(majorVersion, platformVersion)
 
