@@ -54,7 +54,7 @@ def call() {
 
         if (docsChanged) {
             print "deployDomentation"
-//        deployDomentation(currentCommitMessage)
+//        deployDocumentation(currentCommitMessage)
     }
 }
 }
