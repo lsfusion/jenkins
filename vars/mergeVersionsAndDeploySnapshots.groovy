@@ -53,7 +53,7 @@ def call() {
         }
 
         if (docsChanged) {
-            deployDomentation(currentCommitMessage)
+            deployDocumentation(currentCommitMessage)
         }
     }
 }
