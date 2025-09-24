@@ -50,7 +50,7 @@ def writeLatestDeployBranch(String branch) {
     latestBranches.add(branch)
     latestBranches = latestBranches.unique()
     def sortedSet = latestBranches.sort()
-    branchesFile.text = sortedSet.inspect()
+    branchesFile.write(sortedSet.join('\n'))
 }
 
 def readLatestCommitMessages(File latestCommitMessagesFile) {
