@@ -80,7 +80,7 @@ def readLatestCommit(dir) {
 }
 
 def writeLatestCommitBranches(Set<String> branches) {
-    File branchesFile = new File("${Paths.jenkinsHome}/latestCommitBranches")
+    File branchesFile = new File("${Paths.jenkinsHome}/latestCommitBranchesTest")
     Set<String> latestBranches = new LinkedHashSet<>()
     if (branchesFile.exists()) {
         def fileLines = branchesFile.readLines()
@@ -97,7 +97,7 @@ def writeLatestCommitBranches(Set<String> branches) {
 }
 
 def writeLatestCommitMessage(String message) {
-    File commitsFile = new File("${Paths.jenkinsHome}/latestCommitMessages")
+    File commitsFile = new File("${Paths.jenkinsHome}/latestCommitMessagesTest")
     String allMessages = ""
     if (commitsFile.exists()) {
         allMessages = commitsFile.text + "\n"

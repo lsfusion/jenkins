@@ -1,6 +1,6 @@
 def call() {
-    File latestCommitsBranchesFile = new File("${Paths.jenkinsHome}/latestCommitBranches");
-    File latestCommitsMessagesFile = new File("${Paths.jenkinsHome}/latestCommitMessages");
+    File latestCommitsBranchesFile = new File("${Paths.jenkinsHome}/latestCommitBranchesTest");
+    File latestCommitsMessagesFile = new File("${Paths.jenkinsHome}/latestCommitMessagesTest");
     
     Set<String> branches = readLatestCommitBranches(latestCommitsBranchesFile)
     String commitMessages = readLatestCommitMessages(latestCommitsMessagesFile)
@@ -38,7 +38,7 @@ def readLatestCommitBranches(File latestCommitBranchesFile) {
 }
 
 def writeLatestDeployBranch(String branch) {
-    File branchesFile = new File("${Paths.jenkinsHome}/latestDeployBranches")
+    File branchesFile = new File("${Paths.jenkinsHome}/latestDeployBranchesTest")
     Set<String> latestBranches = new LinkedHashSet<>()
     if (branchesFile.exists()) {
         def fileLines = branchesFile.readLines()

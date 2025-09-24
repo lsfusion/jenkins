@@ -1,6 +1,6 @@
 class Paths {
     static String jenkinsHome = '/usr/share/jenkins'
-    static String src = "$jenkinsHome/src"
+    static String src = "$jenkinsHome/srctest"
     static String tmp = "/tmp"
     static String download = "/var/www/download"
     static String rpm = "$jenkinsHome/rpm"

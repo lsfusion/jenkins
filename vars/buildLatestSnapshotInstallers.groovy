@@ -1,5 +1,5 @@
 def call() {
-    File latestDeployFile = new File("${Paths.jenkinsHome}/latestDeployBranches");
+    File latestDeployFile = new File("${Paths.jenkinsHome}/latestDeployBranchesTest");
 
     Set<String> latestBranches = readLatestCommitBranches(latestDeployFile)
     for (branch in latestBranches) {
