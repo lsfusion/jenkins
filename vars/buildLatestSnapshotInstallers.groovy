@@ -13,7 +13,11 @@ def readLatestCommitBranches(File latestDeployFile) {
     if (!latestDeployFile.exists()) {
         return []
     } else {
-        Set<String> latestBranches = Eval.me(latestDeployFile.text)
+        Set<String> latestBranches = new LinkedHashSet<>()
+        def fileLines = latestDeployFile.readLines()
+        for (String line : fileLines) {
+            latestBranches.add(line.trim())
+        }
         return latestBranches
     }
 }

@@ -37,20 +37,23 @@ def call() {
         }
 
         if (platformChanged) {
+            Set<String> branchesSet = new LinkedHashSet<>()
             if (firstToDeploy > 0) {
                 def deployBranches = (firstToDeploy..lastVersion).collect { it }
                 for (branch in deployBranches) {
-                    deploySnapshot("v$branch", null, true, true)
-                    writeLatestDeployBranch("v$branch")
+                    branchesSet.add("v$branch")
                 }
             }
+            branchesSet.add("master")
             
-            deploySnapshot("master", currentCommitMessage, true, false)
-            writeLatestDeployBranch("master")
+            writeLatestCommitBranches(branchesSet)
+            writeLatestCommitMessage(currentCommitMessage)
+            
+//            deploySnapshots()
         }
 
         if (docsChanged) {
-            deployDocusaurus()
+            deployDomentation(currentCommitMessage)
         }
     }
 }
@@ -75,15 +78,30 @@ def readLatestCommit(dir) {
     return sh(returnStdout: true, script: "git log -n 1 --no-merges --pretty=format:\"%h\" --full-history -- $dir")
 }
 
-def writeLatestDeployBranch(String branch) {
-    File branchesFile = new File("${Paths.jenkinsHome}/latestDeployBranches")
-    Set<String> latestBranches
-    if (!branchesFile.exists()) {
-        latestBranches = []
-    } else {
-        latestBranches = Eval.me(branchesFile.text)
+def writeLatestCommitBranches(Set<String> branches) {
+    File branchesFile = new File("${Paths.jenkinsHome}/latestCommitBranches")
+    Set<String> latestBranches = new LinkedHashSet<>()
+    if (branchesFile.exists()) {
+        def fileLines = branchesFile.readLines()
+        for (String line : fileLines) {
+            latestBranches.add(line.trim())
+        }
     }
+    
+    latestBranches.addAll(branches)
+    latestBranches = latestBranches.unique()
+    def sortedSet = latestBranches.sort()
 
-    latestBranches.add(branch)
-    branchesFile.text = latestBranches.inspect()
+    branchesFile.write(sortedSet.join('\n'))
+}
+
+def writeLatestCommitMessage(String message) {
+    File commitsFile = new File("${Paths.jenkinsHome}/latestCommitMessages")
+    String allMessages = ""
+    if (commitsFile.exists()) {
+        allMessages = commitsFile.text + "\n"
+    }
+    allMessages += message
+
+    commitsFile.text = allMessages
 }
