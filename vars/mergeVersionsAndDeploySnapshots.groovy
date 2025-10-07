@@ -67,7 +67,7 @@ def call(boolean deploySnapshots) {
         }
 
         if (docsChanged) {
-            print "deployDomentation"
+            print "deployDocumentation"
 //        deployDocumentation(currentCommitMessage)
     }
 }
