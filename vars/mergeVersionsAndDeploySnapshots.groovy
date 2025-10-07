@@ -1,4 +1,4 @@
-def call(boolean deploySnapshots) {
+def call(boolean deployPlatform) {
     String lastVersionState
     Integer lastVersion, lastSupportedVersion
     (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
@@ -61,7 +61,7 @@ def call(boolean deploySnapshots) {
                 }
             }
             
-            if (deploySnapshots) {
+            if (deployPlatform) {
                 deploySnapshots()
             }
         }
