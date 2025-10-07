@@ -1,4 +1,4 @@
-def call() {
+def call(boolean deploySnapshots) {
     String lastVersionState
     Integer lastVersion, lastSupportedVersion
     (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
@@ -20,6 +20,7 @@ def call() {
         def currentCommit = sh(returnStdout: true, script: "git log -n 1 --no-merges --pretty=format:\"%h\"")
         String currentCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
         boolean platformChanged = platformChanged(currentCommit)
+        boolean apiDesktopChanged = apiDesktopChanged(currentCommit)
         boolean lsfLogicsgChanged = lsfLogicsgChanged(currentCommit)
         boolean docsChanged = docsChanged(currentCommit)
 
@@ -49,7 +50,19 @@ def call() {
             writeLatestCommitBranches(branchesSet)
             writeLatestCommitMessage(currentCommitMessage)
             
-//            deploySnapshots()
+            if (apiDesktopChanged) {
+                if (firstToDeploy > 0) {
+                    def deployBranches = (firstToDeploy..lastVersion).collect { it }
+                    for (branch in deployBranches) {
+                        removeSignedJarFile("v$branch")
+                    }
+                    removeSignedJarFile("master")
+                }
+            }
+            
+            if (deploySnapshots) {
+                deploySnapshots()
+            }
         }
 
         if (docsChanged) {
@@ -73,6 +86,17 @@ def platformChanged(def currentCommit) {
             currentCommit == readLatestCommit("desktop-client") ||
             currentCommit == readLatestCommit("server") ||
             currentCommit == readLatestCommit("web-client")
+}
+
+def apiDesktopChanged(def currentCommit) {
+    return currentCommit == readLatestCommit("api") || 
+            currentCommit == readLatestCommit("desktop-client")
+}
+
+def removeSignedJarFile(def branch) {
+    update branch
+    String platformVersion = readVersion()
+    sh "rm -f ${Paths.signedDir}/lsfusion-client-${platformVersion}.jar"
 }
 
 def readLatestCommit(dir) {

@@ -6,9 +6,10 @@ class Paths {
     static String rpm = "$jenkinsHome/rpm"
     static String apt = "$jenkinsHome/apt"
     static String ssl = "$jenkinsHome/ssl"
+    static String signedDir = "$ssl/signedtest"
     static String documentation = "$jenkinsHome/docusaurus"
     static String antlr4 = "/antlr"
-static String lsfLogics = "server/src/main/antlr3/lsfusion/server/language/LsfLogics.g"
+    static String lsfLogics = "server/src/main/antlr3/lsfusion/server/language/LsfLogics.g"
 
     static String githubRepo = "nomojenkins/platform.git"
     static String documentationRepo = "lsfusion/docusaurus.git"
