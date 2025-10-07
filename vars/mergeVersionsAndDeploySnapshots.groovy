@@ -56,7 +56,8 @@ def call(boolean deploySnapshots) {
                     for (branch in deployBranches) {
                         removeSignedJarFile("v$branch")
                     }
-                    removeSignedJarFile("master")
+                    // currently not signing master SNAPSHOTS
+//                    removeSignedJarFile("master")
                 }
             }
             
