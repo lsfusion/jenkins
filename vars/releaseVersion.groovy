@@ -31,9 +31,7 @@ def call(int branch, boolean releaseFinal) {
         }
 
         stage('Update dockerfiles') {
-            if (releaseBeta || releaseFinal) {
-                updateDockerImagesVersions tagVersion
-            }
+            updateDockerImagesVersions tagVersion
         }
 
         stage('Release branch') {
