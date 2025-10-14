@@ -39,18 +39,18 @@ def call(int majorVersion, String platformVersion) {
         
         sh "wine ${makensis} Installer-x64.nsi"
         sh "chmod -x x64.exe"
-        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x64.exe ${Paths.signedDir}"
-        sh "cp -f  ${Paths.signedDir}/x64.exe ${downloadDir}/lsfusion-${platformVersion}-x64.exe"
+        sh "mv ${workspace}/x64.exe ${workspace}/lsfusion-${platformVersion}-x64.exe"
+        sh "sh ${Paths.ssl}/sign.sh ${workspace}/lsfusion-${platformVersion}-x64.exe ${downloadDir}"
 
         sh "wine ${makensis} Installer-x64-dev.nsi"
         sh "chmod -x x64-dev.exe"
-        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x64-dev.exe ${Paths.signedDir}"
-        sh "cp -f ${Paths.signedDir}/x64-dev.exe ${downloadDir}/lsfusion-dev-${platformVersion}-x64.exe"
+        sh "mv ${workspace}/x64-dev.exe ${workspace}/lsfusion-dev-${platformVersion}-x64.exe"
+        sh "sh ${Paths.ssl}/sign.sh ${workspace}/lsfusion-dev-${platformVersion}-x64.exe ${downloadDir}"
 
         sh "wine ${makensis} Installer-x64-desktop.nsi"
         sh "chmod -x x64-desktop.exe"
-        sh "sh ${Paths.ssl}/sign.sh ${workspace}/x64-desktop.exe ${Paths.signedDir}"
-        sh "cp -f ${Paths.signedDir}/x64-desktop.exe ${downloadDir}/lsfusion-desktop-${platformVersion}-x64.exe"
+        sh "mv ${workspace}/x64-desktop.exe ${workspace}/lsfusion-desktop-${platformVersion}-x64.exe"
+        sh "sh ${Paths.ssl}/sign.sh ${workspace}/lsfusion-desktop-${platformVersion}-x64.exe ${downloadDir}"
     }
 }
 
