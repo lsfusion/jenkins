@@ -47,7 +47,7 @@ def call(String branch) {
         }
     }
 
-    sh "git add ${workspace}/web-client/src/main/webapp/static/js/ace/src/"
-    commit "Update ace"
-    push branch
+//    sh "git add ${workspace}/web-client/src/main/webapp/static/js/ace/src/"
+//    commit "Update ace"
+//    push branch
 }
