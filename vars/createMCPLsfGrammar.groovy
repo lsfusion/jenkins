@@ -7,7 +7,7 @@ def call() {
             dir(antlrDirPath + '/mcp') {
                 git(
                         url: 'https://github.com/lsfusion/mcp.git',
-                        branch: 'master',
+                        branch: 'main',
                 )
             }
         }
@@ -28,7 +28,7 @@ def call() {
                 sh '''
                     git add tools/
                     git commit -am "Update grammar"
-                    git push origin master
+                    git push origin main
                 '''
             }
         }
