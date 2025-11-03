@@ -6,7 +6,7 @@ def call() {
         stage('get mcp') {
             dir(antlrDirPath + '/mcp') {
                 git(
-                        url: 'https://github.com/lsfusion/mcp.git',
+                        url: 'git@github.com:lsfusion/mcp.git',
                         branch: 'main',
                 )
             }
