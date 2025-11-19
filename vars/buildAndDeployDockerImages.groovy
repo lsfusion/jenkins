@@ -1,27 +1,38 @@
 def call(String tagVersion) {
 
-    registryCredential = 'docker-hub'
-    client = ''
-    server = ''
-
-    stage('Building images') {
-        script {
-            client = docker.build("lsfusion/client:$tagVersion", "$Paths.src/web-client") // eg. lsfusion/client:4.0-beta4
-            server = docker.build("lsfusion/server:$tagVersion", "$Paths.src/server")
+    stage('Setup buildx') {
+        steps {
+            sh '''
+              docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+              docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
+              docker buildx inspect --bootstrap
+            '''
         }
     }
 
-    stage('Deploy images') {
+    stage('Building & deploying images') {
         script {
-            docker.withRegistry( '', registryCredential ) {
-                client.push()
-                server.push()
+            docker.withRegistry('', 'docker-hub') {
+                sh """
+                  docker buildx build \
+                    --platform linux/amd64,linux/arm64 \
+                    -t lsfusion/client:$tagVersion \
+                    --push \
+                    $Paths.src/web-client
+                """
+
+                sh """
+                  docker buildx build \
+                    --platform linux/amd64,linux/arm64 \
+                    -t lsfusion/server:$tagVersion \
+                    --push \
+                    $Paths.src/server
+                """
             }
         }
     }
 
     stage('Cleaning up') {
-        sh "docker rmi lsfusion/client:$tagVersion"
-        sh "docker rmi lsfusion/server:$tagVersion"
+        sh 'docker buildx prune -f'
     }
 }
