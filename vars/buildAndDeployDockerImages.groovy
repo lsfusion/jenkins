@@ -1,13 +1,11 @@
 def call(String tagVersion) {
 
     stage('Setup buildx') {
-        steps {
-            sh '''
-              docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-              docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
-              docker buildx inspect --bootstrap
-            '''
-        }
+        sh '''
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
+          docker buildx inspect --bootstrap
+        '''
     }
 
     stage('Building & deploying images') {
