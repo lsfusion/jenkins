@@ -2,19 +2,18 @@ def call(String tagVersion) {
 
     stage('Setup buildx') {
         sh '''
-            # Включаем QEMU
             docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-            # Создаём builder, если его нет
+            # Creating builder, if it is absent
             if ! docker buildx ls | grep -q multiarch-builder; then
               docker buildx create --name multiarch-builder --driver docker-container
             fi
 
-            # ВАЖНО: не rely on --use, а использовать builder явно
             docker buildx inspect multiarch-builder --bootstrap
         '''
     }
 
+    // withRegistry creates new DOCKER_CONFIG - multiarch-builder is not visible
     stage('Docker login') {
         withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
             sh '''
@@ -45,7 +44,6 @@ def call(String tagVersion) {
 
     stage('Cleaning up') {
         sh '''
-            docker buildx rm multiarch-builder || true
             docker buildx prune -f
         '''
     }
