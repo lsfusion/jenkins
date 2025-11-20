@@ -13,10 +13,19 @@ def call(String tagVersion) {
             # ВАЖНО: не rely on --use, а использовать builder явно
             docker buildx inspect multiarch-builder --bootstrap
         '''
+        sh '''echo "HOME=$HOME"
+            echo "DOCKER_CONFIG=$DOCKER_CONFIG"
+            ls -R $HOME/.docker || true
+        '''
     }
 
     stage('Building & deploying images') {
         docker.withRegistry('', 'docker-hub') {
+            sh '''echo "HOME=$HOME"
+                echo "DOCKER_CONFIG=$DOCKER_CONFIG"
+                ls -R $HOME/.docker || true
+            '''
+            
             sh """
                 docker buildx build \
                   --builder multiarch-builder \
