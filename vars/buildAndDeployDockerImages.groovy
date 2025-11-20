@@ -13,37 +13,34 @@ def call(String tagVersion) {
             # ВАЖНО: не rely on --use, а использовать builder явно
             docker buildx inspect multiarch-builder --bootstrap
         '''
-        sh '''echo "HOME=$HOME"
-            echo "DOCKER_CONFIG=$DOCKER_CONFIG"
-            ls -R $HOME/.docker || true
-        '''
+    }
+
+    stage('Docker login') {
+        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            sh '''
+              echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            '''
+        }
     }
 
     stage('Building & deploying images') {
-        docker.withRegistry('', 'docker-hub') {
-            sh '''echo "HOME=$HOME"
-                echo "DOCKER_CONFIG=$DOCKER_CONFIG"
-                ls -R $HOME/.docker || true
-            '''
-            
-            sh """
-                docker buildx build \
-                  --builder multiarch-builder \
-                  --platform linux/amd64,linux/arm64 \
-                  -t lsfusion/client:${tagVersion} \
-                  --push \
-                  ${Paths.src}/web-client
-            """
+        sh """
+          docker buildx build \
+            --builder multiarch-builder \
+            --platform linux/amd64,linux/arm64 \
+            -t lsfusion/client:${tagVersion} \
+            --push \
+            ${Paths.src}/web-client
+        """
 
-            sh """
-                docker buildx build \
-                  --builder multiarch-builder \
-                  --platform linux/amd64,linux/arm64 \
-                  -t lsfusion/server:${tagVersion} \
-                  --push \
-                  ${Paths.src}/server
-            """
-        }
+        sh """
+          docker buildx build \
+            --builder multiarch-builder \
+            --platform linux/amd64,linux/arm64 \
+            -t lsfusion/server:${tagVersion} \
+            --push \
+            ${Paths.src}/server
+        """
     }
 
     stage('Cleaning up') {
