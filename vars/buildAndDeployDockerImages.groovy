@@ -2,42 +2,45 @@ def call(String tagVersion) {
 
     stage('Setup buildx') {
         sh '''
-          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+            # Включаем QEMU
+            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-          # Создаём buildx builder с драйвером container
-          docker buildx create --name multiarch-builder --driver docker-container --use || \
-          docker buildx use multiarch-builder
-    
-          docker buildx inspect --bootstrap
+            # Создаём builder, если его нет
+            if ! docker buildx ls | grep -q multiarch-builder; then
+              docker buildx create --name multiarch-builder --driver docker-container
+            fi
+
+            # ВАЖНО: не rely on --use, а использовать builder явно
+            docker buildx inspect multiarch-builder --bootstrap
         '''
     }
 
     stage('Building & deploying images') {
-        script {
-            docker.withRegistry('', 'docker-hub') {
-                sh """
-                  docker buildx build \
-                    --platform linux/amd64,linux/arm64 \
-                    -t lsfusion/client:$tagVersion \
-                    --push \
-                    $Paths.src/web-client
-                """
+        docker.withRegistry('', 'docker-hub') {
+            sh """
+                docker buildx build \
+                  --builder multiarch-builder \
+                  --platform linux/amd64,linux/arm64 \
+                  -t lsfusion/client:${tagVersion} \
+                  --push \
+                  ${Paths.src}/web-client
+            """
 
-                sh """
-                  docker buildx build \
-                    --platform linux/amd64,linux/arm64 \
-                    -t lsfusion/server:$tagVersion \
-                    --push \
-                    $Paths.src/server
-                """
-            }
+            sh """
+                docker buildx build \
+                  --builder multiarch-builder \
+                  --platform linux/amd64,linux/arm64 \
+                  -t lsfusion/server:${tagVersion} \
+                  --push \
+                  ${Paths.src}/server
+            """
         }
     }
 
     stage('Cleaning up') {
         sh '''
-          docker buildx rm multiarch-builder || true
-          docker buildx prune -f
+            docker buildx rm multiarch-builder || true
+            docker buildx prune -f
         '''
     }
 }
