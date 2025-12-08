@@ -32,6 +32,10 @@ Section "${SERVER_SECTION_NAME}" SecServer
     ${GetDirectFile} "${DOWNLOAD_SERVER_JAR}" "${INSTSERVERDIR}" ${SERVER_JAR}
     ${GetDirectFile} "${DOWNLOAD_SERVER_SOURCES_JAR}" "${INSTSERVERDIR}" ${SERVER_SOURCES_JAR}  
     
+    !ifdef MYCOMPANY
+        ${GetDirectFile} "${DOWNLOAD_MYCOMPANY_JAR}" "${INSTSERVERDIR}\\lib" ${MYCOMPANY_JAR}  
+    !endif
+    
     ${if} $serverCreateService == "1"
         SetOutPath ${INSTSERVERDIR}\bin
         File /oname=$serverServiceName.exe bin\lsfusion${ARCH}.exe
