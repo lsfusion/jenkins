@@ -98,6 +98,7 @@ Var clientContext
 
 Var serverLanguage
 Var serverCountry
+Var topModule
 
 # no locals in nsis
 Var serviceFile
@@ -147,6 +148,12 @@ Page custom javaConfigPagePre javaConfigPageLeave
 Page custom serverConfigPagePre serverConfigPageLeave
 ; directory - main
 
+!ifdef MYCOMPANY
+    # MyCompany pages
+    !include MyCompanyFunctions.nsh
+    Page custom myCompanyConfigPagePre myCompanyConfigPageLeave
+!endif
+
 # Client pages
 !include ClientFunctions.nsh
 Page custom clientConfigPagePre clientConfigPageLeave
@@ -180,6 +187,10 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 !insertmacro MUI_LANGUAGE Russian
 !include I18nEn.nsh
 !include I18nRu.nsh
+!ifdef MYCOMPANY
+    !include MycompanyEn.nsh
+    !include MycompanyRu.nsh
+!endif
 
 LicenseLangString lsLicense ${LANG_ENGLISH} "resources\license-english.txt"
 LicenseLangString lsLicense ${LANG_RUSSIAN} "resources\license-russian.txt"
@@ -480,6 +491,9 @@ Function execAntConfiguration
         ${endIf}
         ${ifNot} $serverCountry == ""
             ${ConfigWriteSE} "$serverSettingsFile" "user.setCountry=" $serverCountry $R0
+        ${endIf}
+        ${ifNot} $topModule == ""
+            ${ConfigWriteSE} "$serverSettingsFile" "logics.topModule=" $topModule $R0
         ${endIf}
     ${endIf}
     
