@@ -43,7 +43,7 @@ def copyDocPages(id, branch) {
                 branch: branch
         )
 
-        dir("docs") {
+        dir("src/main/resources/docs") {
 //            sh "rm -rf $enPath"
 //            sh "cp -fa en $enPath"
 //
