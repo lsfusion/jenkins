@@ -7,7 +7,8 @@ def call() {
 
         def versionFile = "${Paths.jenkinsHome}/idea-plugin/currentPluginVersion"
         def oldVer = readFile versionFile
-        def newVer = getPluginVersion()
+        def pluginXml = readFile "META-INF/plugin.xml"
+        def newVer = getPluginVersion(pluginXml)
         if (newVer != oldVer) {
             sh 'chmod +x gradlew'
             sh './gradlew buildPlugin'
@@ -26,7 +27,7 @@ def call() {
 //                     verbose   : true]
 //            ]
 
-//            slack.message "Plugin v.${getPluginVersion()} was built successfully.\n```${getReleaseNotes()}```"
+//            slack.message "Plugin v.${newVer} was built successfully.\n```${getReleaseNotes(pluginXml)}```"
 //
 //            writeFile file: versionFile, text: newVer
         } else {
@@ -39,13 +40,12 @@ def call() {
 }
 
 @NonCPS
-def getPluginVersion() {
-    return new XmlSlurper().parse("META-INF/plugin.xml").version.text()
+def getPluginVersion(String xml) {
+    return new XmlSlurper().parseText(xml).version.text()
 }
 
 @NonCPS
-def getReleaseNotes() {
-    def text = new File("META-INF/plugin.xml").text
+def getReleaseNotes(String text) {
     def startIndex = text.indexOf("<ul>")
     def endIndex = text.indexOf("</ul>")
     if (startIndex == -1 || endIndex == -1) return ""
