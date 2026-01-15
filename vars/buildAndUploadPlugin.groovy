@@ -14,21 +14,21 @@ def call() {
 
             sh "cp -f build/distributions/lsfusion-idea-plugin-${newVer}.zip lsfusion-idea-plugin.zip"
 
-            withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
-                sh "curl -i --header 'Authorization: Bearer ${token}' -F pluginId=7601 -F file=@lsfusion-idea-plugin.zip https://plugins.jetbrains.com/plugin/uploadPlugin"
-            }
+//            withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
+//                sh "curl -i --header 'Authorization: Bearer ${token}' -F pluginId=7601 -F file=@lsfusion-idea-plugin.zip https://plugins.jetbrains.com/plugin/uploadPlugin"
+//            }
+//
+//            ftpPublisher failOnError: true, publishers: [
+//                    [configName: 'Download FTP server',
+//                     transfers : [
+//                             [sourceFiles: "lsfusion-idea-plugin.zip", remoteDirectory: "exe/ext"]
+//                     ],
+//                     verbose   : true]
+//            ]
 
-            ftpPublisher failOnError: true, publishers: [
-                    [configName: 'Download FTP server',
-                     transfers : [
-                             [sourceFiles: "lsfusion-idea-plugin.zip", remoteDirectory: "exe/ext"]
-                     ],
-                     verbose   : true]
-            ]
-
-            slack.message "Plugin v.${getPluginVersion()} was built successfully.\n```${getReleaseNotes()}```"
-
-            writeFile file: versionFile, text: newVer
+//            slack.message "Plugin v.${getPluginVersion()} was built successfully.\n```${getReleaseNotes()}```"
+//
+//            writeFile file: versionFile, text: newVer
         } else {
             echo "version's the same"
         }
