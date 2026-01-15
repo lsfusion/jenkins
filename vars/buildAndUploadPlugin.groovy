@@ -5,7 +5,7 @@ def call() {
                 branch: 'master',
         )
 
-        def versionFile = "${Paths.jenkinsHome}/idea-plugin/currentPluginVersion"
+        def versionFile = "${Paths.jenkinsHome}/currentPluginVersion"
         def oldVer = readFile versionFile
         def pluginXml = readFile "META-INF/plugin.xml"
         def newVer = getPluginVersion(pluginXml)
