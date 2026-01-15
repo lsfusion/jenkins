@@ -9,9 +9,10 @@ def call() {
         def oldVer = readFile versionFile
         def newVer = getPluginVersion()
         if (newVer != oldVer) {
-            sh 'ant all'
+            sh 'chmod +x gradlew'
+            sh './gradlew buildPlugin'
 
-//            sh "cp -f lsfusion-idea-plugin.zip ${Paths.jenkinsHome}/installer-src/"
+            sh "cp -f build/distributions/lsfusion-idea-plugin-${newVer}.zip lsfusion-idea-plugin.zip"
 
             withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
                 sh "curl -i --header 'Authorization: Bearer ${token}' -F pluginId=7601 -F file=@lsfusion-idea-plugin.zip https://plugins.jetbrains.com/plugin/uploadPlugin"
@@ -39,13 +40,16 @@ def call() {
 
 @NonCPS
 def getPluginVersion() {
-    return new XmlSlurper().parse("${Paths.jenkinsHome}/idea-plugin/META-INF/plugin.xml").version.text()
+    return new XmlSlurper().parse("META-INF/plugin.xml").version.text()
 }
 
 @NonCPS
 def getReleaseNotes() {
-    def text = new File("${Paths.jenkinsHome}/idea-plugin/META-INF/plugin.xml").text
-    def lis = new XmlSlurper().parseText(text.substring(text.indexOf("<ul>", 0), text.indexOf("</ul>", 0) + 5))
+    def text = new File("META-INF/plugin.xml").text
+    def startIndex = text.indexOf("<ul>")
+    def endIndex = text.indexOf("</ul>")
+    if (startIndex == -1 || endIndex == -1) return ""
+    def lis = new XmlSlurper().parseText(text.substring(startIndex, endIndex + 5))
     def res = ""
     for (li in lis.children()) {
         res = "${res}• ${li.text()}\n"
