@@ -15,21 +15,21 @@ def call() {
 
             sh "cp -f build/distributions/lsfusion-idea-plugin-${newVer}.zip lsfusion-idea-plugin.zip"
 
-//            withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
-//                sh "curl -i --header 'Authorization: Bearer ${token}' -F pluginId=7601 -F file=@lsfusion-idea-plugin.zip https://plugins.jetbrains.com/plugin/uploadPlugin"
-//            }
-//
-//            ftpPublisher failOnError: true, publishers: [
-//                    [configName: 'Download FTP server',
-//                     transfers : [
-//                             [sourceFiles: "lsfusion-idea-plugin.zip", remoteDirectory: "exe/ext"]
-//                     ],
-//                     verbose   : true]
-//            ]
+            withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
+                sh "./gradlew publishPlugin -PintellijPublishToken=${token}"
+            }
 
-//            slack.message "Plugin v.${newVer} was built successfully.\n```${getReleaseNotes(pluginXml)}```"
-//
-//            writeFile file: versionFile, text: newVer
+            ftpPublisher failOnError: true, publishers: [
+                    [configName: 'Download FTP server',
+                     transfers : [
+                             [sourceFiles: "lsfusion-idea-plugin.zip", remoteDirectory: "exe/ext"]
+                     ],
+                     verbose   : true]
+            ]
+
+            slack.message "Plugin v.${newVer} was built successfully.\n```${getReleaseNotes(pluginXml)}```"
+
+            writeFile file: versionFile, text: newVer
         } else {
             echo "version's the same"
         }
