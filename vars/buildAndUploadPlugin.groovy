@@ -27,6 +27,7 @@ def call() {
                 }
             } catch (e) {
                 echo "Failed to publish plugin: ${e.message}"
+                echo "This might be because the version is already uploaded and pending review."
                 return
             }
 
