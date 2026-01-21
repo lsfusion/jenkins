@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 def call() {
     try {
         git(
@@ -5,18 +7,27 @@ def call() {
                 branch: 'master',
         )
 
-        def versionFile = "${Paths.jenkinsHome}/currentPluginVersion"
-        def oldVer = readFile versionFile
+        def response = sh(
+                script: "curl -s https://plugins.jetbrains.com/api/plugins/7601/updates",
+                returnStdout: true
+        ).trim()
+        def oldVer = parseLatestVersion(response)
         def pluginXml = readFile "META-INF/plugin.xml"
         def newVer = getPluginVersion(pluginXml)
+
         if (newVer != oldVer) {
             sh 'chmod +x gradlew'
             sh './gradlew buildPlugin'
 
             sh "cp -f build/distributions/lsfusion-idea-plugin-${newVer}.zip lsfusion-idea-plugin.zip"
 
-            withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
-                sh "./gradlew publishPlugin -PintellijPublishToken=${token}"
+            try {
+                withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
+                    sh "./gradlew publishPlugin -PintellijPublishToken=${token}"
+                }
+            } catch (e) {
+                echo "Failed to publish plugin: ${e.message}"
+                return
             }
 
             ftpPublisher failOnError: true, publishers: [
@@ -27,16 +38,23 @@ def call() {
                      verbose   : true]
             ]
 
-            slack.message "Plugin v.${newVer} was built successfully.\n```${getReleaseNotes(pluginXml)}```"
-
-            writeFile file: versionFile, text: newVer
+            slack.message "Plugin v${newVer} was built successfully.\n```${getReleaseNotes(pluginXml)}```"
         } else {
-            echo "version's the same"
+            echo "Version ${newVer} matches the latest version in Marketplace. Skipping build."
         }
     } catch (e) {
         slack.error "Warning! <$env.BUILD_URL|$currentBuild.fullDisplayName> failed."
         throw e
     }
+}
+
+@NonCPS
+def parseLatestVersion(String jsonText) {
+    def json = new JsonSlurper().parseText(jsonText)
+    if (json instanceof List && !json.isEmpty()) {
+        return json[0].version.toString()
+    }
+    return ""
 }
 
 @NonCPS
