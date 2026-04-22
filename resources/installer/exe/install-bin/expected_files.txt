@@ -1,7 +1,7 @@
 apache-ant-<version>.zip
 apache-tomcat-<version>-windows-x64.zip
 apache-tomcat-<version>-windows-x86.zip
-ideaIC-<version>.exe
+idea-<version>.exe
 jdk-<version>-windows-i586.exe
 jdk-<version>-windows-x64.exe
 lsfusion-client.jar
