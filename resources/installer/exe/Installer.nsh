@@ -18,7 +18,7 @@ SetCompressor lzma
 !define JAVA_INSTALLER_EXT "msi"
 ;!define JAVA_INSTALLER_EXT "exe"
 !define PG_INSTALLER "postgresql-${PG_VERSION}-${ARCH}"
-!define IDEA_INSTALLER "ideaIC-${IDEA_VERSION}"
+!define IDEA_INSTALLER "idea-${IDEA_VERSION}"
 !define IDEA_PLUGIN "lsfusion-idea-plugin"
 !define TOMCAT_ARCHIVE "apache-tomcat-${TOMCAT_VERSION}-${ARCH}"
 !define ANT_ARCHIVE "apache-ant-${ANT_VERSION}"
@@ -36,7 +36,7 @@ SetCompressor lzma
 !define SERVER_SECTION_NAME "Server"
 !define CLIENT_SECTION_NAME "Client (Web & Desktop)"
 !define DESKTOP_CLIENT_SECTION_NAME "Client (Desktop)"
-!define IDEA_SECTION_NAME "IDE" ; "IntelliJ IDEA Community Edition ${IDEA_VERSION} with lsFusion plugin"
+!define IDEA_SECTION_NAME "IDE" ; "IntelliJ IDEA ${IDEA_VERSION} with lsFusion plugin"
 !define JASPER_SECTION_NAME "Reports IDE" ; "Jaspersoft Studio ${JASPER_VERSION}"
 
 !define CLIENT_JAR "client.jar"
@@ -78,7 +78,7 @@ Var pgDir
 Var pgServiceName
 
 Var ideaDir
-!define IDEA_CONFIG_DIR "$PROFILE\AppData\Roaming\JetBrains\IdeaIC${IDEA_MAJORVERSION}"
+!define IDEA_CONFIG_DIR "$PROFILE\AppData\Roaming\JetBrains\Idea${IDEA_MAJORVERSION}"
 
 Var jasperDir
 
@@ -251,7 +251,7 @@ Function .onInit
     
     StrCpy $javaDir "$ProgramFiles${ARCH}\Java\jdk${JDK_VERSION}"
 
-    StrCpy $ideaDir "$ProgramFiles${ARCH}\JetBrains\IDEA Community Edition ${IDEA_VERSION}"
+    StrCpy $ideaDir "$ProgramFiles${ARCH}\JetBrains\IDEA ${IDEA_VERSION}"
     
     StrCpy $jasperDir "$ProgramFiles${ARCH}\TIBCO\Jaspersoft Studio-${JASPER_VERSION}"
 

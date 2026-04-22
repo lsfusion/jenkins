@@ -7,7 +7,7 @@ LangString strJavaSectionDescription ${LANG_RUSSIAN} "Java Development Kit ${JDK
 LangString strServerSectionDescription ${LANG_RUSSIAN} "Сервер приложений - lsFusion Server ${LSFUSION_VERSION}"
 LangString strClientSectionDescription ${LANG_RUSSIAN} "Веб сервер - lsFusion Client (Web & Desktop) ${LSFUSION_VERSION}"
 LangString strDesktopClientSectionDescription ${LANG_RUSSIAN} "Десктоп клиент - lsFusion Client (Desktop) ${LSFUSION_VERSION}"
-LangString strIdeaSectionDescription ${LANG_RUSSIAN} "Среда разработки - IntelliJ IDEA Community Edition ${IDEA_VERSION} с установленным плагином lsFusion"
+LangString strIdeaSectionDescription ${LANG_RUSSIAN} "Среда разработки - IntelliJ IDEA ${IDEA_VERSION} с установленным плагином lsFusion"
 LangString strJasperSectionDescription ${LANG_RUSSIAN} "Среда разработки отчетов - Jaspersoft Studio ${JASPER_VERSION}"
 
 LangString strPgUnSectionDescription ${LANG_RUSSIAN} "Удалить сервер баз данных - PostgresSQL ${PG_VERSION}"
@@ -15,7 +15,7 @@ LangString strJavaUnSectionDescription ${LANG_RUSSIAN} "Java Development Kit ${J
 LangString strServerUnSectionDescription ${LANG_RUSSIAN} "Удалить сервер приложений - lsFusion Server ${LSFUSION_VERSION}"
 LangString strClientUnSectionDescription ${LANG_RUSSIAN} "Удалить веб сервер - lsFusion Client (Web & Desktop) ${LSFUSION_VERSION}"
 LangString strDesktopClientUnSectionDescription ${LANG_RUSSIAN} "Удалить десктоп клиент - lsFusion Client (Desktop) ${LSFUSION_VERSION}"
-LangString strIdeaUnSectionDescription ${LANG_RUSSIAN} "Удалить среду разработки - IntelliJ IDEA Community Edition ${IDEA_VERSION} с установленным плагином lsFusion"
+LangString strIdeaUnSectionDescription ${LANG_RUSSIAN} "Удалить среду разработки - IntelliJ IDEA ${IDEA_VERSION} с установленным плагином lsFusion"
 LangString strJasperUnSectionDescription ${LANG_RUSSIAN} "Удалить среду разработки отчетов - Jaspersoft Studio ${JASPER_VERSION}"
 
 LangString strPostgreDirHeader ${LANG_RUSSIAN} "Выберите папку для установки PotgreSQL ${PG_MAJORVERSION}."
@@ -31,8 +31,8 @@ LangString strNoJavaError ${LANG_RUSSIAN} "JVM не найдена в папке
 
 LangString strClientOptions ${LANG_RUSSIAN} "Настройки для установки lsFusion Client."
 
-LangString strIdeaDirHeader ${LANG_RUSSIAN} "Выберите папку для установки IntelliJ IDEA Community Edition ${IDEA_VERSION}."
-LangString strIdeaDirTextTop ${LANG_RUSSIAN} "Программа установит IntelliJ IDEA Community Edition ${IDEA_VERSION} в указанную папку."
+LangString strIdeaDirHeader ${LANG_RUSSIAN} "Выберите папку для установки IntelliJ IDEA ${IDEA_VERSION}."
+LangString strIdeaDirTextTop ${LANG_RUSSIAN} "Программа установит IntelliJ IDEA ${IDEA_VERSION} в указанную папку."
 
 LangString strJasperDirHeader ${LANG_RUSSIAN} "Выберите папку для установки Jaspersoft Studio ${JASPER_VERSION}."
 LangString strJasperDirTextTop ${LANG_RUSSIAN} "Программа установит Jaspersoft Studio ${JASPER_VERSION} в указанную папку."

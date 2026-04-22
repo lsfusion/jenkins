@@ -121,8 +121,8 @@ Section -un.Uninstall
             DetailPrint "Removing Intellij IDEA"
             nsExec::ExecToLog "$0\bin\Uninstall.exe /S"
             
-            Delete "$DESKTOP\IntelliJ IDEA Community Edition ${IDEA_VERSION}.lnk"
-            Delete "$SMPROGRAMS\JetBrains\IntelliJ IDEA Community Edition ${IDEA_VERSION}.lnk"
+            Delete "$DESKTOP\IntelliJ IDEA ${IDEA_VERSION}.lnk"
+            Delete "$SMPROGRAMS\JetBrains\IntelliJ IDEA ${IDEA_VERSION}.lnk"
             RMDir "$SMPROGRAMS\JetBrains"
         ${endIf}
 

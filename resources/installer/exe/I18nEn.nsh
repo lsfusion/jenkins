@@ -7,7 +7,7 @@ LangString strJavaSectionDescription ${LANG_ENGLISH} "Java Development Kit ${JDK
 LangString strServerSectionDescription ${LANG_ENGLISH} "Application Server - lsFusion Server ${LSFUSION_VERSION}"
 LangString strClientSectionDescription ${LANG_ENGLISH} "Web Server - lsFusion Client (Web & Desktop) ${LSFUSION_VERSION}"
 LangString strDesktopClientSectionDescription ${LANG_ENGLISH} "Desktop Client - lsFusion Client (Desktop) ${LSFUSION_VERSION}"
-LangString strIdeaSectionDescription ${LANG_ENGLISH} "IDE - IntelliJ IDEA Community Edition ${IDEA_VERSION} with bundled lsFusion plugin"
+LangString strIdeaSectionDescription ${LANG_ENGLISH} "IDE - IntelliJ IDEA ${IDEA_VERSION} with bundled lsFusion plugin"
 LangString strJasperSectionDescription ${LANG_ENGLISH} "Reports IDE - Jaspersoft Studio ${JASPER_VERSION}"
 
 LangString strPgUnSectionDescription ${LANG_ENGLISH} "Uninstall Database Server - PostgresSQL ${PG_VERSION}"
@@ -15,7 +15,7 @@ LangString strJavaUnSectionDescription ${LANG_ENGLISH} "Java Development Kit ${J
 LangString strServerUnSectionDescription ${LANG_ENGLISH} "Uninstall Application Server - lsFusion Server ${LSFUSION_VERSION}"
 LangString strClientUnSectionDescription ${LANG_ENGLISH} "Uninstall Web Server - lsFusion Client (Web & Desktop) ${LSFUSION_VERSION}"
 LangString strDesktopClientUnSectionDescription ${LANG_ENGLISH} "Uninstall Desktop Client - lsFusion Client (Desktop) ${LSFUSION_VERSION}"
-LangString strIdeaUnSectionDescription ${LANG_ENGLISH} "Uninstall IDE - IntelliJ IDEA Community Edition ${IDEA_VERSION} with bundled lsFusion plugin"
+LangString strIdeaUnSectionDescription ${LANG_ENGLISH} "Uninstall IDE - IntelliJ IDEA ${IDEA_VERSION} with bundled lsFusion plugin"
 LangString strJasperUnSectionDescription ${LANG_ENGLISH} "Uninstall Reports IDE - Jaspersoft Studio ${JASPER_VERSION}"
 
 LangString strPostgreDirHeader ${LANG_ENGLISH} "Choose the folder in which to install PostgreSQL ${PG_MAJORVERSION}."
@@ -31,8 +31,8 @@ LangString strNoJavaError ${LANG_ENGLISH} "No Java Virtual Machine found in fold
 
 LangString strClientOptions ${LANG_ENGLISH} "Options for lsFusion Client installation."
 
-LangString strIdeaDirHeader ${LANG_ENGLISH} "Choose the folder in which to install IntelliJ IDEA Community Edition ${IDEA_VERSION}."
-LangString strIdeaDirTextTop ${LANG_ENGLISH} "Setup will install IntelliJ IDEA Community Edition ${IDEA_VERSION} to the following folder."
+LangString strIdeaDirHeader ${LANG_ENGLISH} "Choose the folder in which to install IntelliJ IDEA ${IDEA_VERSION}."
+LangString strIdeaDirTextTop ${LANG_ENGLISH} "Setup will install IntelliJ IDEA ${IDEA_VERSION} to the following folder."
 
 LangString strJasperDirHeader ${LANG_ENGLISH} "Choose the folder in which to install Jaspersoft Studio ${JASPER_VERSION}."
 LangString strJasperDirTextTop ${LANG_ENGLISH} "Setup will install Jaspersoft Studio ${JASPER_VERSION} to the following folder."
