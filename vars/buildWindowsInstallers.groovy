@@ -10,18 +10,6 @@ def call(int majorVersion, String platformVersion) {
 
     sh "cp -lr ${installerSrc}/* ${installerBin}"
 
-    sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${platformVersion}:jar:assembly -DoutputDirectory=${installerBin}"
-    sh "mvn dependency:copy -Dartifact=lsfusion.platform:server:${platformVersion}:jar:assembly-sources -DoutputDirectory=${installerBin}"
-    sh "mvn dependency:copy -Dartifact=lsfusion.platform:desktop-client:${platformVersion}:jar:assembly -DoutputDirectory=${installerBin}"
-    sh "mvn dependency:copy -Dartifact=lsfusion.platform:web-client:${platformVersion}:war -DoutputDirectory=${installerBin}"
-
-    dir(installerBin) {
-        sh "mv -f server-${platformVersion}-assembly.jar server.jar"
-        sh "mv -f server-${platformVersion}-assembly-sources.jar server-sources.jar"
-        sh "mv -f desktop-client-${platformVersion}-assembly.jar client.jar"
-        sh "mv -f web-client-${platformVersion}.war client.war"
-    }
-
     dir(workspace) {
         def makensis = "${installerSrc}/nsis-unicode-win/makensis.exe"
         def downloadDir = "${Paths.download}/exe/${platformVersion}"

@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 def call() {
     try {
         git(
@@ -5,16 +7,28 @@ def call() {
                 branch: 'master',
         )
 
-        def versionFile = "${Paths.jenkinsHome}/idea-plugin/currentPluginVersion"
-        def oldVer = readFile versionFile
-        def newVer = getPluginVersion()
+        def response = sh(
+                script: "curl -s https://plugins.jetbrains.com/api/plugins/7601/updates",
+                returnStdout: true
+        ).trim()
+        def oldVer = parseLatestVersion(response)
+        def pluginXml = readFile "META-INF/plugin.xml"
+        def newVer = getPluginVersion(pluginXml)
+
         if (newVer != oldVer) {
-            sh 'ant all'
+            sh 'chmod +x gradlew'
+            sh './gradlew buildPlugin'
 
-//            sh "cp -f lsfusion-idea-plugin.zip ${Paths.jenkinsHome}/installer-src/"
+            sh "cp -f build/distributions/lsfusion-idea-plugin-${newVer}.zip lsfusion-idea-plugin.zip"
 
-            withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
-                sh "curl -i --header 'Authorization: Bearer ${token}' -F pluginId=7601 -F file=@lsfusion-idea-plugin.zip https://plugins.jetbrains.com/plugin/uploadPlugin"
+            try {
+                withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
+                    sh "./gradlew publishPlugin -PintellijPublishToken=${token}"
+                }
+            } catch (e) {
+                echo "Failed to publish plugin: ${e.message}"
+                echo "This might be because the version is already uploaded and pending review."
+                return
             }
 
             ftpPublisher failOnError: true, publishers: [
@@ -25,11 +39,9 @@ def call() {
                      verbose   : true]
             ]
 
-            slack.message "Plugin v.${getPluginVersion()} was built successfully.\n```${getReleaseNotes()}```"
-
-            writeFile file: versionFile, text: newVer
+            slack.message "Plugin v${newVer} was built successfully.\n```${getReleaseNotes(pluginXml)}```"
         } else {
-            echo "version's the same"
+            echo "Version ${newVer} matches the latest version in Marketplace. Skipping build."
         }
     } catch (e) {
         slack.error "Warning! <$env.BUILD_URL|$currentBuild.fullDisplayName> failed."
@@ -38,14 +50,25 @@ def call() {
 }
 
 @NonCPS
-def getPluginVersion() {
-    return new XmlSlurper().parse("${Paths.jenkinsHome}/idea-plugin/META-INF/plugin.xml").version.text()
+def parseLatestVersion(String jsonText) {
+    def json = new JsonSlurper().parseText(jsonText)
+    if (json instanceof List && !json.isEmpty()) {
+        return json[0].version.toString()
+    }
+    return ""
 }
 
 @NonCPS
-def getReleaseNotes() {
-    def text = new File("${Paths.jenkinsHome}/idea-plugin/META-INF/plugin.xml").text
-    def lis = new XmlSlurper().parseText(text.substring(text.indexOf("<ul>", 0), text.indexOf("</ul>", 0) + 5))
+def getPluginVersion(String xml) {
+    return new XmlSlurper().parseText(xml).version.text()
+}
+
+@NonCPS
+def getReleaseNotes(String text) {
+    def startIndex = text.indexOf("<ul>")
+    def endIndex = text.indexOf("</ul>")
+    if (startIndex == -1 || endIndex == -1) return ""
+    def lis = new XmlSlurper().parseText(text.substring(startIndex, endIndex + 5))
     def res = ""
     for (li in lis.children()) {
         res = "${res}• ${li.text()}\n"
