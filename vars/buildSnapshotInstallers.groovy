@@ -1,10 +1,12 @@
-def call(String branch) {
+def call(String branch, boolean buildWindows = false) {
     update branch
 
     String platformVersion = readVersion()
     int majorVersion = platformVersion.replaceFirst(/\.[0-9]+-SNAPSHOT/, '') as Integer
 
-//    buildWindowsInstallers(majorVersion, platformVersion)
+    if (buildWindows) {
+        buildWindowsInstallers(majorVersion, platformVersion)
+    }
     buildRPMInstallers(majorVersion, platformVersion)
     buildAPTInstallers(majorVersion, platformVersion)
 
