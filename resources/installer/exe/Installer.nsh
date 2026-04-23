@@ -78,7 +78,7 @@ Var pgDir
 Var pgServiceName
 
 Var ideaDir
-!define IDEA_CONFIG_DIR "$PROFILE\AppData\Roaming\JetBrains\Idea${IDEA_MAJORVERSION}"
+!define IDEA_CONFIG_DIR "$PROFILE\AppData\Roaming\JetBrains\IntelliJIdea${IDEA_MAJORVERSION}"
 
 Var jasperDir
 
