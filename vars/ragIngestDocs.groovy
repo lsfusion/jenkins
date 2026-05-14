@@ -16,6 +16,13 @@
 //   - rag-vector-store-id  (Secret text): target Vector Store id (vs_...).
 //     Only consulted on the first run; persisted into state.json thereafter.
 //
+// CONCURRENCY: the wrapper internally holds `lock(resource:
+// 'platform-rag-state')` for its whole body. ragRebuildIndex uses the
+// same lock name, so the two jobs serialize on each other (which is what
+// we want — both write `.rag/openai-state.json`). This requires the
+// Lockable Resources Jenkins plugin; without it the build fails loudly,
+// which is the intended behavior over silent racing.
+//
 // Call example (from a Jenkinsfile on the platform master post-merge job):
 //
 //   @Library('lsfusion') _
@@ -76,6 +83,15 @@ def call(Map args = [:]) {
     // they're build-time scratch, not part of the platform tree.
     String mcpDir = '.jenkins-mcp'
     String venvDir = '.jenkins-rag-venv'
+
+    // Everything from clone → run → commit → push holds the shared lock,
+    // so ingest-vs-rebuild can never race on .rag/openai-state.json.
+    // Argument parsing and the pin-file sanity checks above run unlocked
+    // (they don't touch the state file). The lock is shared with
+    // ragRebuildIndex (same resource name). Requires the Lockable
+    // Resources plugin; without it, Jenkins fails the build with a clear
+    // error, which is the desired behavior — silent racing is worse.
+    lock(resource: 'platform-rag-state') {
 
     // ─── 1. Sparse-clone mcp at the pinned SHA ─────────────────────────────
     // Pulls just `fill/` and `tools/` (the driver lives in tools/). Public
@@ -210,4 +226,6 @@ git push 'git@github.com:${githubRepo}' "HEAD:${pushBranch}"
     if (driverRc != '0') {
         error("ragIngestDocs: driver exited ${driverRc} (state was committed if dry-run=false)")
     }
+
+    }  // end lock
 }
