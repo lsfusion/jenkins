@@ -87,13 +87,15 @@ PYTHONPATH='${mcpDir}' python3 -m fill.manifest validate \\
 
     if (checkBootstrap) {
         // PR_BODY env keeps potentially-multiline PR descriptions out of the shell.
+        // `:-` default in the expansion handles the case where prDescription was empty
+        // (Jenkins `withEnv(["PR_BODY="])` does not always set the variable under `set -u`).
         withEnv(["PR_BODY=${prDescription}"]) {
             sh """#!/usr/bin/env bash
 set -euo pipefail
 PYTHONPATH='${mcpDir}' python3 -m fill.manifest check-bootstrap \\
     --report '${reportPath}' \\
     --acceptance-file '${acceptanceFile}' \\
-    --pr-description "\$PR_BODY"
+    --pr-description "\${PR_BODY:-}"
 """
         }
     }
