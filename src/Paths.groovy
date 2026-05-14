@@ -14,6 +14,7 @@ class Paths {
     static String githubRepo = "lsfusion/platform.git"
     static String documentationRepo = "lsfusion/docusaurus.git"
     static String docsRepo = "lsfusion/platform.git"
+    static String mcpRepo = "lsfusion/mcp.git"
 
     // for testing purposes
     static String githubIssuesRepo = null
