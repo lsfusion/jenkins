@@ -51,7 +51,6 @@ def call(Map args = [:]) {
     }
 
     String mcpDir = '.jenkins-mcp'
-    String venvDir = '.jenkins-venv'
 
     // Sparse-clone mcp at the pinned SHA — public repo, no creds needed.
     // `--filter=blob:none --no-checkout` pulls just the tree, then sparse-checkout
@@ -72,21 +71,16 @@ git sparse-checkout set fill
 git checkout ${mcpSha}
 """
 
-    // Fresh venv per build — Jenkins workspace may persist between runs.
-    sh """#!/usr/bin/env bash
-set -euo pipefail
-rm -rf ${venvDir}
-python3 -m venv ${venvDir}
-. ${venvDir}/bin/activate
-pip install --quiet --upgrade pip
-pip install --quiet -e ${mcpDir}/fill
-"""
+    // `fill.manifest` is stdlib-only at this slice — no pip install needed.
+    // Adding `${mcpDir}` to PYTHONPATH makes `fill` importable as a top-level
+    // package directly from the sparse checkout. Later slices (chunker, ingest,
+    // eval) WILL need pip with langchain/openai/tiktoken, at which point this
+    // step grows a `python3-venv` or Docker-agent prerequisite — but for the
+    // validator slice keeping deps zero side-steps the python3-venv requirement.
 
-    // Validate manifest schema + consistency.
     sh """#!/usr/bin/env bash
 set -euo pipefail
-. ${venvDir}/bin/activate
-python3 -m fill.manifest validate \\
+PYTHONPATH='${mcpDir}' python3 -m fill.manifest validate \\
     --manifest '${manifestPath}' \\
     --docs-dir '${docsDir}'
 """
@@ -96,8 +90,7 @@ python3 -m fill.manifest validate \\
         withEnv(["PR_BODY=${prDescription}"]) {
             sh """#!/usr/bin/env bash
 set -euo pipefail
-. ${venvDir}/bin/activate
-python3 -m fill.manifest check-bootstrap \\
+PYTHONPATH='${mcpDir}' python3 -m fill.manifest check-bootstrap \\
     --report '${reportPath}' \\
     --acceptance-file '${acceptanceFile}' \\
     --pr-description "\$PR_BODY"
