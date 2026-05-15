@@ -1,6 +1,6 @@
 class Paths {
     static String jenkinsHome = '/usr/share/jenkins'
-    static String src = "$jenkinsHome/lsFusion/mycompany"
+    static String src = "$jenkinsHome/mctest"
     static String tmp = "/tmp"
     static String download = "/var/www/download"
     static String rpm = "$jenkinsHome/rpm"
@@ -11,9 +11,9 @@ class Paths {
     static String antlr4 = "/antlr"
     static String lsfLogics = "server/src/main/antlr3/lsfusion/server/language/LsfLogics.g"
 
-    static String githubRepo = "lsfusion-solutions/mycompany.git"
-    static String documentationRepo = "lsfusion-solutions/mycompany-docs.git"
-    static String docsRepo = "lsfusion-solutions/mycompany.git"
+    static String githubRepo = "nomojenkins/mycompany.git"
+    static String documentationRepo = "nomojenkins/mycompany-docs.git"
+    static String docsRepo = "nomojenkins/mycompany.git"
 
     // for testing purposes
     static String githubIssuesRepo = null
