@@ -1,22 +1,12 @@
 def call(int branch, boolean releaseFinal) {
     boolean isBeta
-    boolean releaseBeta
-    boolean isLastVersion
-
     int majorVersion, minorVersion
     String tagVersion = "unknown"
 
     stage('Get branch version info') {
         (isBeta, minorVersion) = getBranchVersion(branch)
         majorVersion = branch
-        releaseBeta = isBeta && !releaseFinal
-        if (isBeta && releaseFinal) {
-            minorVersion = 0
-        }
-        tagVersion = majorVersion + '.' + (releaseBeta ? '0-beta' : '') + minorVersion
-
-        def (lastVersion, lastVersionState, lastSupportedVersion) = getLastVersions()
-        isLastVersion = lastVersion == branch
+        tagVersion = majorVersion + '.' + minorVersion
     }
 
     stage('Update') {
@@ -29,16 +19,7 @@ def call(int branch, boolean releaseFinal) {
     }
 
     stage('Release branch') {
-        String releaseCommand = "mvn -B release:clean release:prepare release:perform -P assemble -Dplatform.assemble.version=${tagVersion}"
-        if (releaseBeta) {
-            releaseCommand += " -DdevelopmentVersion=$majorVersion.0-SNAPSHOT -DreleaseVersion=$tagVersion"
-        }
-
-        sh releaseCommand
-
-        if (releaseBeta) {
-            nextBetaVersion.set(minorVersion + 1)
-        }
+        sh "mvn -B release:clean release:prepare release:perform -P assemble -Dplatform.assemble.version=${tagVersion}"
     }
 
     stage('Update tag') {
@@ -46,16 +27,11 @@ def call(int branch, boolean releaseFinal) {
     }
 
     stage('Build and deploy docker images') {
-        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-            sh '''
-              echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            '''
-            sh "mvn clean deploy -P assemble,docker,multiarch -Dplatform.assemble.version=${tagVersion}"
-            if (isLastVersion && !releaseBeta) {
-                // TODO: build & push 'latest' tag
-                echo "Skipping 'latest' tag build (placeholder)"
-            }
-        }
+        // to generate Dockerfile
+        sh "mvn clean install -P assemble,docker"
+
+        buildAndDeployDockerImages(tagVersion, tagVersion)  
+//        buildAndDeployDockerImages(tagVersion, 'latest')
     }
 
     stage('Upload to CDN') {

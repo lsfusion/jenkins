@@ -1,4 +1,4 @@
-def call(String tagVersion) {
+def call(String appVersion, String imageVersion) {
 
     stage('Setup buildx') {
         sh '''
@@ -27,18 +27,10 @@ def call(String tagVersion) {
           docker buildx build \
             --builder multiarch-builder \
             --platform linux/amd64,linux/arm64 \
-            -t lsfusion/client:${tagVersion} \
+            -t lsfusion/mycompany:${imageVersion} \
+            --build-arg FILENAME=lsfusion-server-${appVersion}.jar \
             --push \
-            ${Paths.src}/web-client
-        """
-
-        sh """
-          docker buildx build \
-            --builder multiarch-builder \
-            --platform linux/amd64,linux/arm64 \
-            -t lsfusion/server:${tagVersion} \
-            --push \
-            ${Paths.src}/server
+            ./target
         """
     }
 
