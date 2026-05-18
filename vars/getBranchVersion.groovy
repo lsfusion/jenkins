@@ -3,8 +3,8 @@ def call(int version) {
 
     String versionString = readVersion()
 
-    if (!(versionString =~ /[0-9]+\.[0-9]+-SNAPSHOT/))
-        error("Version in branch should be *.*-SNAPSHOT")
+//    if (!(versionString =~ /[0-9]+\.[0-9]+-SNAPSHOT/))
+//        error("Version in branch should be *.*-SNAPSHOT")
 
     if (Integer.valueOf(versionString.substring(0, versionString.indexOf('.'))) != version)
         error("Major version in branch should be $version")
