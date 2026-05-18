@@ -17,18 +17,18 @@ def call(int branch, boolean releaseFinal) {
         update "v$branch"
     }
 
-//    stage('Generate changelog') {
-//        generateChangeLog(tagVersion)
-//        sh "mvn scm:checkin -Dmessage=\"Generated change log\""
-//    }
-//    
-//    stage('Prepare release version') {
-//        sh """
-//            sed -i '/<parent>/,/<\\/parent>/ s|<version>${snapshotVersion}</version>|<version>${tagVersion}</version>|' pom.xml
-//            sed -i 's|<platform.assemble.version>${snapshotVersion}</platform.assemble.version>|<platform.assemble.version>${tagVersion}</platform.assemble.version>|' pom.xml
-//        """
-//        sh "mvn scm:checkin -Dmessage=\"Preparing for release: platform v${tagVersion}\""
-//    }
+    stage('Generate changelog') {
+        generateChangeLog(tagVersion)
+        sh "mvn scm:checkin -Dmessage=\"Generated change log\""
+    }
+    
+    stage('Prepare release version') {
+        sh """
+            sed -i '/<parent>/,/<\\/parent>/ s|<version>${snapshotVersion}</version>|<version>${tagVersion}</version>|' pom.xml
+            sed -i 's|<platform.assemble.version>${snapshotVersion}</platform.assemble.version>|<platform.assemble.version>${tagVersion}</platform.assemble.version>|' pom.xml
+        """
+        sh "mvn scm:checkin -Dmessage=\"Preparing for release: platform v${tagVersion}\""
+    }
 
     stage('Release branch') {
         sh "mvn -B release:clean release:prepare release:perform -P assemble -Dplatform.assemble.version=${tagVersion}"
