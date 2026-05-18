@@ -6,7 +6,8 @@ def call(int branch, boolean releaseFinal) {
     String nextVersion = "unknown"
 
     stage('Get branch version info') {
-        (isBeta, minorVersion) = getBranchVersion(branch)
+//        (isBeta, minorVersion) = getBranchVersion(branch)
+        minorVersion = 2
         majorVersion = branch
         tagVersion = majorVersion + '.' + minorVersion
         snapshotVersion = "${majorVersion}.${minorVersion}-SNAPSHOT"
