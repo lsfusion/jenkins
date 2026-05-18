@@ -1,14 +1,9 @@
-def call(String tagVersion) {
+def call(String appVersion, String imageVersion) {
 
     stage('Setup buildx') {
-        sh '''
-            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
-            # Creating builder, if it is absent
-            if ! docker buildx ls | grep -q multiarch-builder; then
-              docker buildx create --name multiarch-builder --driver docker-container
-            fi
-
+        sh '''                    
+            docker buildx rm multiarch-builder 2>/dev/null || true
+            docker buildx create --name multiarch-builder --driver docker-container
             docker buildx inspect multiarch-builder --bootstrap
         '''
     }
@@ -26,19 +21,13 @@ def call(String tagVersion) {
         sh """
           docker buildx build \
             --builder multiarch-builder \
+            --provenance=false \
+            --sbom=false \
             --platform linux/amd64,linux/arm64 \
-            -t lsfusion/client:${tagVersion} \
+            -t lsfusion/mycompany:$imageVersion \
+            --build-arg FILENAME=lsfusion-server-${appVersion}.jar \
             --push \
-            ${Paths.src}/web-client
-        """
-
-        sh """
-          docker buildx build \
-            --builder multiarch-builder \
-            --platform linux/amd64,linux/arm64 \
-            -t lsfusion/server:${tagVersion} \
-            --push \
-            ${Paths.src}/server
+            ./target
         """
     }
 

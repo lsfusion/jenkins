@@ -1,196 +1,253 @@
 @Grab("org.eclipse.jgit:org.eclipse.jgit:7.0.0.202409031743-r")
 @Grab("org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5")
 
-import org.eclipse.egit.github.core.Issue
-import org.eclipse.egit.github.core.IssueEvent
-import org.eclipse.egit.github.core.Label
-import org.eclipse.egit.github.core.client.GitHubClient
-import org.eclipse.egit.github.core.service.IssueService
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.lib.ObjectId
-import org.eclipse.jgit.lib.Ref
-import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.revwalk.RevCommit
-import org.eclipse.jgit.revwalk.RevWalk
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder
-
-import java.text.SimpleDateFormat
-
 def call(String to) {
-    // in theory it should be read from scm tag in pom.xml, but it's not that easy task
-    def repoParts = (Paths.githubIssuesRepo == null ? Paths.githubRepo : Paths.githubIssuesRepo).split('/')
-    
-    String user = repoParts[0] //lsFusion
-    String repo = repoParts[1]
-    
-    def pathToRepo = pwd()
+    try {
+        def repoParts = (Paths.githubIssuesRepo == null ? Paths.githubRepo : Paths.githubIssuesRepo).split('/')
 
-    List<IssueEvent> closedEvents = getClosedEvents(user, repo.replace(".git", ""))
+        String user = repoParts[0] //mycompany
+        String repo = repoParts[1]
 
-    boolean head = true;
-    String result = "";
-    String shortResult = ""
-    String from;
-    String url = "git@github.com:" + user + "/" + repo
+        def pathToRepo = pwd()
 
-    from = getPrevVersion(to)
-    while (from != null) {
-        Set<String> commits = getCommitsBetweenTags(pathToRepo, from, head ? "HEAD" : to)
+        def issuesData = getClosedEvents(user, repo)
+        def result = ""
+        def from = getPrevVersion(to)
+        def repoUrl = "https://github.com/${user}/${repo}"
 
-        List<Issue> issues = getClosedIssues(closedEvents, commits)
+        def commits = getCommitsBetweenTags(pathToRepo, from, "HEAD")
+        def issues = getClosedIssues(issuesData, commits)
+        def groupedIssues = groupIssuesByType(issues)
 
-        def groupedIssues = issues.groupBy { issue -> getMainLabel(issue.labels) }
-        result += genHeader(to, head ? new Date() : getTagDate(pathToRepo, to));
-        for (def type : IssueType.values())
-            result += genIssuesOfType(type, groupedIssues.get(type), url)
-
-        to = from
-
-        if (head) {
-            head = false
-            shortResult = result
-            result += "## ----- PREVIOUS RELEASES --------\n"
+        result += genHeader(to, new Date())
+        for (def type in ['MAJORENHANCEMENT', 'ENHANCEMENT', 'BUG']) {
+            result += genIssuesOfType(type, groupedIssues[type], repoUrl)
         }
 
-        from = getPrevVersion(to)
-    }
+        echo result
 
-    writeFile file:'CHANGELOG.md', text:result
-    return shortResult
+        def updatedFileContent = insertAfterFirstLine(readFile('CHANGELOG.md'), result)
+
+        writeFile file: 'CHANGELOG.md', text: updatedFileContent
+
+        echo "Changelog generated successfully!"
+    } catch (Exception e) {
+        echo "Error: ${e.message}"
+        currentBuild.result = 'FAILURE'
+    }
 }
 
-static String getPrevVersion(String versionString) {
-    if (!(versionString =~ /[0-9]+\.0-beta[0-9]+/ || versionString =~ /[0-9]+\.[0-9]+/))
-        error("Version in branch should be either *.0-beta* or *.*")
-
-    String minorVersionString
-    String majorVersionString
-    if (versionString =~ /[0-9]+\.0-beta[0-9]+/) {
-        minorVersionString = versionString.substring(versionString.indexOf('beta') + 4)
-        majorVersionString = versionString.substring(0, versionString.indexOf('beta') + 4)
-    } else {
-        minorVersionString = versionString.substring(versionString.indexOf('.') + 1)
-        majorVersionString = versionString.substring(0, versionString.indexOf('.') + 1) // with '.' at the end
+def getPrevVersion(versionString) {
+    if (!(versionString =~ /[0-9]+\.[0-9]+/)) {
+        error("Version in branch should be *.*")
     }
 
-    String prevVersion
+    def minorVersionString = versionString.substring(versionString.indexOf('.') + 1)
+    def majorVersionString = versionString.substring(0, versionString.indexOf('.') + 1)
+
+    def prevVersion
     def minorVersion = Integer.valueOf(minorVersionString)
-    if(minorVersion > 0)
+    if (minorVersion > 0) {
         prevVersion = majorVersionString + "" + (minorVersion - 1)
-    else {
+    } else {
         int prevMajorVersion = Integer.valueOf(versionString.substring(0, versionString.indexOf('.'))) - 1
-        if(prevMajorVersion < 2)
+        if (prevMajorVersion < 6) {
             return null
+        }
         prevVersion = prevMajorVersion + ".0"
     }
 
     return prevVersion
 }
 
-static String genHeader(String to, Date date) {
-    return "## " + to + " (" + (new SimpleDateFormat("yyyy-MM-dd").format(date)) + ")\n"
+def genHeader(version, date) {
+    def dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd")
+    return "## ${version} (${dateFormat.format(date)})\n"
 }
 
-static String genIssuesOfType(IssueType type, List<Issue> issues, String repoName) {
-    if(issues == null || issues.isEmpty())
+def genIssuesOfType(type, issues, repoUrl) {
+    if (!issues || issues.isEmpty()) {
         return ""
-    String result = "##### " + type.getCaption() + ":\n"
-    for(def issue : issues)
-        result += " - " + issue.title + " [#" + issue.number +  "](" + repoName + "/issues/" + issue.number + ")\n"
+    }
+
+    def captions = [
+            'MAJORENHANCEMENT': 'Implemented major enhancements',
+            'ENHANCEMENT': 'Implemented enhancements',
+            'BUG': 'Fixed bugs'
+    ]
+
+    def result = "### ${captions[type]}:\n"
+    for (def issue in issues) {
+        result += " - ${issue.title} [#${issue.number}](${repoUrl}/issues/${issue.number})\n"
+    }
     return result
 }
 
-enum IssueType {
-    MAJORENHANCEMENT, ENHANCEMENT, BUG
+def groupIssuesByType(issues) {
+    def grouped = [
+            'MAJORENHANCEMENT': [],
+            'ENHANCEMENT': [],
+            'BUG': []
+    ]
 
-    String getCaption() {
-        switch (this) {
-            case MAJORENHANCEMENT:
-                return "Implemented major enhancements"
-            case ENHANCEMENT:
-                return "Implemented enhancements"
-            case BUG:
-                return "Fixed bugs"
+    for (def issue in issues) {
+        def issueType = getMainLabel(issue.labels)
+        grouped[issueType] << issue
+    }
+
+    return grouped
+}
+
+def getMainLabel(labels) {
+    for (def label in labels) {
+        if (label.name == "major feature") {
+            return 'MAJORENHANCEMENT'
         }
-        throw new UnsupportedOperationException();
+        if (label.name == "bug") {
+            return 'BUG'
+        }
     }
+    return 'ENHANCEMENT'
 }
 
-static IssueType getMainLabel(List<Label> labels) {
-    for(def label : labels) {
-        if (label.getName().equals("major feature"))
-            return IssueType.MAJORENHANCEMENT
-        if (label.getName().equals("bug"))
-            return IssueType.BUG
-    }
-    return IssueType.ENHANCEMENT
-}
+def getClosedEvents(user, repo) {
+    // issueNumber -> [issue: {number, title, labels}, commitIds: Set<String>, closed: bool]
+    def issuesData = [:]
 
-class MyGitHubClient extends GitHubClient {
-    public MyGitHubClient(String token) {
-        setOAuth2Token(token);
-    }
-}
+    withCredentials([string(credentialsId: 'api.github.com.token', variable: 'TOKEN')]) {
+        def perPage = 100
+        def page = 1
+        while (true) {
+            def response = sh(
+                    script: """
+                    curl -s -H "Authorization: token ${TOKEN}" \
+                    "https://api.github.com/repos/${user}/${repo}/issues/events?per_page=${perPage}&page=${page}"
+                """,
+                    returnStdout: true
+            )
 
-List<IssueEvent> getClosedEvents(String user, String repo) {
-    List<IssueEvent> closedEvents = new ArrayList<>();
-    withCredentials([string(credentialsId: 'api.github.com.token', variable: 'token')]) {
-        for (Collection<IssueEvent> issueEvents : new IssueService(new MyGitHubClient(token)).pageEvents(user, repo, Integer.MAX_VALUE))
-            for (IssueEvent issueEvent : issueEvents) {
-                // if commit closes issue
-                if (issueEvent.commitId != null && !issueEvent.commitId.isEmpty() && issueEvent.event.equals("closed"))
-                    closedEvents.add(issueEvent);
+            def events = readJSON text: response
+            if (events == null || events.isEmpty()) {
+                break
             }
+
+            for (def event in events) {
+                if (event.event != "closed" && event.event != "referenced") {
+                    continue
+                }
+                if (!event.issue) {
+                    continue
+                }
+
+                def num = event.issue.number
+                def entry = issuesData[num]
+                if (entry == null) {
+                    entry = [
+                            issue: [
+                                    number: num,
+                                    title: event.issue.title,
+                                    labels: event.issue.labels
+                            ],
+                            commitIds: [] as Set,
+                            closed: false
+                    ]
+                    issuesData[num] = entry
+                }
+                if (event.event == "closed") {
+                    entry.closed = true
+                }
+                if (event.commit_id) {
+                    entry.commitIds << event.commit_id
+                }
+            }
+
+            if (events.size() < perPage) {
+                break
+            }
+            page++
+        }
     }
-    return closedEvents
+
+    return issuesData
 }
 
-static List<Issue> getClosedIssues(List<IssueEvent> closedEvents, Set<String> commits) {
-    List<Issue> closedIssues = new ArrayList<>();
-    for(IssueEvent issueEvent : closedEvents) {
-        // if commit in required commit list
-        if(commits.contains(issueEvent.commitId))
-            closedIssues.add(issueEvent.issue);
+def getClosedIssues(issuesData, commits) {
+    def closedIssues = []
+    for (def entry in issuesData.values()) {
+        if (!entry.closed) {
+            continue
+        }
+        if (entry.commitIds.any { commits.contains(it) }) {
+            closedIssues << entry.issue
+        }
     }
     return closedIssues
 }
 
-static getCommitsBetweenTags(String pathToRepo, String tag1, String tag2) {
-    FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
-    repositoryBuilder.setMustExist(true);
-    def file = new File(pathToRepo, ".git")
-    repositoryBuilder.setGitDir(file);
-    Repository repository = repositoryBuilder.build();
+def getCommitsBetweenTags(pathToRepo, tag1, tag2) {
+    def commits = []
 
-    Ref from = repository.findRef(tag1)
-    Ref to = repository.findRef(tag2)
-    def command = new Git(repository).log()
-    def fromId = getActualRefObjectId(repository, from)
-    def toId = getActualRefObjectId(repository, to)
+    def tag1Exists = sh(
+            script: "git rev-parse --verify ${tag1} >/dev/null 2>&1 && echo 'exists' || echo 'not exists'",
+            returnStdout: true
+    ).trim() == 'exists'
 
-    command = command.addRange(fromId, toId)
-    Set<String> commits = new HashSet<>();
-    for (RevCommit commit : command.call())
-        commits.add(commit.getName());
-    return commits;
-}
+    def tag2Exists = sh(
+            script: "git rev-parse --verify ${tag2} >/dev/null 2>&1 && echo 'exists' || echo 'not exists'",
+            returnStdout: true
+    ).trim() == 'exists'
 
-static getTagDate(String pathToRepo, String tag) {
-    FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
-    repositoryBuilder.setMustExist(true);
-    def file = new File(pathToRepo, ".git")
-    repositoryBuilder.setGitDir(file);
-    Repository repository = repositoryBuilder.build();
-
-    Ref to = repository.findRef(tag)
-    RevWalk walk = new RevWalk(repository);
-    return walk.parseTag(to.getObjectId()).getTaggerIdent().getWhen()
-}
-
-static ObjectId getActualRefObjectId(Repository repo, Ref ref) {
-    final Ref repoPeeled = repo.getRefDatabase().peel(ref);
-    if (repoPeeled.getPeeledObjectId() != null) {
-        return repoPeeled.getPeeledObjectId();
+    if (!tag1Exists || !tag2Exists) {
+        echo "Skipping - one or both tags don't exist"
+        return commits // возвращаем пустой список
     }
-    return ref.getObjectId();
+
+    dir(pathToRepo) {
+        // Получаем коммиты между тегами используя нативный git
+        def commitList = sh(
+                script: """
+                git log --pretty=format:"%H" ${tag1}..${tag2}
+            """,
+                returnStdout: true
+        ).trim()
+
+        commits = commitList.split('\n') as List
+    }
+
+    return commits as Set
+}
+
+def getTagDate(pathToRepo, tag) {
+    def dateStr = ""
+
+    dir(pathToRepo) {
+        dateStr = sh(
+                script: """
+                git log -1 --format=%ai ${tag}
+            """,
+                returnStdout: true
+        ).trim()
+    }
+
+    def format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    return format.parse(dateStr)
+}
+
+def insertAfterFirstLine(existingContent, newContent) {
+    def lines = existingContent.split('\n')
+    def resultLines = []
+
+    if (lines.size() > 0) {
+        resultLines << lines[0]
+    }
+
+    resultLines << ""
+    resultLines << newContent.trim()
+    resultLines << ""
+
+    for (int i = 1; i < lines.size(); i++) {
+        resultLines << lines[i]
+    }
+
+    return resultLines.join('\n')
 }

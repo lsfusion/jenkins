@@ -16,7 +16,7 @@ class Paths {
     static String docsRepo = "lsfusion-solutions/mycompany.git"
 
     // for testing purposes
-    static String githubIssuesRepo = null
+    static String githubIssuesRepo = "lsfusion-solutions/mycompany"
     static boolean noCustomUpdates = true
     static String slackChannel = null
     
