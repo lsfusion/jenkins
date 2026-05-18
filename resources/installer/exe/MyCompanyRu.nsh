@@ -1,5 +1,0 @@
-LangString strMyCompanyOptions ${LANG_RUSSIAN} "Настройки установки MyCompany"
-LangString strChooseLanguage ${LANG_RUSSIAN} "Язык сервера MyCompany"
-LangString strSystemLanguage ${LANG_RUSSIAN} "Язык системы"
-LangString strEnglish ${LANG_RUSSIAN} "Английский"
-LangString strRussian ${LANG_RUSSIAN} "Русский"
