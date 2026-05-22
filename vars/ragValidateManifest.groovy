@@ -1,45 +1,34 @@
 // ragValidateManifest — PR-builder step for lsfusion/platform.
 //
-// Runs on PRs that touch docs/en/** or docs/manifest.json. Sparse-clones
-// the mcp repo at the SHA pinned in platform/.rag/mcp-version, installs the
-// `fill` package, and runs `fill.manifest validate` against the PR checkout.
+// Validates the docs FOLDER STRUCTURE on PRs that touch docs/**. Sparse-clones
+// the mcp repo at the SHA pinned in platform/.rag/mcp-version, then runs
+// `fill.manifest validate` — now a folder-structure + slug-shape check (there is
+// no manifest anymore; a doc's category comes from its docs/<lang> subfolder:
+// language/paradigm/how-to/brief/rules).
 //
-// Optional bootstrap acceptance check (when `checkBootstrap: true` is passed)
-// also runs `fill.manifest check-bootstrap` to enforce the
-// BOOTSTRAP_DEFAULTS_REVIEWED:<N> marker contract for bootstrap PRs.
+// NOTE: the step name is kept so the existing PR-builder job binding keeps
+// working; it no longer validates a manifest. Two server-side follow-ups on the
+// job config (which lives in Jenkins, not in a repo):
+//   - drop the old `docs/manifest.json` path from the stage's `when` trigger;
+//   - remove any `checkBootstrap: true` call site — the manifest bootstrap /
+//     classify workflow (BOOTSTRAP_DEFAULTS_REVIEWED) is gone.
+// The pinned mcp SHA must point at post-folder-migration mcp for the new
+// `validate --docs-dir` form to exist.
 //
-// Call examples (from a Jenkinsfile on the platform repo PR-builder job):
+// Call example (from a Jenkinsfile on the platform repo PR-builder job):
 //
-//   stage('Validate manifest') {
+//   stage('Validate docs structure') {
 //     when { changeRequest() }
 //     steps { ragValidateManifest() }
 //   }
 //
-//   // Bootstrap PR (touching .rag/bootstrap/):
-//   steps {
-//     ragValidateManifest(
-//       checkBootstrap: true,
-//       prDescription: env.CHANGE_BODY,  // GitHub PR body, populated by Jenkins
-//     )
-//   }
-//
-// Arguments (all optional, sensible defaults):
-//   manifestPath:    path to manifest.json     (default: 'docs/manifest.json')
-//   docsDir:         path to docs/en           (default: 'docs/en')
-//   reportPath:      bootstrap-report.md path  (default: '.rag/bootstrap/bootstrap-report.md')
-//   acceptanceFile:  acceptance.md path        (default: '.rag/bootstrap/acceptance.md')
-//   checkBootstrap:  run BOOTSTRAP_DEFAULTS_REVIEWED marker check (default: false)
-//   prDescription:   raw PR body text for marker scan (default: '')
+// Arguments (all optional):
+//   docsDirs:  doc roots to validate (default: ['docs/en', 'docs/ru'])
 
 import static Paths.mcpRepo
 
 def call(Map args = [:]) {
-    String manifestPath   = args.manifestPath   ?: 'docs/manifest.json'
-    String docsDir        = args.docsDir        ?: 'docs/en'
-    String reportPath     = args.reportPath     ?: '.rag/bootstrap/bootstrap-report.md'
-    String acceptanceFile = args.acceptanceFile ?: '.rag/bootstrap/acceptance.md'
-    Boolean checkBootstrap = args.checkBootstrap ?: false
-    String prDescription   = args.prDescription  ?: ''
+    List<String> docsDirs = args.docsDirs ?: ['docs/en', 'docs/ru']
 
     if (!fileExists('.rag/mcp-version')) {
         error("ragValidateManifest: .rag/mcp-version not found in workspace. This step expects " +
@@ -71,32 +60,14 @@ git sparse-checkout set fill
 git checkout ${mcpSha}
 """
 
-    // `fill.manifest` is stdlib-only at this slice — no pip install needed.
-    // Adding `${mcpDir}` to PYTHONPATH makes `fill` importable as a top-level
-    // package directly from the sparse checkout. Later slices (chunker, ingest,
-    // eval) WILL need pip with langchain/openai/tiktoken, at which point this
-    // step grows a `python3-venv` or Docker-agent prerequisite — but for the
-    // validator slice keeping deps zero side-steps the python3-venv requirement.
-
-    sh """#!/usr/bin/env bash
+    // `fill.manifest validate` is stdlib-only — no pip install needed. One run
+    // per doc root; the check verifies every .md sits in a valid category folder
+    // with a well-formed slug, and that slugs don't collide across folders.
+    for (docsDir in docsDirs) {
+        sh """#!/usr/bin/env bash
 set -euo pipefail
 PYTHONPATH='${mcpDir}' python3 -m fill.manifest validate \\
-    --manifest '${manifestPath}' \\
     --docs-dir '${docsDir}'
 """
-
-    if (checkBootstrap) {
-        // PR_BODY env keeps potentially-multiline PR descriptions out of the shell.
-        // `:-` default in the expansion handles the case where prDescription was empty
-        // (Jenkins `withEnv(["PR_BODY="])` does not always set the variable under `set -u`).
-        withEnv(["PR_BODY=${prDescription}"]) {
-            sh """#!/usr/bin/env bash
-set -euo pipefail
-PYTHONPATH='${mcpDir}' python3 -m fill.manifest check-bootstrap \\
-    --report '${reportPath}' \\
-    --acceptance-file '${acceptanceFile}' \\
-    --pr-description "\${PR_BODY:-}"
-"""
-        }
     }
 }
