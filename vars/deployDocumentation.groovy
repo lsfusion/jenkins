@@ -38,18 +38,27 @@ def copyDocPages(id, branch) {
 
         dir("docs") {
             sh "rm -rf $enPath"
-            sh "cp -fa en $enPath"
-
             sh "rm -rf $ruPath"
-            sh "cp -fa ru $ruPath"
 
-            // The current-docs navigation lives in platform/docs/sidebars.js
-            // (beside en/ru, so the copies above don't touch it). Materialize it
-            // for the build as docusaurus/sidebars.generated.js, which the repo's
-            // sidebars.js loader falls back to. Versioned docs keep their own
-            // versioned_sidebars/*.json, so this runs for the current version only.
             if (isNext) {
+                // Current docs use the TYPE-FIRST source layout docs/<type>/{en,ru}/.
+                // Reconstruct the flat per-locale tree Docusaurus expects — en under
+                // docs/, ru under i18n/ — so the published output is byte-identical to
+                // the old layout. The per-type docs/<type>/AGENTS.md sit ABOVE <type>/en
+                // and are therefore NOT copied (no stray built pages / llms twins).
+                sh "mkdir -p $enPath $ruPath"
+                for (t in ['language', 'paradigm', 'how-to', 'brief', 'rules', 'images']) {
+                    sh "cp -fa $t/en $enPath/$t"
+                    sh "cp -fa $t/ru $ruPath/$t"
+                }
+                // Current-docs navigation: platform/docs/sidebars.js → materialize
+                // it for the build as docusaurus/sidebars.generated.js (the repo's
+                // sidebars.js loader falls back to it).
                 sh "cp -fa sidebars.js $documentation/sidebars.generated.js"
+            } else {
+                // v4/v5/v6 keep the OLD flat layout docs/{en,ru}/ on their branches.
+                sh "cp -fa en $enPath"
+                sh "cp -fa ru $ruPath"
             }
         }
     }
