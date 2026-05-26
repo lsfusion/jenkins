@@ -5,6 +5,13 @@ def call(boolean deployPlatform) {
     
     int firstToDeploy = 0
 
+    // Snapshot each branch's last-processed commit BEFORE the merge loop overwrites it
+    // (checkAndMergeVersion rewrites prevMergeAndDeploy). Change-detection below diffs
+    // prevCommit..HEAD instead of looking only at HEAD, so a platform commit still triggers a
+    // deploy even when later docs/rag commits (or a skipped run) leave HEAD non-platform — the
+    // old HEAD-only check silently dropped such commits and froze the snapshot.
+    def prevCommits = readPrevBuildCommits()
+
     def branches = (lastSupportedVersion..lastVersion).collect{it}
     for (branch in branches) {
         if (checkAndMergeVersion("v$branch", branch) && firstToDeploy == 0) {
@@ -16,13 +23,19 @@ def call(boolean deployPlatform) {
     }
 
     if (firstToDeploy != 0) {
-        update firstToDeploy == -1 ? "master" : "v$firstToDeploy"
-        def currentCommit = sh(returnStdout: true, script: "git log -n 1 --no-merges --pretty=format:\"%h\"")
+        String deployBranch = firstToDeploy == -1 ? "master" : "v$firstToDeploy"
+        update deployBranch
         String currentCommitMessage = sh(returnStdout: true, script: "git log -n 1 --pretty=short")
-        boolean platformChanged = platformChanged(currentCommit)
-        boolean apiDesktopChanged = apiDesktopChanged(currentCommit)
-        boolean lsfLogicsgChanged = lsfLogicsgChanged(currentCommit)
-        boolean docsChanged = docsChanged(currentCommit)
+
+        // What changed since this branch was last processed (prevCommit..HEAD), per area.
+        // prevMergeAndDeploy stores `git rev-parse` output (trailing newline) under plain String
+        // keys — coerce the branch to String (GString keys would miss the map) and trim the commit
+        // before interpolating it into a git range.
+        String prevCommit = prevCommits[deployBranch]?.trim()
+        boolean platformChanged = hasPathChanges(prevCommit, ["api", "build", "desktop-client", "server", "web-client"])
+        boolean apiDesktopChanged = hasPathChanges(prevCommit, ["api", "desktop-client"])
+        boolean lsfLogicsgChanged = hasPathChanges(prevCommit, [Paths.lsfLogics])
+        boolean docsChanged = hasPathChanges(prevCommit, ["docs"])
 
         if (lsfLogicsgChanged) {
             if (firstToDeploy > 0) {
@@ -72,35 +85,33 @@ def call(boolean deployPlatform) {
     }
 }
 
-def lsfLogicsgChanged(def currentCommit) {
-    return currentCommit == readLatestCommit(Paths.lsfLogics)
+def readPrevBuildCommits() {
+    File cvFile = new File(Paths.jenkinsHome + '/prevMergeAndDeploy')
+    return cvFile.exists() ? Eval.me(cvFile.text) : [:]
 }
 
-def docsChanged(def currentCommit) {
-    return currentCommit == readLatestCommit("docs")
-}
-
-def platformChanged(def currentCommit) {
-    return currentCommit == readLatestCommit("api") ||
-            currentCommit == readLatestCommit("build") ||
-            currentCommit == readLatestCommit("desktop-client") ||
-            currentCommit == readLatestCommit("server") ||
-            currentCommit == readLatestCommit("web-client")
-}
-
-def apiDesktopChanged(def currentCommit) {
-    return currentCommit == readLatestCommit("api") || 
-            currentCommit == readLatestCommit("desktop-client")
+// True if any commit in (sinceCommit, HEAD] touched one of `paths`. A null marker (first run for
+// the branch) counts as changed so the first build still deploys; an unrelated/rewritten
+// sinceCommit errs toward "changed" (deploy) rather than silently skipping.
+def hasPathChanges(String sinceCommit, List<String> paths) {
+    if (sinceCommit == null) {
+        return true
+    }
+    // If the marker commit isn't in the workspace (force-push / fresh clone / gc), a range diff
+    // would fail with "bad revision"; treat that as changed and deploy rather than throw.
+    if (sh(returnStatus: true, script: "git cat-file -e ${sinceCommit}^{commit}") != 0) {
+        return true
+    }
+    String pathArgs = paths.collect { "'$it'" }.join(' ')
+    String changed = sh(returnStdout: true,
+            script: "git log ${sinceCommit}..HEAD --no-merges --full-history --pretty=format:%h -- ${pathArgs}").trim()
+    return !changed.isEmpty()
 }
 
 def removeSignedDesktopJar(def branch) {
     update branch
     String platformVersion = readVersion()
     sh "rm -f ${Paths.signedDir}/lsfusion-client-${platformVersion}.jar"
-}
-
-def readLatestCommit(dir) {
-    return sh(returnStdout: true, script: "git log -n 1 --no-merges --pretty=format:\"%h\" --full-history -- $dir")
 }
 
 def writeLatestCommitBranches(Set<String> branches) {
