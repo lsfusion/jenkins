@@ -20,6 +20,10 @@ def call(String commitMessage) {
 
         sh "GIT_USER=nomojenkins USE_SSH=true DEPLOYMENT_BRANCH=master yarn deploy"
 
+        // `yarn deploy` clones the lsfusion.github.io repo into /tmp/lsfusion.github.io-master*,
+        // then exits without removing it. Clean it up so these don't accumulate.
+        sh "rm -rf ${Paths.tmp}/lsfusion.github.io-master*"
+
         if (commitMessage != null)
             slack.message "Documentation has been successfully updated.\n```" + commitMessage + "```"
     }
