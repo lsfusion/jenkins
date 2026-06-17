@@ -23,16 +23,16 @@
 // Lockable Resources Jenkins plugin; without it the build fails loudly,
 // which is the intended behavior over silent racing.
 //
-// Call example (from a Jenkinsfile on the platform master post-merge job):
+// Call example — the step checks out platform master itself (see below), so no separate
+// Checkout stage is needed; just invoke it (e.g. from the processPlatformCommit merge job,
+// or a standalone job for manual / dry runs):
 //
 //   @Library('lsfusion') _
 //   pipeline {
 //     agent any
 //     options { disableConcurrentBuilds() }
-//     triggers { githubPush() }
 //     stages {
-//       stage('Checkout') { steps { checkout scm } }
-//       stage('Ingest')   { steps { ragIngestDocs() } }
+//       stage('Ingest') { steps { ragIngestDocs() } }
 //     }
 //   }
 //
@@ -67,6 +67,14 @@ def call(Map args = [:]) {
     // catches things like `..` and `.lock` that this regex permits.
     if (!(pushBranch ==~ /[a-zA-Z0-9._\/-]+/)) {
         error("ragIngestDocs: pushBranch contains unsafe characters: '${pushBranch}'")
+    }
+
+    // Check out platform master into platformRoot first: the mcp pin (.rag/mcp-version),
+    // the docs corpus, and the .rag/openai-state.json this step commits all live on master.
+    // Doing it here makes the step self-contained, so callers (the processPlatformCommit
+    // merge job, or a standalone job) don't have to check out master beforehand.
+    dir(platformRoot) {
+        update "master"
     }
 
     String mcpVersionFile = "${platformRoot}/.rag/mcp-version"

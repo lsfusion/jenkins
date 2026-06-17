@@ -80,6 +80,7 @@ def call(boolean deployPlatform) {
         }
 
         if (docsChanged) {
+            ragIngestDocs(dryRun: false)
             deployDocumentation(currentCommitMessage)
         }
     }

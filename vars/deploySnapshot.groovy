@@ -30,5 +30,5 @@ def call(String branch, String commitMessage, boolean uploadToCdn, boolean signD
     }
 
     if (commitMessage != null) // master
-        slack.message "<${env.BUILD_URL}|${currentBuild.fullDisplayName}> succeeded.\n```" + commitMessage + "```"
+        slack.message "lsFusion SNAPSHOT artifacts published.\n<${env.BUILD_URL}|${currentBuild.fullDisplayName}>\n```" + commitMessage + "```"
 }
