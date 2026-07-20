@@ -71,6 +71,7 @@ def call(int branch, boolean releaseFinal) {
         stage('Copy compose.yaml') {
             sh "mkdir -p ${Paths.download}/docker/${tagVersion}"
             sh "cp -f compose.yaml ${Paths.download}/docker/${tagVersion}/"
+            sh "cp -f ${getResourcesDir()}/docker/pg-migrate* ${Paths.download}/docker/"
         }
 
         stage('Generate JNLP') {
@@ -108,7 +109,8 @@ def call(int branch, boolean releaseFinal) {
                                  [sourceFiles: "exe/${tagVersion}/", remoteDirectory: "exe", flatten: true],
                                  [sourceFiles: "apt/", remoteDirectory: "apt", removePrefix: "apt"],
                                  [sourceFiles: "dnf/", remoteDirectory: "dnf", removePrefix: "dnf"],
-                                 [sourceFiles: "docker/${tagVersion}/", remoteDirectory: "docker", removePrefix: "docker"]
+                                 [sourceFiles: "docker/${tagVersion}/", remoteDirectory: "docker", removePrefix: "docker"],
+                                 [sourceFiles: "docker/pg-migrate*", remoteDirectory: "docker", removePrefix: "docker"]
                          ],
                          verbose   : true]
                 ]

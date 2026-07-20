@@ -13,6 +13,7 @@ def call(String branch, boolean buildWindows = false) {
     buildAndDeployDockerImages(platformVersion)
     sh "mkdir -p ${Paths.download}/docker/${platformVersion}"
     sh "cp -f compose.yaml ${Paths.download}/docker/${platformVersion}/"
+    sh "cp -f ${getResourcesDir()}/docker/pg-migrate* ${Paths.download}/docker/"
 
     dir(Paths.download) {
         ftpPublisher failOnError: true, publishers: [
@@ -21,7 +22,8 @@ def call(String branch, boolean buildWindows = false) {
                          [sourceFiles: "exe/${platformVersion}/", remoteDirectory: "exe", flatten: true],
                          [sourceFiles: "apt-snap/", remoteDirectory: "apt-snap", removePrefix: "apt-snap", cleanRemote: true],
                          [sourceFiles: "dnf-snap/", remoteDirectory: "dnf-snap", removePrefix: "dnf-snap", cleanRemote: true],
-                         [sourceFiles: "docker/${platformVersion}/", remoteDirectory: "docker", removePrefix: "docker"]
+                         [sourceFiles: "docker/${platformVersion}/", remoteDirectory: "docker", removePrefix: "docker"],
+                         [sourceFiles: "docker/pg-migrate*", remoteDirectory: "docker", removePrefix: "docker"]
                  ],
                  verbose   : true]
         ]
