@@ -25,6 +25,9 @@ sed "s/(/( /g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                     
 sed "s/}?=>/}/g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                                     # change all }?=> to } to delete
 sed "s/}?/}/g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                                       # change all }? to } to delete
 
+sed "s/catch *\[[^]]*\]//g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                          # drop the 'catch' of a rule exception handler together with its [] arguments, the {} action is deleted below
+sed "s/^\([[:space:]]*\)finally\b/\1/" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4               # the same for a 'finally' clause
+
 sed "s/\]/}/g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                                       # change all ] to } to delete
 sed "s/\[/{/g" LsfJSLogics.g4 > tmp ; mv tmp LsfJSLogics.g4                                       # change all [ to [ to delete
 
