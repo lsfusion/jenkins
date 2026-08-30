@@ -11,6 +11,12 @@
 // to (re)index; this wrapper just plumbs credentials, deps, and the
 // state-commit back to the remote.
 //
+// It ALSO builds the corpus snapshot the MCP server searches in-process and
+// copies it to the server host. That happens here, from the same Section
+// objects the driver just indexed, so the snapshot and the vector store can
+// never describe different revisions of the docs — which is the one failure
+// a local index has that a hosted one does not.
+//
 // Required Jenkins credentials (configure on the job):
 //   - openai-api-key       (Secret text): OpenAI API key.
 //   - rag-vector-store-id  (Secret text): target Vector Store id (vs_...).
@@ -54,6 +60,15 @@ def call(Map args = [:]) {
     String gitUserName  = args.gitUserName   ?: 'rag-ingest[bot]'
     String gitUserEmail = args.gitUserEmail  ?: 'rag-ingest@lsfusion.org'
     Boolean dryRun      = args.dryRun        ?: false
+    // The snapshot the MCP server searches in-process. Built from the SAME
+    // Section objects this job just indexed, in this job, so the snapshot and
+    // the vector store can never describe different revisions of the docs.
+    // Delivered to the host that runs the server — the one deployMcp already
+    // reaches over SSH.
+    Boolean buildSnapshot = args.containsKey('buildSnapshot') ? args.buildSnapshot : true
+    String snapshotHost   = args.snapshotHost ?: 'root@ai.lsfusion.org'
+    String snapshotDir    = args.snapshotDir  ?: '/opt/stack/mcp-data/snapshot'
+    String snapshotName   = args.snapshotName ?: 'corpus.npz'
 
     // Every operator-supplied string that lands inside a `sh` heredoc is
     // single-quote-escaped via the standard bash trick: `'` → `'\''`.
@@ -125,9 +140,12 @@ git checkout '${mcpSha}'
     // Internal constants only — no operator input. Each package name is
     // single-quoted to keep the shell expansion explicit even though
     // injection is currently impossible.
+    // `numpy` is the snapshot builder's only extra dep (a snapshot is a
+    // float32 matrix); installed on the real path only, since a dry run
+    // never builds one.
     String pipPackages = dryRun
         ? "'langchain-text-splitters' 'tiktoken' 'python-frontmatter'"
-        : "'openai' 'langchain-text-splitters' 'tiktoken' 'python-frontmatter'"
+        : "'openai' 'langchain-text-splitters' 'tiktoken' 'python-frontmatter' 'numpy'"
     sh """#!/usr/bin/env bash
 set -euo pipefail
 rm -rf '${venvDir}'
@@ -175,6 +193,65 @@ echo \$RC > .jenkins-rag-rc
     }
 
     String driverRc = readFile('.jenkins-rag-rc').trim()
+
+    // ─── 3b. Build and deliver the corpus snapshot ────────────────────────
+    // Only on a clean driver run: a snapshot built beside a half-finished
+    // ingest would describe a corpus the store does not hold, and the whole
+    // point of building it here is that the two agree.
+    //
+    // Delivery is atomic on the far side — copy to a temp name, then `mv`
+    // within the same directory — because the server may be reading the file
+    // while this runs, and half a snapshot loads as a truncated one. Mode 0644
+    // on purpose: the container runs as uid 10001, not root.
+    //
+    // A failure here does NOT fail the build. The ingest already succeeded and
+    // the vector store is up to date; the server keeps serving its previous
+    // snapshot (or falls back to the store), and the next docs commit retries.
+    if (dryRun) {
+        echo 'ragIngestDocs: dry-run — skipping the snapshot build'
+    } else if (!buildSnapshot) {
+        echo 'ragIngestDocs: buildSnapshot=false — skipping the snapshot build'
+    } else if (driverRc != '0') {
+        echo "ragIngestDocs: driver exit ${driverRc} — skipping the snapshot " +
+             '(it must describe the same corpus the store just received)'
+    } else {
+        String docsSha = ''
+        dir(platformRoot) {
+            docsSha = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+        }
+        withCredentials([string(credentialsId: 'openai-api-key', variable: 'OPENAI_API_KEY')]) {
+            withEnv(["SNAP_HOST=${snapshotHost}", "SNAP_DIR=${snapshotDir}",
+                     "SNAP_NAME=${snapshotName}", "DOCS_SHA=${docsSha}",
+                     "MCP_DIR=${mcpDir}", "VENV_DIR=${venvDir}",
+                     "PLATFORM_ROOT=${platformRoot}"]) {
+                // Single-quoted on purpose: no Groovy interpolation, so no
+                // $-escaping landmines. Every value arrives through the env
+                // set just above.
+                int snapRc = sh(returnStatus: true, script: '''#!/usr/bin/env bash
+set -euo pipefail
+. "$VENV_DIR"/bin/activate
+OUT="$WORKSPACE/rag-snapshot.npz"
+PYTHONPATH="$MCP_DIR" python3 "$MCP_DIR/tools/rag_build_snapshot.py" \\
+    --platform-root "$PLATFORM_ROOT" --out "$OUT" --corpus-revision "$DOCS_SHA"
+ls -l "$OUT"
+scp -o BatchMode=yes -o StrictHostKeyChecking=accept-new \\
+    "$OUT" "$SNAP_HOST:$SNAP_DIR/$SNAP_NAME.tmp"
+ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new "$SNAP_HOST" \\
+    "chmod 0644 '$SNAP_DIR/$SNAP_NAME.tmp' && mv -f '$SNAP_DIR/$SNAP_NAME.tmp' '$SNAP_DIR/$SNAP_NAME'"
+rm -f "$OUT"
+''')
+
+                if (snapRc != 0) {
+                    echo "ragIngestDocs: snapshot build/delivery failed (rc=${snapRc}) — the " +
+                         'ingest stands, the server keeps its previous snapshot, and the ' +
+                         'next docs commit retries'
+                } else {
+                    echo "ragIngestDocs: snapshot delivered to ${snapshotHost}:${snapshotDir}/${snapshotName} " +
+                         "for docs ${docsSha}"
+                }
+            }
+        }
+    }
 
     // ─── 4. Commit + push state.json (skipped on dry-run) ────────────────
     // Dry-run uses a Fake client; pushing its mutations back to master
