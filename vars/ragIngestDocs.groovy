@@ -118,11 +118,12 @@ def call(Map args = [:]) {
 
     // ─── 1. Sparse-clone mcp at the pinned SHA ─────────────────────────────
     // Pulls just `fill/` and `tools/` (the driver lives in tools/). Public
-    // repo, no creds needed.
+    // repo, but cloned over SSH: GitHub throttles unauthenticated downloads
+    // from datacenter IPs, which fails this clone intermittently.
     dir(mcpDir) { deleteDir() }
     sh """#!/usr/bin/env bash
 set -euo pipefail
-git clone --filter=blob:none --no-checkout 'https://github.com/${mcpRepo}' '${mcpDir}'
+git clone --filter=blob:none --no-checkout 'git@github.com:${mcpRepo}' '${mcpDir}'
 cd '${mcpDir}'
 git sparse-checkout init --cone
 git sparse-checkout set fill tools

@@ -8,7 +8,7 @@ def call(String branch) {
         stage('get ace') {
             dir(antlrDirPath + '/ace') {
                 git(
-                        url: 'https://github.com/lsfusion/ace.git',
+                        url: 'git@github.com:lsfusion/ace.git',
                         branch: 'master',
                 )
             }
