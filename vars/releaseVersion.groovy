@@ -35,12 +35,25 @@ def call(int branch, boolean releaseFinal) {
         }
 
         stage('Release branch') {
-            String releaseCommand = "mvn -B release:clean release:prepare release:perform"
+            // -Darguments reaches the builds that prepare and perform fork. deployAtEnd for the reason deploySnapshot has
+            // it, and more so here: a release published halfway leaves a version the repository will not take again
+            String releaseCommand = "mvn -B release:clean release:prepare release:perform -Darguments=-DdeployAtEnd=true"
             if (releaseBeta) {
                 releaseCommand += " -DdevelopmentVersion=$majorVersion.0-SNAPSHOT -DreleaseVersion=$tagVersion"
             }
 
-            sh releaseCommand
+            // both of those builds include the tests module, whose integration tests need a postgres
+            boolean hasTests = fileExists('tests/compose.yaml')
+            try {
+                if (hasTests) {
+                    sh "docker compose -f tests/compose.yaml up -d db --wait"
+                }
+                sh releaseCommand
+            } finally {
+                if (hasTests) {
+                    sh "docker compose -f tests/compose.yaml down -v"
+                }
+            }
 
             if (releaseBeta) {
                 nextBetaVersion.set(minorVersion + 1)
