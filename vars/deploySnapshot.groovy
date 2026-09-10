@@ -10,10 +10,12 @@ def call(String branch, String commitMessage, boolean uploadToCdn, boolean signD
             sh "docker compose -f tests/compose.yaml up -d db --wait"
         }
 
+        // deployAtEnd : maven takes each module through deploy before starting the next, and tests is near the
+        // end of the reactor - without it everything ahead of a failing test would already be published
         if (signDesktopJar) {
-            sh "mvn -ntp clean deploy"
+            sh "mvn -ntp clean deploy -DdeployAtEnd=true"
         } else {
-            sh "mvn -ntp clean deploy -P-sign-desktop-jar"
+            sh "mvn -ntp clean deploy -DdeployAtEnd=true -P-sign-desktop-jar"
         }
         
         if (uploadToCdn) {
