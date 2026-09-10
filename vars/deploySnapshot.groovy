@@ -10,6 +10,10 @@ def call(String branch, String commitMessage, boolean uploadToCdn, boolean signD
             sh "docker compose -f tests/compose.yaml up -d db --wait"
         }
 
+        // junit below reads whatever reports are on disk, and mvn clean only reaches the modules the build gets to:
+        // without this, a build that fails early reports the tests of the one before it
+        sh "rm -rf */target/surefire-reports tests/target/failsafe-reports"
+
         // deployAtEnd : maven takes each module through deploy before starting the next, and tests is near the
         // end of the reactor - without it everything ahead of a failing test would already be published
         if (signDesktopJar) {
