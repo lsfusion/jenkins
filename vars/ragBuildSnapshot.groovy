@@ -34,6 +34,8 @@
 //     }
 //   }
 
+import static Paths.mcpRepo
+
 def call(Map args = [:]) {
     String platformRoot = args.platformRoot  ?: '.'
     Boolean dryRun      = args.dryRun        ?: false
