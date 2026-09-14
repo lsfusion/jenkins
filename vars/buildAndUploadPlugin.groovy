@@ -21,14 +21,24 @@ def call() {
 
             sh "cp -f build/distributions/lsfusion-idea-plugin-${newVer}.zip lsfusion-idea-plugin.zip"
 
-            try {
-                withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
-                    sh "./gradlew publishPlugin -PintellijPublishToken=${token}"
+            def publishStatus
+            withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
+                // Single-quoted: the shell expands $token, so the secret is not interpolated by Groovy.
+                publishStatus = sh(
+                        script: '#!/bin/bash\nset -o pipefail\n./gradlew publishPlugin -PintellijPublishToken="$token" 2>&1 | tee build/publishPlugin.log',
+                        returnStatus: true
+                )
+            }
+            if (publishStatus != 0) {
+                def publishLog = readFile 'build/publishPlugin.log'
+                // oldVer is the latest approved update, so every push rebuilds a version that is still waiting for review
+                // and Marketplace refuses the second upload. That is expected; any other failure is not.
+                if (publishLog.contains('already contains version')) {
+                    echo "Version ${newVer} is already uploaded to JetBrains Marketplace and not approved yet, nothing is published."
+                    currentBuild.description = "${newVer}: already uploaded, not approved yet"
+                    return
                 }
-            } catch (e) {
-                echo "Failed to publish plugin: ${e.message}"
-                echo "This might be because the version is already uploaded and pending review."
-                return
+                error "Publishing ${newVer} to JetBrains Marketplace failed: ${gradleFailureReason(publishLog)}"
             }
 
             ftpPublisher failOnError: true, publishers: [
@@ -44,7 +54,7 @@ def call() {
             echo "Version ${newVer} matches the latest version in Marketplace. Skipping build."
         }
     } catch (e) {
-        slack.error "Warning! <$env.BUILD_URL|$currentBuild.fullDisplayName> failed."
+        slack.error "Warning! <$env.BUILD_URL|$currentBuild.fullDisplayName> failed${e.message ? ': ' + e.message : '.'}"
         throw e
     }
 }
@@ -74,4 +84,20 @@ def getReleaseNotes(String text) {
         res = "${res}• ${li.text()}\n"
     }
     return res
+}
+
+// Gradle's "* What went wrong:" section as one line, e.g.
+// "Execution failed for task ':verifyPlugin'. Verification failed with [INTERNAL_API_USAGES] problems. ..."
+@NonCPS
+def gradleFailureReason(String log) {
+    def lines = log.readLines()
+    def start = lines.findIndexOf { it.startsWith('* What went wrong:') }
+    if (start == -1) {
+        return 'no Gradle failure message, see the build log'
+    }
+    return lines.drop(start + 1)
+            .takeWhile { !it.trim().isEmpty() }
+            .collect { it.replaceFirst(/^>\s*/, '').trim() }
+            .join(' ')
+            .take(300)
 }
