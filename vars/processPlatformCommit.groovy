@@ -32,7 +32,7 @@ def call(boolean deployPlatform) {
         // keys — coerce the branch to String (GString keys would miss the map) and trim the commit
         // before interpolating it into a git range.
         String prevCommit = prevCommits[deployBranch]?.trim()
-        boolean platformChanged = hasPathChanges(prevCommit, ["api", "build", "desktop-client", "server", "web-client"])
+        boolean platformChanged = hasPathChanges(prevCommit, ["api", "build", "desktop-client", "server", "web-client", "tests"])
         boolean apiDesktopChanged = hasPathChanges(prevCommit, ["api", "desktop-client"])
         boolean lsfLogicsgChanged = hasPathChanges(prevCommit, [Paths.lsfLogics])
         boolean docsChanged = hasPathChanges(prevCommit, ["docs"])
