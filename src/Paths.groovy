@@ -1,6 +1,7 @@
 class Paths {
     static String jenkinsHome = '/usr/share/jenkins'
     static String src = "$jenkinsHome/src"
+    static String srcTests = "$jenkinsHome/srctests" // platformTests : its own checkout, the deploy jobs clean and switch branches in src
     static String tmp = "/tmp"
     static String download = "/var/www/download"
     static String rpm = "$jenkinsHome/rpm"
