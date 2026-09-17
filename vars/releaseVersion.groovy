@@ -35,7 +35,9 @@ def call(int branch, boolean releaseFinal) {
         }
 
         stage('Release branch') {
-            String releaseCommand = "mvn -B release:clean release:prepare release:perform"
+            // -Darguments reaches the builds that prepare and perform fork. deployAtEnd for the reason deploySnapshot has
+            // it, and more so here: a release published halfway leaves a version the repository will not take again
+            String releaseCommand = "mvn -B release:clean release:prepare release:perform -Darguments=-DdeployAtEnd=true"
             if (releaseBeta) {
                 releaseCommand += " -DdevelopmentVersion=$majorVersion.0-SNAPSHOT -DreleaseVersion=$tagVersion"
             }
