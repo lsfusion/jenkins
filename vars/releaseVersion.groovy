@@ -40,7 +40,18 @@ def call(int branch, boolean releaseFinal) {
                 releaseCommand += " -DdevelopmentVersion=$majorVersion.0-SNAPSHOT -DreleaseVersion=$tagVersion"
             }
 
-            sh releaseCommand
+            // both of those builds include the tests module, whose integration tests need a postgres
+            boolean hasTests = fileExists('tests/compose.yaml')
+            try {
+                if (hasTests) {
+                    sh "docker compose -f tests/compose.yaml up -d db --wait"
+                }
+                sh releaseCommand
+            } finally {
+                if (hasTests) {
+                    sh "docker compose -f tests/compose.yaml down -v"
+                }
+            }
 
             if (releaseBeta) {
                 nextBetaVersion.set(minorVersion + 1)
