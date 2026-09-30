@@ -16,10 +16,13 @@ def call(String branch, String commitMessage, boolean uploadToCdn, boolean signD
 
         // deployAtEnd : maven takes each module through deploy before starting the next, and tests is near the
         // end of the reactor - without it everything ahead of a failing test would already be published
+        // maven.test.skip : the platform skips the unit tests of its modules unless asked for them; asked for only
+        // where the tests module is, since the older branches carry some of the same tests still broken
+        String deploy = "mvn -ntp clean deploy -DdeployAtEnd=true" + (hasTests ? " -Dmaven.test.skip=false" : "")
         if (signDesktopJar) {
-            sh "mvn -ntp clean deploy -DdeployAtEnd=true"
+            sh deploy
         } else {
-            sh "mvn -ntp clean deploy -DdeployAtEnd=true -P-sign-desktop-jar"
+            sh deploy + " -P-sign-desktop-jar"
         }
         
         if (uploadToCdn) {
