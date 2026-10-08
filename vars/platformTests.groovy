@@ -13,7 +13,7 @@ def call(String branch, String tests = null) {
         sh "docker compose -f tests/compose.yaml up -d db --wait"
         // the build the deploy makes, with the unit tests of every module (maven.test.skip) and the tests module's;
         // only nothing is signed, installed or deployed
-        sh "mvn -ntp clean verify -Dmaven.test.skip=false -P-sign-desktop-jar" + (tests ? " -Dlsf.tests='$tests'" : "")
+        sh "mvn -ntp clean verify -Dmaven.test.skip=false -P-sign-desktop-jar -Dgwt.localWorkers=4" + (tests ? " -Dlsf.tests='$tests'" : "")
     } finally {
         junit allowEmptyResults: true, testResults: '*/target/surefire-reports/*.xml, tests/target/failsafe-reports/*.xml'
         sh "docker compose -f tests/compose.yaml down -v"

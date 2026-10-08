@@ -18,7 +18,9 @@ def call(String branch, String commitMessage, boolean uploadToCdn, boolean signD
         // end of the reactor - without it everything ahead of a failing test would already be published
         // maven.test.skip : the platform skips the unit tests of its modules unless asked for them; asked for only
         // where the tests module is, since the older branches carry some of the same tests still broken
-        String deploy = "mvn -ntp clean deploy -DdeployAtEnd=true" + (hasTests ? " -Dmaven.test.skip=false" : "")
+        // gwt.localWorkers : GWT compiles the web client's permutations one after another unless told otherwise; half
+        // of the box's cores, as each worker is a jvm of its own and the box has no swap
+        String deploy = "mvn -ntp clean deploy -DdeployAtEnd=true -Dgwt.localWorkers=4" + (hasTests ? " -Dmaven.test.skip=false" : "")
         if (signDesktopJar) {
             sh deploy
         } else {
