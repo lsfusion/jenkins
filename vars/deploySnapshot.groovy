@@ -5,10 +5,10 @@ def call(String branch, String commitMessage, boolean uploadToCdn, boolean signD
     // branches from before the module have no compose file, and are deployed exactly as they were
     boolean hasTests = fileExists('tests/compose.yaml')
     // the browser tests run in playwright's image, as the box has no browser; asked for only where they are, since
-    // maven 3 only warns about a profile that is not there, and maven 4 fails on it. LSF_SKIP_UI_TESTS, a global
+    // maven 3 only warns about a profile that is not there, and maven 4 fails on it. LSF_SKIP_UI_TESTS=true, a global
     // property of the jenkins, turns them off when what breaks is their stack - docker, npm, the image -, which
-    // the quarantine of a test does not help with
-    boolean hasUiTests = fileExists('tests/src/ui') && !env.LSF_SKIP_UI_TESTS
+    // the quarantine of a test does not help with; false, like no property, leaves them on
+    boolean hasUiTests = fileExists('tests/src/ui') && !env.LSF_SKIP_UI_TESTS?.toBoolean()
 
     try {
         // junit and archiveArtifacts below read whatever is on disk, and mvn clean only reaches the modules the build
