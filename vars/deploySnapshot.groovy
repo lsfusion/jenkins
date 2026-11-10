@@ -27,7 +27,10 @@ def call(String branch, String commitMessage, boolean uploadToCdn, boolean signD
         } else {
             sh deploy + " -P-sign-desktop-jar"
         }
-        
+        // for the browser tests (browserTests): the tests of a later commit, whose deploy failed, may need what these
+        // snapshots lack
+        new File("${Paths.jenkinsHome}/deployedCommit-${branch}").text = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+
         if (uploadToCdn) {
             String platformVersion = readVersion()
             

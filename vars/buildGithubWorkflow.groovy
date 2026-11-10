@@ -7,11 +7,15 @@
 //     buildGithubWorkflow(repo: ..., workflow: 'linux.yml')    // another workflow
 //     buildGithubWorkflow(repo: ..., ref: 'feature/foo')       // another branch
 //     buildGithubWorkflow(repo: ..., wait: false)              // fire-and-forget
+//     buildGithubWorkflow(repo: ..., inputs: [name: 'value'])  // the workflow_dispatch inputs
+
+import groovy.json.JsonOutput
 
 def call(Map args) {
     String repo = args.repo
     String workflow = args.workflow ?: 'build-all.yml'
     String ref = args.ref ?: 'main'
+    String body = JsonOutput.toJson([ref: ref, inputs: args.inputs ?: [:]])
     boolean waitForResult = args.containsKey('wait') ? args.wait : true
     String name = repo.tokenize('/').last()
 
@@ -22,14 +26,14 @@ def call(Map args) {
             // remember when we dispatched (with a small skew) to locate the started run afterwards
             String since = sh(script: "date -u -d '60 seconds ago' +%Y-%m-%dT%H:%M:%SZ", returnStdout: true).trim()
 
-            echo "Dispatching ${workflow} on ${repo}@${ref}..."
+            echo "Dispatching ${workflow} on ${repo}: ${body}"
             sh """
                 curl -fsS -X POST \\
                   -H "Authorization: token \${TOKEN}" \\
                   -H "Accept: application/vnd.github+json" \\
                   -H "X-GitHub-Api-Version: 2022-11-28" \\
                   https://api.github.com/repos/${repo}/actions/workflows/${workflow}/dispatches \\
-                  -d '{"ref": "${ref}"}'
+                  -d '${body}'
             """
 
             if (!waitForResult) {
