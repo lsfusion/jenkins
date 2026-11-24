@@ -1,3 +1,4 @@
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 def call() {
@@ -13,7 +14,7 @@ def call() {
                 returnStdout: true
         ).trim()
         def oldVer = parseLatestVersion(response)
-        def pluginXml = readFile "META-INF/plugin.xml"
+        def pluginXml = readFile file: "META-INF/plugin.xml", encoding: 'UTF-8'
         def newVer = getPluginVersion(pluginXml)
 
         if (newVer != oldVer) {
@@ -42,8 +43,9 @@ def call() {
                 error "Publishing ${newVer} to JetBrains Marketplace failed: ${gradleFailureReason(publishLog)}"
             }
 
-            // Marketplace has the version now, whatever happens to the FTP upload, so it is tagged right away.
+            // Marketplace has the version now, whatever happens to the FTP upload, so it is tagged and released right away.
             tagRelease(newVer, builtCommit)
+            def releaseUrl = publishGithubRelease(newVer, builtCommit, getChangeNotes(pluginXml), "build/distributions/lsfusion-idea-plugin-${newVer}.zip")
 
             ftpPublisher failOnError: true, publishers: [
                     [configName: 'Download FTP server',
@@ -53,7 +55,11 @@ def call() {
                      verbose   : true]
             ]
 
-            slack.message "Plugin v${newVer} was built successfully.\n```${getReleaseNotes(pluginXml)}```"
+            // a link rather than the change notes themselves, which are too long for a Slack message; without the release,
+            // to the change notes in plugin.xml
+            def notesLink = releaseUrl ? "<${releaseUrl}|release notes>" :
+                    "<https://github.com/lsfusion/plugin-idea/blob/${builtCommit}/META-INF/plugin.xml|change notes in plugin.xml>"
+            slack.message "Plugin v${newVer} was built successfully: ${notesLink}."
         } else {
             echo "Version ${newVer} matches the latest version in Marketplace. Skipping build."
         }
@@ -92,6 +98,87 @@ def tagRelease(String version, String commit) {
     }
 }
 
+// Publishes the version this build uploaded as the GitHub release v<version> of lsfusion/plugin-idea, with the change notes
+// and the zip, so that any version can be downloaded without the Marketplace and installed with Install Plugin from Disk:
+// lsfusion.org has the latest one only. A release of that version is updated and its zip replaced: like the tag (see
+// tagRelease), it is of an upload the Marketplace no longer has.
+// It is a full release from the start, not a prerelease until the review is over, as lsfusion.org serves the version
+// from the start too.
+// A failure leaves the uploads as they are: the build turns unstable, archives the notes and the zip, and Slack gets a
+// warning. No later build retries it, as with the tag, so the release is then published by hand from those files.
+// Returns the URL of the release, null if it failed.
+def publishGithubRelease(String version, String commit, String notes, String zip) {
+    String tag = "v${version}"
+    String asset = "lsfusion-idea-plugin-${version}.zip"
+    String notesFile = 'build/release-notes.md'
+    String repo = 'repos/lsfusion/plugin-idea'
+    String url = null
+    try {
+        writeFile file: notesFile, text: notes, encoding: 'UTF-8'
+        withCredentials([string(credentialsId: 'api.github.com.token', variable: 'TOKEN')]) {
+            def release = githubApi('GET', "https://api.github.com/${repo}/releases/tags/${tag}", [200, 404])
+            if (release == null) {
+                // target_commitish is for a tag that was not pushed: GitHub then puts it on that commit, not on master
+                release = githubApi('POST', "https://api.github.com/${repo}/releases", [201],
+                        [tag_name: tag, target_commitish: commit, name: version, body: notes])
+            } else {
+                githubApi('PATCH', "https://api.github.com/${repo}/releases/${release.id}", [200], [name: version, body: notes])
+                for (int i = 0; i < release.assets.size(); i++) {
+                    if (release.assets[i].name == asset) {
+                        githubApi('DELETE', "https://api.github.com/${repo}/releases/assets/${release.assets[i].id}", [204])
+                    }
+                }
+            }
+            githubApi('POST', "https://uploads.github.com/${repo}/releases/${release.id}/assets?name=${asset}", [201], null, zip)
+            url = release.html_url
+            echo "Published ${zip} in ${url}."
+        }
+    } catch (InterruptedException e) {
+        throw e // an aborted build stops here, it does not go on to the FTP upload
+    } catch (e) {
+        def reason = e.message ?: e.toString()
+        echo "Publishing the GitHub release ${tag} failed: ${reason}"
+        currentBuild.result = 'UNSTABLE'
+        currentBuild.description = "${currentBuild.description ?: version}, no GitHub release"
+        slack.warning "Plugin v${version} is uploaded, but <$env.BUILD_URL|$currentBuild.fullDisplayName> did not publish the GitHub release ${tag}: ${reason}."
+        try {
+            // they stay in this checkout only until the next build
+            archiveArtifacts artifacts: "${zip},${notesFile}", allowEmptyArchive: true
+        } catch (InterruptedException ie) {
+            throw ie
+        } catch (ae) {
+            echo "Archiving the notes and the zip failed: ${ae.message ?: ae.toString()}"
+        }
+    }
+    return url
+}
+
+// Sends a request to the GitHub API with the token in TOKEN and returns the response, data as JSON or else file as a zip.
+// Fails on a status other than expected, returns null on an expected 404.
+def githubApi(String method, String url, List expected, Map data = null, String file = null) {
+    String request = 'build/github-request.json'
+    String response = 'build/github-response.json'
+    String body = ''
+    if (data != null) {
+        writeFile file: request, text: JsonOutput.toJson(data), encoding: 'UTF-8'
+        body = "-H 'Content-Type: application/json' --data-binary '@${request}'"
+    } else if (file != null) {
+        body = "-H 'Content-Type: application/zip' --data-binary '@${file}'"
+    }
+    // \$TOKEN: the shell expands it, so the secret is not interpolated by Groovy
+    int status = sh(returnStdout: true, script: "rm -f ${response}; curl -sS -o ${response} -w '%{http_code}' -X ${method} " +
+            "-H \"Authorization: Bearer \$TOKEN\" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' " +
+            "${body} '${url}'").trim().toInteger()
+    String text = fileExists(response) ? readFile(response).trim() : ''
+    // an error page of a proxy in front of GitHub is not JSON
+    def json = text.startsWith('{') || text.startsWith('[') ? readJSON(text: text) : null
+    if (!expected.contains(status)) {
+        String message = json instanceof Map && json.message ? ": ${json.message}${json.errors ? ' ' + json.errors : ''}" : ''
+        error "GitHub answered ${method} ${url} with ${status}${message}"
+    }
+    return status == 404 ? null : json
+}
+
 // The commit that tag is on in lsfusion/plugin-idea, null if there is no such tag.
 def remoteTagCommit(String tag) {
     def ref = "refs/tags/${tag}"
@@ -126,17 +213,11 @@ def getPluginVersion(String xml) {
     return new XmlSlurper().parseText(xml).version.text()
 }
 
+// The change notes of plugin.xml for a GitHub release. GitHub renders their HTML (<b>, <ul>, <li>, <code>, <br>) as it is,
+// once no line is indented: Markdown shows an indented line as code.
 @NonCPS
-def getReleaseNotes(String text) {
-    def startIndex = text.indexOf("<ul>")
-    def endIndex = text.indexOf("</ul>")
-    if (startIndex == -1 || endIndex == -1) return ""
-    def lis = new XmlSlurper().parseText(text.substring(startIndex, endIndex + 5))
-    def res = ""
-    for (li in lis.children()) {
-        res = "${res}• ${li.text()}\n"
-    }
-    return res
+def getChangeNotes(String xml) {
+    return new XmlSlurper().parseText(xml).'change-notes'.text().readLines()*.trim().findAll().join('\n')
 }
 
 // Gradle's "* What went wrong:" section as one line, e.g.
