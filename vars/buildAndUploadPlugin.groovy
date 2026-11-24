@@ -6,6 +6,7 @@ def call() {
                 url: 'git@github.com:lsfusion/plugin-idea.git',
                 branch: 'master',
         )
+        def builtCommit = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
 
         def response = sh(
                 script: "curl -s https://plugins.jetbrains.com/api/plugins/7601/updates",
@@ -41,6 +42,9 @@ def call() {
                 error "Publishing ${newVer} to JetBrains Marketplace failed: ${gradleFailureReason(publishLog)}"
             }
 
+            // Marketplace has the version now, whatever happens to the FTP upload, so it is tagged right away.
+            tagRelease(newVer, builtCommit)
+
             ftpPublisher failOnError: true, publishers: [
                     [configName: 'Download FTP server',
                      transfers : [
@@ -57,6 +61,55 @@ def call() {
         slack.error "Warning! <$env.BUILD_URL|$currentBuild.fullDisplayName> failed${e.message ? ': ' + e.message : '.'}"
         throw e
     }
+}
+
+// Tags the version this build uploaded as v<version> on commit, the one it was built from, in lsfusion/plugin-idea, so
+// that the commit of what the Marketplace has can be found from the version. A tag on another commit is moved: it is of
+// an upload the Marketplace no longer has, as when an update it rejected is deleted there and the fixed plugin is uploaded
+// with the same version.
+// A failure leaves the release as it is: the build turns unstable and Slack gets a warning. No later build retries it, they
+// end on "already contains version" until the review is over, so the tag is then put by hand.
+def tagRelease(String version, String commit) {
+    def tag = "v${version}"
+    try {
+        def tagged = remoteTagCommit(tag)
+        if (tagged == commit) {
+            echo "${tag} is already on ${tagged}."
+            return
+        }
+        // -f: a build that failed to push the tag has left it in this checkout
+        sh "git tag -f -a ${tag} -m 'Release ${version}' ${commit}"
+        sh "git push --force origin refs/tags/${tag}"
+        echo(tagged == null ? "Tagged ${commit} as ${tag}." : "Moved ${tag} from ${tagged} to ${commit}.")
+    } catch (InterruptedException e) {
+        throw e // an aborted build stops here, it does not go on to the FTP upload
+    } catch (e) {
+        def reason = e.message ?: e.toString()
+        echo "Tagging ${commit} as ${tag} failed: ${reason}"
+        currentBuild.result = 'UNSTABLE'
+        currentBuild.description = "${currentBuild.description ?: version}, not tagged"
+        slack.warning "Plugin v${version} is uploaded, but <$env.BUILD_URL|$currentBuild.fullDisplayName> did not create the tag ${tag}: ${reason}."
+    }
+}
+
+// The commit that tag is on in lsfusion/plugin-idea, null if there is no such tag.
+def remoteTagCommit(String tag) {
+    def ref = "refs/tags/${tag}"
+    // An annotated tag is listed as the tag object, and as the commit only when ref^{} is asked for.
+    def lsRemote = sh(script: "git ls-remote origin '${ref}' '${ref}^{}'", returnStdout: true)
+    return lsRemoteCommit(lsRemote, ref)
+}
+
+@NonCPS
+def lsRemoteCommit(String lsRemote, String ref) {
+    def shas = [:]
+    lsRemote.eachLine { line ->
+        def parts = line.trim().split(/\s+/)
+        if (parts.length == 2) {
+            shas[parts[1]] = parts[0]
+        }
+    }
+    return shas[ref + '^{}'] ?: shas[ref]
 }
 
 @NonCPS
