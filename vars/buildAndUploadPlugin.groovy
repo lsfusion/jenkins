@@ -23,6 +23,8 @@ def call() {
 
             sh "cp -f build/distributions/lsfusion-idea-plugin-${newVer}.zip lsfusion-idea-plugin.zip"
 
+            removeUnusedIdes()
+
             def publishStatus
             withCredentials([string(credentialsId: 'jetbrains.plugins.token', variable: 'token')]) {
                 // Single-quoted: the shell expands $token, so the secret is not interpolated by Groovy.
@@ -66,6 +68,29 @@ def call() {
     } catch (e) {
         slack.error "Warning! <$env.BUILD_URL|$currentBuild.fullDisplayName> failed${e.message ? ': ' + e.message : '.'}"
         throw e
+    }
+}
+
+// Removes from the Gradle cache the IDEs that earlier builds verified the plugin against and this one does not, before
+// publishPlugin downloads the ones verifyPlugin needs. Each IntelliJ update brings its own copy of every recommended IDE,
+// an archive of about 1.5 GB and its extraction of about 4 GB, and Gradle does not remove the old ones in time: the disk
+// ran out in the middle of a verification. Gradle lists the IDEs without downloading them, from the same releases listing
+// as for verifyPlugin; an IDE removed by mistake, say on an update released in between, is only downloaded again.
+// A failure leaves the cache as it is, and the build goes on.
+def removeUnusedIdes() {
+    String initScript = 'build/intellij-platform-artifacts.gradle'
+    String removeScript = 'build/remove-unused-ides.sh'
+    String artifacts = 'build/intellij-platform-artifacts.txt'
+    try {
+        writeFile file: initScript, text: libraryResource('plugin/intellij-platform-artifacts.gradle')
+        writeFile file: removeScript, text: libraryResource('plugin/remove-unused-ides.sh')
+        // the task reads the configurations of the project when it runs, which the configuration cache does not allow
+        sh "./gradlew -q --no-configuration-cache -I ${initScript} printIntellijPlatformArtifacts > ${artifacts}"
+        sh "bash ${removeScript} ${artifacts}"
+    } catch (InterruptedException e) {
+        throw e
+    } catch (e) {
+        echo "Removing unused IDEs failed, the Gradle cache is left as it is: ${e.message ?: e.toString()}"
     }
 }
 

@@ -1,0 +1,18 @@
+// Gradle init script of the plugin-idea pipeline. Its task printIntellijPlatformArtifacts prints the IntelliJ Platform
+// artifacts the build needs, without downloading them: the IDE the plugin is compiled against ("platform") and the IDEs
+// verifyPlugin checks it against ("verifier"), one "<kind> <group>:<name>:<version>" line each. The verifier list comes from
+// the releases listing that recommended() reads when Gradle configures the build; the IDEs themselves are downloaded only
+// when verifyPlugin runs.
+rootProject {
+    pluginManager.withPlugin('org.jetbrains.intellij.platform') {
+        tasks.register('printIntellijPlatformArtifacts') {
+            doLast {
+                [platform: 'intellijPlatformDependencyArchive', verifier: 'intellijPluginVerifierIdesDependency'].each { kind, configuration ->
+                    project.configurations.getByName(configuration).dependencies.each {
+                        println "${kind} ${it.group}:${it.name}:${it.version}"
+                    }
+                }
+            }
+        }
+    }
+}
