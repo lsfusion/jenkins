@@ -20,8 +20,12 @@ def call(String branch, String commitMessage, boolean uploadToCdn, boolean signD
         // where the tests module is, since the older branches carry some of the same tests still broken
         // gwt.localWorkers : GWT compiles the web client's permutations one after another unless told otherwise; half
         // of the box's cores, as each worker is a jvm of its own and the box has no swap
+        // -T2 : the clients (desktop, then web) and the server with the tests module are two chains of about the same
+        // length, built side by side; GWT's compile then runs next to the tests' compile servers, so it gets fewer
+        // workers, or the box runs short of memory. Only where the tests module is; the older branches are built as
+        // they were
         // no -Pui : the browser tests run in the platform's GitHub workflow, against the snapshots published here
-        String deploy = "mvn -ntp clean deploy -DdeployAtEnd=true -Dgwt.localWorkers=4" + (hasTests ? " -Dmaven.test.skip=false" : "")
+        String deploy = "mvn -ntp clean deploy -DdeployAtEnd=true" + (hasTests ? " -T2 -Dgwt.localWorkers=2 -Dmaven.test.skip=false" : " -Dgwt.localWorkers=4")
         if (signDesktopJar) {
             sh deploy
         } else {
